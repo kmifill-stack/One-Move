@@ -10,166 +10,115 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    * { -webkit-tap-highlight-color: transparent; user-select: none; }
-    body { margin: 0; padding: 0; overflow: hidden; position: fixed; width: 100%; height: 100%; }
-    #root { width: 100%; height: 100%; }
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #1e293b;
+    }
+    #root {
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
-    const RotateCcw = ({ className }) => (<svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>);
-    const Play = ({ className }) => (<svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>);
-    
+
+    const Play = ({ className }) => (
+      <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polygon points="5 3 19 12 5 21 5 3"/>
+      </svg>
+    );
+
     const generatePuzzle = (id, gridSize, solutionRow, solutionCol, trivia) => {
       const solvedGrid = Array(gridSize).fill(null).map(() => Array(gridSize).fill(1));
       const puzzleGrid = solvedGrid.map(row => [...row]);
       puzzleGrid[solutionRow][solutionCol] = puzzleGrid[solutionRow][solutionCol] === 1 ? 0 : 1;
-      const flip = (r, c) => { if (r >= 0 && r < gridSize && c >= 0 && c < gridSize) puzzleGrid[r][c] = puzzleGrid[r][c] === 1 ? 0 : 1; };
-      flip(solutionRow - 1, solutionCol); flip(solutionRow + 1, solutionCol); flip(solutionRow, solutionCol - 1); flip(solutionRow, solutionCol + 1);
+      const flip = (r, c) => {
+        if (r >= 0 && r < gridSize && c >= 0 && c < gridSize) {
+          puzzleGrid[r][c] = puzzleGrid[r][c] === 1 ? 0 : 1;
+        }
+      };
+      flip(solutionRow - 1, solutionCol);
+      flip(solutionRow + 1, solutionCol);
+      flip(solutionRow, solutionCol - 1);
+      flip(solutionRow, solutionCol + 1);
       return { id, grid: puzzleGrid, solution: { row: solutionRow, col: solutionCol }, trivia };
     };
 
     const PUZZLES = [
-      generatePuzzle(1, 3, 1, 1, {question: "What's the tallest mountain in the world?", answer: "Mount Everest", gradient: "from-slate-700 via-stone-600 to-slate-500"}),
-      generatePuzzle(2, 3, 0, 0, {question: "What ocean is the largest?", answer: "Pacific Ocean", gradient: "from-blue-900 via-blue-700 to-cyan-600"}),
-      generatePuzzle(3, 3, 0, 1, {question: "What's the fastest land animal?", answer: "Cheetah", gradient: "from-yellow-800 via-amber-600 to-orange-500"}),
-      generatePuzzle(4, 3, 1, 0, {question: "What planet is known as the Red Planet?", answer: "Mars", gradient: "from-red-950 via-red-800 to-orange-700"}),
-      generatePuzzle(5, 3, 2, 2, {question: "What's the smallest country in the world?", answer: "Vatican City", gradient: "from-amber-100 via-yellow-200 to-amber-300"}),
-      generatePuzzle(6, 3, 0, 2, {question: "What's the longest river in the world?", answer: "Nile River", gradient: "from-emerald-800 via-teal-600 to-cyan-500"}),
-      generatePuzzle(7, 3, 2, 0, {question: "What animal is the largest mammal?", answer: "Blue Whale", gradient: "from-blue-950 via-indigo-800 to-blue-600"}),
-      generatePuzzle(8, 3, 2, 1, {question: "What country has the most population?", answer: "India", gradient: "from-orange-600 via-amber-500 to-yellow-400"}),
-      generatePuzzle(9, 3, 1, 2, {question: "What's the hottest desert?", answer: "Sahara Desert", gradient: "from-yellow-600 via-orange-500 to-red-400"}),
-      generatePuzzle(10, 3, 1, 1, {question: "What country invented pizza?", answer: "Italy", gradient: "from-red-600 via-green-600 to-red-600"}),
-      generatePuzzle(11, 3, 0, 0, {question: "What's the capital of Japan?", answer: "Tokyo", gradient: "from-pink-300 via-rose-400 to-pink-500"}),
-      generatePuzzle(12, 3, 2, 2, {question: "What bird can't fly but can run fast?", answer: "Ostrich", gradient: "from-stone-400 via-neutral-500 to-amber-600"}),
-      generatePuzzle(13, 4, 1, 1, {question: "What continent is Egypt in?", answer: "Africa", gradient: "from-yellow-700 via-orange-600 to-amber-500"}),
-      generatePuzzle(14, 4, 0, 0, {question: "What's the largest island?", answer: "Greenland", gradient: "from-teal-100 via-cyan-200 to-blue-300"}),
-      generatePuzzle(15, 4, 2, 2, {question: "What animal has black and white stripes?", answer: "Zebra", gradient: "from-zinc-800 via-gray-600 to-slate-400"}),
-      generatePuzzle(16, 3, 0, 1, {question: "What's the longest wall in the world?", answer: "Great Wall of China", gradient: "from-stone-600 via-amber-700 to-orange-800"}),
-      generatePuzzle(17, 3, 1, 2, {question: "What planet has rings?", answer: "Saturn", gradient: "from-amber-400 via-yellow-500 to-orange-400"}),
-      generatePuzzle(18, 4, 0, 2, {question: "What country has kangaroos?", answer: "Australia", gradient: "from-red-700 via-orange-600 to-yellow-500"}),
-      generatePuzzle(19, 4, 3, 1, {question: "What ocean is coldest?", answer: "Arctic Ocean", gradient: "from-cyan-100 via-blue-200 to-indigo-300"}),
-      generatePuzzle(20, 4, 1, 3, {question: "What's the tallest tree species?", answer: "Coast Redwood", gradient: "from-green-900 via-emerald-700 to-teal-600"}),
-      generatePuzzle(21, 3, 2, 0, {question: "What city is the Eiffel Tower in?", answer: "Paris", gradient: "from-zinc-300 via-slate-400 to-gray-500"}),
-      generatePuzzle(22, 4, 2, 0, {question: "What animal lives in the Arctic?", answer: "Polar Bear", gradient: "from-blue-50 via-cyan-100 to-white"}),
-      generatePuzzle(23, 4, 3, 3, {question: "What country is shaped like a boot?", answer: "Italy", gradient: "from-green-500 via-white to-red-500"}),
-      generatePuzzle(24, 4, 0, 1, {question: "What's the deepest ocean trench?", answer: "Mariana Trench", gradient: "from-indigo-950 via-blue-900 to-cyan-800"}),
-      generatePuzzle(25, 4, 1, 2, {question: "What bird is pink?", answer: "Flamingo", gradient: "from-pink-400 via-rose-500 to-pink-600"}),
-      generatePuzzle(26, 3, 1, 0, {question: "What country has pyramids?", answer: "Egypt", gradient: "from-yellow-600 via-amber-700 to-orange-800"}),
-      generatePuzzle(27, 4, 2, 3, {question: "What's the largest rainforest?", answer: "Amazon Rainforest", gradient: "from-green-800 via-emerald-700 to-lime-600"}),
-      generatePuzzle(28, 4, 1, 0, {question: "What animal is king of the jungle?", answer: "Lion", gradient: "from-yellow-700 via-orange-600 to-amber-500"}),
-      generatePuzzle(29, 4, 3, 2, {question: "What country invented sushi?", answer: "Japan", gradient: "from-red-100 via-white to-red-100"}),
-      generatePuzzle(30, 4, 2, 1, {question: "What's the brightest star?", answer: "The Sun", gradient: "from-yellow-400 via-orange-400 to-yellow-300"}),
-      generatePuzzle(31, 4, 0, 3, {question: "What country has the most islands?", answer: "Sweden", gradient: "from-blue-400 via-yellow-400 to-blue-400"}),
-      generatePuzzle(32, 4, 3, 0, {question: "What's the largest volcano?", answer: "Mauna Loa", gradient: "from-red-900 via-orange-700 to-yellow-600"}),
-      generatePuzzle(33, 5, 2, 2, {question: "What country has the most vending machines per capita?", answer: "Japan", gradient: "from-blue-600 via-indigo-500 to-purple-600"}),
-      generatePuzzle(34, 4, 1, 1, {question: "What animal can regrow its tail?", answer: "Lizard", gradient: "from-lime-700 via-green-600 to-emerald-500"}),
-      generatePuzzle(35, 4, 2, 2, {question: "What's the driest place on Earth?", answer: "Atacama Desert", gradient: "from-orange-300 via-yellow-400 to-amber-500"}),
-      generatePuzzle(36, 5, 1, 1, {question: "What country has the longest coastline?", answer: "Canada", gradient: "from-red-600 via-white to-red-600"}),
-      generatePuzzle(37, 4, 0, 0, {question: "What animal sleeps while standing?", answer: "Horse", gradient: "from-amber-800 via-brown-700 to-orange-600"}),
-      generatePuzzle(38, 4, 3, 3, {question: "What city has the most bridges?", answer: "Venice", gradient: "from-cyan-400 via-blue-500 to-indigo-600"}),
-      generatePuzzle(39, 5, 3, 3, {question: "What's the smallest ocean?", answer: "Arctic Ocean", gradient: "from-sky-200 via-blue-300 to-cyan-400"}),
-      generatePuzzle(40, 4, 1, 2, {question: "What country invented chocolate?", answer: "Mexico", gradient: "from-green-700 via-white to-red-700"}),
-      generatePuzzle(41, 5, 0, 2, {question: "What's the largest lake?", answer: "Caspian Sea", gradient: "from-blue-600 via-cyan-500 to-teal-400"}),
-      generatePuzzle(42, 4, 2, 1, {question: "What animal has three hearts?", answer: "Octopus", gradient: "from-purple-800 via-indigo-700 to-blue-600"}),
-      generatePuzzle(43, 5, 4, 2, {question: "What country has the most UNESCO sites?", answer: "Italy", gradient: "from-emerald-600 via-white to-red-600"}),
-      generatePuzzle(44, 4, 0, 2, {question: "What's the fastest fish?", answer: "Sailfish", gradient: "from-blue-800 via-cyan-600 to-blue-400"}),
-      generatePuzzle(45, 5, 2, 0, {question: "What country is Machu Picchu in?", answer: "Peru", gradient: "from-red-700 via-white to-red-700"}),
-      generatePuzzle(46, 4, 2, 0, {question: "What bird can fly backwards?", answer: "Hummingbird", gradient: "from-emerald-500 via-teal-400 to-cyan-500"}),
-      generatePuzzle(47, 5, 2, 4, {question: "What's the world's most spoken language?", answer: "English", gradient: "from-blue-700 via-red-600 to-blue-700"}),
-      generatePuzzle(48, 4, 3, 1, {question: "What country has the most time zones?", answer: "France", gradient: "from-blue-700 via-white to-red-700"}),
-      generatePuzzle(49, 5, 1, 3, {question: "What animal can change colors?", answer: "Chameleon", gradient: "from-lime-500 via-green-600 to-emerald-700"}),
-      generatePuzzle(50, 4, 1, 3, {question: "What's the highest waterfall?", answer: "Angel Falls", gradient: "from-cyan-200 via-blue-300 to-indigo-400"}),
-      generatePuzzle(51, 5, 3, 1, {question: "What country invented paper?", answer: "China", gradient: "from-red-600 via-yellow-500 to-red-600"}),
-      generatePuzzle(52, 5, 0, 0, {question: "What's the largest cat species?", answer: "Tiger", gradient: "from-orange-700 via-yellow-600 to-orange-500"}),
-      generatePuzzle(53, 4, 2, 3, {question: "What country is Angkor Wat in?", answer: "Cambodia", gradient: "from-blue-600 via-red-700 to-blue-600"}),
-      generatePuzzle(54, 5, 4, 4, {question: "What animal has the longest lifespan?", answer: "Greenland Shark", gradient: "from-gray-700 via-blue-800 to-slate-900"}),
-      generatePuzzle(55, 5, 1, 2, {question: "What's the coldest inhabited place?", answer: "Oymyakon, Russia", gradient: "from-blue-100 via-cyan-200 to-white"}),
-      generatePuzzle(56, 4, 1, 0, {question: "What country has the most lakes?", answer: "Canada", gradient: "from-blue-400 via-cyan-300 to-teal-400"}),
-      generatePuzzle(57, 5, 2, 1, {question: "What animal can hold its breath longest?", answer: "Cuvier's Beaked Whale", gradient: "from-indigo-900 via-blue-800 to-cyan-700"}),
-      generatePuzzle(58, 5, 3, 2, {question: "What's the oldest city in the world?", answer: "Damascus", gradient: "from-amber-600 via-yellow-700 to-orange-800"}),
-      generatePuzzle(59, 4, 3, 2, {question: "What country has the most active volcanoes?", answer: "Indonesia", gradient: "from-red-800 via-orange-600 to-yellow-500"}),
-      generatePuzzle(60, 5, 2, 3, {question: "What animal has the best memory?", answer: "Elephant", gradient: "from-gray-600 via-stone-500 to-slate-400"}),
-      generatePuzzle(61, 5, 0, 1, {question: "What's the largest moon in our solar system?", answer: "Ganymede", gradient: "from-orange-400 via-amber-500 to-yellow-600"}),
-      generatePuzzle(62, 5, 1, 0, {question: "What country invented ice cream?", answer: "China", gradient: "from-pink-200 via-blue-300 to-purple-400"}),
-      generatePuzzle(63, 5, 4, 1, {question: "What's the most abundant element in the universe?", answer: "Hydrogen", gradient: "from-purple-900 via-indigo-800 to-blue-900"}),
-      generatePuzzle(64, 5, 1, 4, {question: "What country has the longest railway?", answer: "Russia", gradient: "from-blue-700 via-white to-red-700"}),
-      generatePuzzle(65, 5, 0, 3, {question: "What animal has blue blood?", answer: "Horseshoe Crab", gradient: "from-blue-900 via-cyan-800 to-teal-700"}),
-      generatePuzzle(66, 5, 3, 0, {question: "What's the strongest muscle in the body?", answer: "Jaw Muscle (Masseter)", gradient: "from-red-600 via-pink-500 to-rose-400"}),
-      generatePuzzle(67, 5, 4, 3, {question: "What country drinks the most coffee?", answer: "Finland", gradient: "from-blue-500 via-white to-blue-500"}),
-      generatePuzzle(68, 5, 3, 4, {question: "What's the smallest bone in the body?", answer: "Stapes (in the ear)", gradient: "from-pink-300 via-rose-400 to-red-500"}),
-      generatePuzzle(69, 5, 2, 2, {question: "What planet has the most moons?", answer: "Saturn", gradient: "from-yellow-600 via-amber-700 to-orange-800"}),
-      generatePuzzle(70, 5, 1, 1, {question: "What country invented the compass?", answer: "China", gradient: "from-red-700 via-amber-600 to-yellow-500"}),
-      generatePuzzle(71, 5, 3, 3, {question: "What's the largest living organism?", answer: "Honey Fungus", gradient: "from-yellow-700 via-amber-800 to-orange-900"}),
-      generatePuzzle(72, 5, 1, 2, {question: "What country has the most bicycles?", answer: "Netherlands", gradient: "from-orange-600 via-white to-blue-600"}),
-      generatePuzzle(73, 5, 2, 1, {question: "What animal has rectangular pupils?", answer: "Goat", gradient: "from-amber-700 via-yellow-600 to-lime-500"}),
-      generatePuzzle(74, 5, 3, 2, {question: "What's the hardest natural substance?", answer: "Diamond", gradient: "from-blue-200 via-cyan-300 to-sky-400"}),
-      generatePuzzle(75, 5, 2, 3, {question: "What country has the most castles?", answer: "Germany", gradient: "from-stone-600 via-gray-500 to-slate-400"}),
-      generatePuzzle(76, 5, 0, 2, {question: "What animal can survive in space?", answer: "Tardigrade", gradient: "from-purple-950 via-indigo-900 to-blue-950"}),
-      generatePuzzle(77, 5, 2, 0, {question: "What's the largest flower?", answer: "Rafflesia", gradient: "from-red-800 via-orange-700 to-yellow-600"}),
-      generatePuzzle(78, 5, 4, 2, {question: "What country invented fireworks?", answer: "China", gradient: "from-red-600 via-yellow-500 to-orange-600"}),
-      generatePuzzle(79, 5, 2, 4, {question: "What's the fastest growing plant?", answer: "Bamboo", gradient: "from-green-700 via-emerald-600 to-lime-500"}),
-      generatePuzzle(80, 5, 1, 3, {question: "What animal has fingerprints like humans?", answer: "Koala", gradient: "from-gray-400 via-slate-500 to-stone-600"}),
-      generatePuzzle(81, 5, 3, 1, {question: "What's the rarest blood type?", answer: "Rh-null", gradient: "from-red-900 via-rose-800 to-pink-700"}),
-      generatePuzzle(82, 6, 2, 2, {question: "What country has the most UNESCO languages?", answer: "Indonesia", gradient: "from-red-700 via-white to-red-700"}),
-      generatePuzzle(83, 5, 0, 4, {question: "What's the deepest lake?", answer: "Lake Baikal", gradient: "from-blue-800 via-cyan-700 to-teal-600"}),
-      generatePuzzle(84, 6, 1, 1, {question: "What animal has the highest blood pressure?", answer: "Giraffe", gradient: "from-yellow-600 via-orange-700 to-amber-800"}),
-      generatePuzzle(85, 5, 4, 0, {question: "What country has the most diverse ecosystem?", answer: "Brazil", gradient: "from-green-700 via-yellow-500 to-blue-600"}),
-      generatePuzzle(86, 6, 4, 4, {question: "What's the oldest board game?", answer: "Senet", gradient: "from-amber-800 via-yellow-700 to-orange-600"}),
-      generatePuzzle(87, 6, 0, 0, {question: "What country has the most Nobel Prize winners?", answer: "United States", gradient: "from-blue-700 via-white to-red-700"}),
-      generatePuzzle(88, 6, 5, 5, {question: "What animal has the most chromosomes?", answer: "Atlas Blue Butterfly", gradient: "from-blue-400 via-cyan-500 to-sky-600"}),
-      generatePuzzle(89, 6, 2, 3, {question: "What's the largest canyon?", answer: "Grand Canyon", gradient: "from-orange-800 via-red-700 to-amber-600"}),
-      generatePuzzle(90, 6, 3, 2, {question: "What country invented Wi-Fi?", answer: "Australia", gradient: "from-green-700 via-yellow-500 to-green-700"}),
-      generatePuzzle(91, 6, 1, 4, {question: "What's the loudest animal?", answer: "Sperm Whale", gradient: "from-blue-950 via-slate-900 to-gray-800"}),
-      generatePuzzle(92, 6, 4, 1, {question: "What country has the most UNESCO World Heritage sites in one city?", answer: "Italy (Rome)", gradient: "from-yellow-700 via-orange-600 to-red-700"}),
-      generatePuzzle(93, 6, 0, 3, {question: "What's the smallest mammal?", answer: "Bumblebee Bat", gradient: "from-gray-700 via-brown-600 to-amber-700"}),
-      generatePuzzle(94, 6, 3, 0, {question: "What country has the most internet users?", answer: "China", gradient: "from-red-600 via-yellow-500 to-red-600"}),
-      generatePuzzle(95, 6, 5, 2, {question: "What animal can sleep for 3 years?", answer: "Snail", gradient: "from-lime-700 via-green-600 to-emerald-500"}),
-      generatePuzzle(96, 6, 2, 5, {question: "What's the most expensive spice?", answer: "Saffron", gradient: "from-red-700 via-orange-600 to-yellow-500"}),
-      generatePuzzle(97, 6, 3, 3, {question: "What country invented the croissant?", answer: "Austria", gradient: "from-red-700 via-white to-red-700"}),
-      generatePuzzle(98, 6, 1, 2, {question: "What's the most venomous creature?", answer: "Box Jellyfish", gradient: "from-blue-300 via-cyan-400 to-teal-500"}),
-      generatePuzzle(99, 6, 4, 3, {question: "What country has the most Olympic gold medals all-time?", answer: "United States", gradient: "from-yellow-400 via-amber-500 to-orange-600"}),
-      generatePuzzle(100, 6, 2, 4, {question: "What's the rarest naturally occurring element?", answer: "Astatine", gradient: "from-purple-900 via-violet-800 to-indigo-900"})
+      generatePuzzle(1, 3, 1, 1, {
+        question: "What's the tallest mountain in the world?",
+        answer: "Mount Everest",
+        choices: ["K2", "Mount Everest", "Kilimanjaro", "Denali"]
+      }),
+      generatePuzzle(2, 3, 0, 0, {
+        question: "What ocean is the largest?",
+        answer: "Pacific Ocean",
+        choices: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"]
+      }),
+      generatePuzzle(3, 3, 0, 1, {
+        question: "What's the fastest land animal?",
+        answer: "Cheetah",
+        choices: ["Lion", "Cheetah", "Leopard", "Tiger"]
+      }),
+      generatePuzzle(4, 3, 1, 0, {
+        question: "What planet is known as the Red Planet?",
+        answer: "Mars",
+        choices: ["Venus", "Jupiter", "Mars", "Mercury"]
+      }),
+      generatePuzzle(5, 3, 2, 2, {
+        question: "What's the smallest country in the world?",
+        answer: "Vatican City",
+        choices: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"]
+      }),
+      generatePuzzle(6, 3, 0, 2, {
+        question: "What's the longest river in the world?",
+        answer: "Nile River",
+        choices: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"]
+      }),
+      generatePuzzle(7, 3, 2, 0, {
+        question: "What animal is the largest mammal?",
+        answer: "Blue Whale",
+        choices: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"]
+      }),
+      generatePuzzle(8, 3, 2, 1, {
+        question: "What country has the most population?",
+        answer: "India",
+        choices: ["China", "India", "United States", "Indonesia"]
+      }),
+      generatePuzzle(9, 3, 1, 2, {
+        question: "What's the hottest desert?",
+        answer: "Sahara Desert",
+        choices: ["Gobi Desert", "Mojave Desert", "Sahara Desert", "Arabian Desert"]
+      }),
+      generatePuzzle(10, 3, 1, 1, {
+        question: "What country invented pizza?",
+        answer: "Italy",
+        choices: ["Greece", "Italy", "France", "Spain"]
+      })
     ];
 
     const OneMove = () => {
       const [screen, setScreen] = useState('home');
       const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
       const [grid, setGrid] = useState([]);
-      const [insight, setInsight] = useState(0);
-      const [resultType, setResultType] = useState(null);
-      const [animatingInsight, setAnimatingInsight] = useState(false);
+      const [score, setScore] = useState(0);
       const [processing, setProcessing] = useState(false);
-      const [shuffledPuzzles, setShuffledPuzzles] = useState([]);
+      const [selectedAnswer, setSelectedAnswer] = useState(null);
+      const [showResult, setShowResult] = useState(false);
 
-      const shuffleArray = (array) => {
-        const shuffled = [...array];
-        for (let i = shuffled.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        return shuffled;
-      };
-
-      useEffect(() => {
-        const tutorial = PUZZLES.slice(0, 10);
-        const easy = PUZZLES.slice(10, 30);
-        const medium = PUZZLES.slice(30, 60);
-        const mediumHard = PUZZLES.slice(60, 80);
-        const hard = PUZZLES.slice(80, 100);
-        const combined = [...shuffleArray(tutorial), ...shuffleArray(easy), ...shuffleArray(medium), ...shuffleArray(mediumHard), ...shuffleArray(hard)];
-        setShuffledPuzzles(combined);
-      }, []);
-
-      const currentPuzzle = shuffledPuzzles[currentPuzzleIndex] || PUZZLES[0];
-
-      const getTextColor = (gradient) => {
-        const lightBackgrounds = ['from-amber-100', 'from-yellow-200', 'from-pink-200', 'from-blue-50', 'from-cyan-100', 'from-teal-100', 'from-sky-200', 'from-lime-200', 'from-pink-300', 'from-blue-200', 'from-cyan-200', 'from-rose-300', 'from-yellow-400', 'from-amber-400', 'from-orange-400', 'from-lime-500'];
-        const isLight = lightBackgrounds.some(bg => gradient.includes(bg));
-        return isLight ? {primary: 'text-slate-900', secondary: 'text-slate-700', tertiary: 'text-slate-600'} : {primary: 'text-white', secondary: 'text-white/80', tertiary: 'text-white/70'};
-      };
+      const currentPuzzle = PUZZLES[currentPuzzleIndex];
 
       const playSound = (type) => {
         try {
@@ -180,66 +129,269 @@
           const gainNode = audioContext.createGain();
           oscillator.connect(gainNode);
           gainNode.connect(audioContext.destination);
-          if (type === 'flip') { oscillator.frequency.value = 800; oscillator.type = 'sine'; gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05); oscillator.start(audioContext.currentTime); oscillator.stop(audioContext.currentTime + 0.05); }
-          else if (type === 'success') { const basePitch = 523.25; const pitchIncrease = Math.min(insight * 5, 200); oscillator.frequency.value = basePitch + pitchIncrease; oscillator.type = 'sine'; gainNode.gain.setValueAtTime(0.2, audioContext.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4); oscillator.start(audioContext.currentTime); oscillator.stop(audioContext.currentTime + 0.4); }
-          else if (type === 'failure') { oscillator.frequency.value = 200; oscillator.type = 'sine'; gainNode.gain.setValueAtTime(0.08, audioContext.currentTime); gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15); oscillator.start(audioContext.currentTime); oscillator.stop(audioContext.currentTime + 0.15); }
+          
+          if (type === 'flip') {
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.05);
+          } else if (type === 'success') {
+            oscillator.frequency.value = 523.25;
+            oscillator.type = 'sine';
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.4);
+          }
         } catch (error) {}
       };
 
-      const initializePuzzle = () => {
-        const goalGrid = currentPuzzle.grid.map(row => row.map(() => 1));
-        setGrid(goalGrid);
-        setResultType(null);
-        setTimeout(() => { setGrid(currentPuzzle.grid.map(row => [...row])); setScreen('puzzle'); }, 1000);
+      const handleAnswerSelect = (answer) => {
+        setSelectedAnswer(answer);
+        setShowResult(true);
+        
+        if (answer === currentPuzzle.trivia.answer) {
+          playSound('success');
+          setTimeout(() => {
+            setShowResult(false);
+            setSelectedAnswer(null);
+            setGrid(currentPuzzle.grid.map(row => [...row]));
+            setScreen('puzzle');
+          }, 2000);
+        } else {
+          setTimeout(() => {
+            setShowResult(false);
+            setSelectedAnswer(null);
+          }, 2000);
+        }
       };
 
-      useEffect(() => { if (screen === 'showing-goal') { initializePuzzle(); } }, [screen, currentPuzzleIndex]);
-
-      const flipTile = (row, col, gridCopy) => { if (row >= 0 && row < gridCopy.length && col >= 0 && col < gridCopy[0].length) { gridCopy[row][col] = gridCopy[row][col] === 1 ? 0 : 1; } };
+      const flipTile = (row, col, gridCopy) => {
+        if (row >= 0 && row < gridCopy.length && col >= 0 && col < gridCopy[0].length) {
+          gridCopy[row][col] = gridCopy[row][col] === 1 ? 0 : 1;
+        }
+      };
 
       const handleTileTap = async (row, col) => {
         if (processing) return;
         setProcessing(true);
+        
         const newGrid = grid.map(r => [...r]);
         newGrid[row][col] = newGrid[row][col] === 1 ? 0 : 1;
-        flipTile(row - 1, col, newGrid); flipTile(row + 1, col, newGrid); flipTile(row, col - 1, newGrid); flipTile(row, col + 1, newGrid);
+        flipTile(row - 1, col, newGrid);
+        flipTile(row + 1, col, newGrid);
+        flipTile(row, col - 1, newGrid);
+        flipTile(row, col + 1, newGrid);
+        
         playSound('flip');
         setGrid(newGrid);
+        
         await new Promise(resolve => setTimeout(resolve, 800));
         const isSolved = newGrid.every(row => row.every(tile => tile === 1));
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        if (isSolved) { playSound('success'); setResultType('success'); setInsight(prev => prev + 1); setAnimatingInsight(true); setTimeout(() => setAnimatingInsight(false), 600); }
-        else { playSound('failure'); setResultType('failure'); }
-        setScreen('result');
-        setProcessing(false);
+        
+        if (isSolved) {
+          playSound('success');
+          setScore(prev => prev + 1);
+          setScreen('success');
+          
+          setTimeout(() => {
+            if (currentPuzzleIndex < PUZZLES.length - 1) {
+              setCurrentPuzzleIndex(prev => prev + 1);
+              setScreen('trivia');
+            } else {
+              setScreen('complete');
+            }
+            setProcessing(false);
+          }, 2500);
+        } else {
+          setProcessing(false);
+        }
       };
 
-      const handleNext = () => { if (currentPuzzleIndex < shuffledPuzzles.length - 1) { setCurrentPuzzleIndex(prev => prev + 1); setScreen('showing-goal'); } else { setScreen('home'); } };
-      const handleReplay = () => { setScreen('showing-goal'); };
-      const handlePlay = () => { setScreen('showing-goal'); };
+      const handlePlay = () => {
+        setScreen('trivia');
+        setCurrentPuzzleIndex(0);
+        setScore(0);
+      };
 
+      // Home Screen
       if (screen === 'home') {
-        return (<div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4"><div className="text-center space-y-8"><div className="absolute top-8 right-8 text-white/60 text-sm font-light tracking-wider">INSIGHT: {insight}</div><h1 className="text-6xl font-extralight text-white tracking-wider mb-12">ONE MOVE</h1><button onClick={handlePlay} className="group px-12 py-4 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 flex items-center gap-3 mx-auto border border-white/20"><Play className="w-5 h-5" /><span className="text-lg font-light tracking-wide">Play</span></button></div></div>);
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+            <div className="text-center space-y-8 max-w-md">
+              <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
+                ONE MOVE
+              </h1>
+              
+              <div className="bg-slate-800/50 rounded-xl p-6 text-left space-y-4 border border-slate-700">
+                <h2 className="text-xl font-light text-white mb-4">How to Play:</h2>
+                <div className="space-y-3 text-slate-300 text-sm">
+                  <p><span className="text-blue-400 font-semibold">1.</span> Answer the trivia question</p>
+                  <p><span className="text-blue-400 font-semibold">2.</span> Solve the puzzle in ONE move</p>
+                  <p><span className="text-blue-400 font-semibold">3.</span> Tap any tile - it flips that tile + 4 neighbors</p>
+                  <p><span className="text-blue-400 font-semibold">4.</span> Goal: Make all tiles match (all blue)</p>
+                </div>
+              </div>
+              
+              <button
+                onClick={handlePlay}
+                className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center gap-3 mx-auto text-lg font-light tracking-wide"
+              >
+                <Play className="w-5 h-5" />
+                <span>Play</span>
+              </button>
+            </div>
+          </div>
+        );
       }
 
-      if (screen === 'showing-goal') {
-        const gridSize = grid.length;
-        const tileSize = gridSize === 3 ? 'w-24 h-24' : gridSize === 4 ? 'w-20 h-20' : gridSize === 5 ? 'w-16 h-16' : 'w-14 h-14';
-        const textColors = getTextColor(currentPuzzle.trivia.gradient);
-        return (<div className={`min-h-screen bg-gradient-to-br ${currentPuzzle.trivia.gradient} flex items-center justify-center p-4`}><div className="space-y-8"><div className="text-center mb-6 max-w-md mx-auto"><p className={`${textColors.secondary} text-lg font-light tracking-wide mb-4`}>{currentPuzzle.trivia.question}</p><p className={`${textColors.tertiary} text-sm font-light tracking-widest`}>MAKE THEM ALL MATCH</p></div><div className="inline-grid gap-2 p-6 bg-black/20 rounded-2xl backdrop-blur-sm" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}>{grid.map((row, rowIndex) => (row.map((tile, colIndex) => (<div key={`${rowIndex}-${colIndex}`} className={`${tileSize} rounded-lg transition-all duration-500 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/50`} />))))}</div></div></div>);
+      // Trivia Screen
+      if (screen === 'trivia') {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+            <div className="absolute top-6 right-6 bg-blue-600 px-4 py-2 rounded-lg">
+              <div className="text-white text-sm font-semibold">
+                🏆 PUZZLES SOLVED: {score}
+              </div>
+            </div>
+            
+            <div className="max-w-2xl w-full space-y-8">
+              <h2 className="text-3xl font-light text-white text-center mb-8">
+                {currentPuzzle.trivia.question}
+              </h2>
+              
+              <div className="grid grid-cols-1 gap-4">
+                {currentPuzzle.trivia.choices.map((choice, index) => (
+                  <button
+                    key={index}
+                    onClick={() => !showResult && handleAnswerSelect(choice)}
+                    disabled={showResult}
+                    className={`
+                      p-6 rounded-xl text-lg font-light transition-all duration-300
+                      ${showResult && choice === selectedAnswer && choice === currentPuzzle.trivia.answer
+                        ? 'bg-green-600 text-white'
+                        : showResult && choice === selectedAnswer && choice !== currentPuzzle.trivia.answer
+                        ? 'bg-red-600 text-white'
+                        : showResult
+                        ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed'
+                        : 'bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500'
+                      }
+                    `}
+                  >
+                    {choice}
+                  </button>
+                ))}
+              </div>
+              
+              {showResult && selectedAnswer === currentPuzzle.trivia.answer && (
+                <div className="text-center text-2xl font-light text-green-400 animate-pulse">
+                  Correct! ✓
+                </div>
+              )}
+              
+              {showResult && selectedAnswer !== currentPuzzle.trivia.answer && (
+                <div className="text-center text-2xl font-light text-red-400 animate-pulse">
+                  Try Again!
+                </div>
+              )}
+            </div>
+          </div>
+        );
       }
 
+      // Puzzle Screen
       if (screen === 'puzzle') {
         const gridSize = grid.length;
-        const tileSize = gridSize === 3 ? 'w-24 h-24' : gridSize === 4 ? 'w-20 h-20' : gridSize === 5 ? 'w-16 h-16' : 'w-14 h-14';
-        const textColors = getTextColor(currentPuzzle.trivia.gradient);
-        return (<div className={`min-h-screen bg-gradient-to-br ${currentPuzzle.trivia.gradient} flex items-center justify-center p-4`}><div className={`absolute top-6 right-6 ${textColors.tertiary} text-sm font-light tracking-wider`}>⚡ {insight}</div><div className="space-y-8"><div className="text-center mb-6 max-w-md mx-auto"><p className={`${textColors.secondary} text-lg font-light tracking-wide`}>{currentPuzzle.trivia.question}</p></div>{currentPuzzleIndex === 0 && (<div className="text-center mb-4"><p className={`${textColors.tertiary} text-sm font-light tracking-wide`}>Tap flips tile + neighbors</p></div>)}<div className="inline-grid gap-2 p-6 bg-black/20 rounded-2xl backdrop-blur-sm" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}>{grid.map((row, rowIndex) => (row.map((tile, colIndex) => (<button key={`${rowIndex}-${colIndex}`} onClick={() => handleTileTap(rowIndex, colIndex)} disabled={processing} className={`${tileSize} rounded-lg transition-all duration-300 ${tile === 1 ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/50 hover:shadow-blue-500/70 hover:scale-105' : 'bg-slate-800/50 border border-slate-700/50'} ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}`} />))))}</div></div></div>);
+        const tileSize = gridSize === 3 ? 'w-24 h-24' : gridSize === 4 ? 'w-20 h-20' : 'w-16 h-16';
+        
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+            <div className="absolute top-6 right-6 bg-blue-600 px-4 py-2 rounded-lg">
+              <div className="text-white text-sm font-semibold">
+                🏆 PUZZLES SOLVED: {score}
+              </div>
+            </div>
+            
+            <div className="space-y-8">
+              <div className="text-center">
+                <p className="text-white text-lg font-light">Find the ONE move to solve it!</p>
+              </div>
+              
+              <div 
+                className="inline-grid gap-2 p-6 bg-slate-800/30 rounded-2xl backdrop-blur-sm"
+                style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
+              >
+                {grid.map((row, rowIndex) => (
+                  row.map((tile, colIndex) => (
+                    <button
+                      key={`${rowIndex}-${colIndex}`}
+                      onClick={() => handleTileTap(rowIndex, colIndex)}
+                      disabled={processing}
+                      className={`
+                        ${tileSize}
+                        rounded-lg
+                        transition-all duration-300
+                        ${tile === 1 
+                          ? 'bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg shadow-blue-500/50 hover:shadow-blue-500/70 hover:scale-105' 
+                          : 'bg-slate-800 border-2 border-slate-700'
+                        }
+                        ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}
+                      `}
+                    />
+                  ))
+                ))}
+              </div>
+            </div>
+          </div>
+        );
       }
 
-      if (screen === 'result') {
-        const textColors = getTextColor(currentPuzzle.trivia.gradient);
-        return (<div className={`min-h-screen bg-gradient-to-br ${currentPuzzle.trivia.gradient} flex items-center justify-center p-4`}><div className="text-center space-y-8">{animatingInsight && (<div className={`absolute top-8 right-8 ${textColors.primary} text-2xl font-light tracking-wider animate-pulse`}>+1</div>)}<div className="space-y-4"><h2 className={`text-5xl font-extralight ${textColors.primary} tracking-wider`}>{resultType === 'success' ? 'Solved' : 'Almost.'}</h2>{resultType === 'success' && (<div className="max-w-md mx-auto"><p className={`${textColors.tertiary} text-sm font-light tracking-wide mb-2`}>{currentPuzzle.trivia.question}</p><p className={`${textColors.primary} text-xl font-light tracking-wide`}>{currentPuzzle.trivia.answer}</p></div>)}</div><div className="flex gap-4 justify-center"><button onClick={handleReplay} className="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-all duration-300 flex items-center gap-2 border border-white/20"><RotateCcw className="w-4 h-4" /><span className="font-light tracking-wide">Replay</span></button>{resultType === 'success' && currentPuzzleIndex < shuffledPuzzles.length - 1 && (<button onClick={handleNext} className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 font-light tracking-wide">Next</button>)}{resultType === 'success' && currentPuzzleIndex === shuffledPuzzles.length - 1 && (<button onClick={() => setScreen('home')} className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 font-light tracking-wide">Complete</button>)}</div></div></div>);
+      // Success Screen
+      if (screen === 'success') {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+            <div className="text-center space-y-8">
+              <h2 className="text-5xl font-extralight text-white tracking-wider">
+                Solved! ✓
+              </h2>
+              
+              <div className="max-w-md mx-auto bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                <p className="text-slate-400 text-sm font-light mb-2">
+                  {currentPuzzle.trivia.question}
+                </p>
+                <p className="text-white text-2xl font-light">
+                  {currentPuzzle.trivia.answer}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
       }
+
+      // Complete Screen
+      if (screen === 'complete') {
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+            <div className="text-center space-y-8">
+              <h2 className="text-5xl font-extralight text-white tracking-wider">
+                Complete! 🎉
+              </h2>
+              <p className="text-2xl text-slate-300">
+                You solved all {score} puzzles!
+              </p>
+              <button
+                onClick={() => setScreen('home')}
+                className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light tracking-wide"
+              >
+                Play Again
+              </button>
+            </div>
+          </div>
+        );
+      }
+
       return null;
     };
 
