@@ -542,6 +542,7 @@
             setScreen('puzzle');
           }, 2000);
         } else {
+          // Wrong answer - don't increment score, just allow retry
           setTimeout(() => {
             setShowResult(false);
             setSelectedAnswer(null);
