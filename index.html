@@ -624,12 +624,12 @@
             <div className="absolute top-4 right-4 space-y-2">
               <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
+                  💎 TRIVIA: {triviaScore}
                 </div>
               </div>
               <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+                  💎 PUZZLES: {puzzleScore}
                 </div>
               </div>
             </div>
@@ -665,12 +665,12 @@
             <div className="absolute top-4 right-4 space-y-2">
               <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
+                  💎 TRIVIA: {triviaScore}
                 </div>
               </div>
               <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+                  💎 PUZZLES: {puzzleScore}
                 </div>
               </div>
             </div>
@@ -747,12 +747,12 @@
             <div className="absolute top-4 right-4 space-y-2">
               <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
+                  💎 TRIVIA: {triviaScore}
                 </div>
               </div>
               <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+                  💎 PUZZLES: {puzzleScore}
                 </div>
               </div>
             </div>
@@ -764,7 +764,7 @@
                 {!puzzleFirstAttempt && (
                   <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no points</p>
                 )}
-                {failCount >= 30 && (
+                {failCount >= 10 && (
                   <button
                     onClick={handleSkipPuzzle}
                     className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
@@ -810,12 +810,12 @@
             <div className="absolute top-4 right-4 space-y-2">
               <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
+                  💎 TRIVIA: {triviaScore}
                 </div>
               </div>
               <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+                  💎 PUZZLES: {puzzleScore}
                 </div>
               </div>
             </div>
@@ -827,7 +827,7 @@
                 {!puzzleFirstAttempt && (
                   <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no points</p>
                 )}
-                {failCount >= 30 && (
+                {failCount >= 10 && (
                   <button
                     onClick={handleSkipPuzzle}
                     className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
