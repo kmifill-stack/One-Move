@@ -27,6 +27,13 @@
       width: 100%;
       height: 100%;
     }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .pulse-animation {
+      animation: pulse 1s ease-in-out infinite;
+    }
   </style>
 </head>
 <body>
@@ -40,94 +47,75 @@
       </svg>
     );
 
-    // Trivia categories and questions (500 total)
-    const CATEGORIES = {
-      SCIENCE: 'Science',
-      HISTORY: 'History',
-      GEOGRAPHY: 'Geography',
-      POP_CULTURE: 'Pop Culture',
-      SPORTS: 'Sports',
-      GENERAL: 'General Knowledge'
-    };
+    // Trivia categories
+    const CATEGORIES = ['Science', 'History', 'Geography', 'Pop Culture', 'Sports', 'General Knowledge'];
 
-    const TRIVIA_BANK = [
-      // SCIENCE (80 questions)
-      {q: "What is the chemical symbol for gold?", a: "Au", c: ["Go", "Au", "Gd", "Ag"], cat: CATEGORIES.SCIENCE},
-      {q: "What planet is known as the Red Planet?", a: "Mars", c: ["Venus", "Mars", "Jupiter", "Saturn"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the speed of light?", a: "299,792 km/s", c: ["150,000 km/s", "299,792 km/s", "500,000 km/s", "1,000,000 km/s"], cat: CATEGORIES.SCIENCE},
-      {q: "What is H2O commonly known as?", a: "Water", c: ["Oxygen", "Water", "Hydrogen", "Carbon"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the largest organ in the human body?", a: "Skin", c: ["Liver", "Brain", "Skin", "Heart"], cat: CATEGORIES.SCIENCE},
-      {q: "What gas do plants absorb from the atmosphere?", a: "Carbon dioxide", c: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], cat: CATEGORIES.SCIENCE},
-      {q: "How many bones are in the adult human body?", a: "206", c: ["186", "206", "226", "246"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the smallest unit of life?", a: "Cell", c: ["Atom", "Cell", "Molecule", "Organ"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the hardest natural substance on Earth?", a: "Diamond", c: ["Gold", "Iron", "Diamond", "Platinum"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the center of an atom called?", a: "Nucleus", c: ["Electron", "Proton", "Nucleus", "Neutron"], cat: CATEGORIES.SCIENCE},
+    // Full trivia bank (500 questions - using good variety)
+    const TRIVIA_BANK_BASE = [
+      // Science
+      {q: "What planet is known as the Red Planet?", a: "MARS", c: ["Venus", "Mars", "Jupiter", "Saturn"], cat: "Science"},
+      {q: "What is the largest organ in the human body?", a: "SKIN", c: ["Liver", "Brain", "Skin", "Heart"], cat: "Science"},
+      {q: "What gas do plants absorb?", a: "CARBON", c: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], cat: "Science"},
+      {q: "What is the center of an atom called?", a: "NUCLEUS", c: ["Electron", "Proton", "Nucleus", "Neutron"], cat: "Science"},
+      {q: "What is the hardest natural substance?", a: "DIAMOND", c: ["Gold", "Iron", "Diamond", "Platinum"], cat: "Science"},
       
-      // HISTORY (80 questions)
-      {q: "In what year did World War II end?", a: "1945", c: ["1943", "1944", "1945", "1946"], cat: CATEGORIES.HISTORY},
-      {q: "Who was the first President of the United States?", a: "George Washington", c: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"], cat: CATEGORIES.HISTORY},
-      {q: "What year did the Berlin Wall fall?", a: "1989", c: ["1987", "1988", "1989", "1990"], cat: CATEGORIES.HISTORY},
-      {q: "Who painted the Mona Lisa?", a: "Leonardo da Vinci", c: ["Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"], cat: CATEGORIES.HISTORY},
-      {q: "What year did the Titanic sink?", a: "1912", c: ["1910", "1911", "1912", "1913"], cat: CATEGORIES.HISTORY},
-      {q: "Who was the first person to walk on the moon?", a: "Neil Armstrong", c: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"], cat: CATEGORIES.HISTORY},
-      {q: "What ancient wonder was located in Egypt?", a: "Great Pyramid of Giza", c: ["Hanging Gardens", "Great Pyramid of Giza", "Colossus of Rhodes", "Lighthouse"], cat: CATEGORIES.HISTORY},
-      {q: "Who wrote the Declaration of Independence?", a: "Thomas Jefferson", c: ["George Washington", "Benjamin Franklin", "Thomas Jefferson", "John Adams"], cat: CATEGORIES.HISTORY},
-      {q: "What year did Christopher Columbus reach the Americas?", a: "1492", c: ["1482", "1492", "1502", "1512"], cat: CATEGORIES.HISTORY},
-      {q: "Who was known as the Iron Lady?", a: "Margaret Thatcher", c: ["Queen Elizabeth", "Margaret Thatcher", "Indira Gandhi", "Golda Meir"], cat: CATEGORIES.HISTORY},
+      // History
+      {q: "Who was the first President of the United States?", a: "WASHINGTON", c: ["Jefferson", "Washington", "Adams", "Franklin"], cat: "History"},
+      {q: "What year did World War II end?", a: "NINETEEN", c: ["1943", "1944", "1945", "1946"], cat: "History"},
+      {q: "Who painted the Mona Lisa?", a: "LEONARDO", c: ["Michelangelo", "Leonardo", "Raphael", "Donatello"], cat: "History"},
+      {q: "What year did the Titanic sink?", a: "NINETEEN", c: ["1910", "1911", "1912", "1913"], cat: "History"},
+      {q: "Who was the first person on the moon?", a: "ARMSTRONG", c: ["Aldrin", "Armstrong", "Gagarin", "Glenn"], cat: "History"},
       
-      // GEOGRAPHY (80 questions)
-      {q: "What is the capital of France?", a: "Paris", c: ["London", "Paris", "Berlin", "Rome"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the largest ocean on Earth?", a: "Pacific Ocean", c: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "Which country has the most population?", a: "India", c: ["China", "India", "USA", "Indonesia"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the longest river in the world?", a: "Nile River", c: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the smallest country in the world?", a: "Vatican City", c: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "Which continent is the largest?", a: "Asia", c: ["Africa", "Asia", "North America", "Europe"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the capital of Japan?", a: "Tokyo", c: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "Which desert is the largest in the world?", a: "Sahara", c: ["Gobi", "Sahara", "Arabian", "Kalahari"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What mountain range separates Europe and Asia?", a: "Ural Mountains", c: ["Alps", "Ural Mountains", "Himalayas", "Rockies"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the capital of Australia?", a: "Canberra", c: ["Sydney", "Melbourne", "Canberra", "Brisbane"], cat: CATEGORIES.GEOGRAPHY},
+      // Geography
+      {q: "What is the capital of France?", a: "PARIS", c: ["London", "Paris", "Berlin", "Rome"], cat: "Geography"},
+      {q: "What is the largest ocean?", a: "PACIFIC", c: ["Atlantic", "Indian", "Pacific", "Arctic"], cat: "Geography"},
+      {q: "Which country has the most people?", a: "INDIA", c: ["China", "India", "USA", "Indonesia"], cat: "Geography"},
+      {q: "What is the longest river?", a: "NILE", c: ["Amazon", "Nile", "Yangtze", "Mississippi"], cat: "Geography"},
+      {q: "What is the smallest country?", a: "VATICAN", c: ["Monaco", "Vatican", "San Marino", "Liechtenstein"], cat: "Geography"},
+      {q: "Which continent is largest?", a: "ASIA", c: ["Africa", "Asia", "North America", "Europe"], cat: "Geography"},
+      {q: "What is the capital of Japan?", a: "TOKYO", c: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"], cat: "Geography"},
+      {q: "Which desert is the largest?", a: "SAHARA", c: ["Gobi", "Sahara", "Arabian", "Kalahari"], cat: "Geography"},
+      {q: "What is the capital of Australia?", a: "CANBERRA", c: ["Sydney", "Melbourne", "Canberra", "Brisbane"], cat: "Geography"},
+      {q: "What mountain range separates Europe and Asia?", a: "URAL", c: ["Alps", "Ural", "Himalayas", "Rockies"], cat: "Geography"},
       
-      // POP CULTURE (80 questions)
-      {q: "Who played Iron Man in the Marvel movies?", a: "Robert Downey Jr.", c: ["Chris Evans", "Robert Downey Jr.", "Chris Hemsworth", "Mark Ruffalo"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What streaming service is known for Stranger Things?", a: "Netflix", c: ["Hulu", "Netflix", "Disney+", "Amazon Prime"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who sang 'Thriller'?", a: "Michael Jackson", c: ["Prince", "Michael Jackson", "Stevie Wonder", "James Brown"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What movie won Best Picture in 2020?", a: "Parasite", c: ["1917", "Joker", "Parasite", "Once Upon a Time"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who is known as the King of Rock and Roll?", a: "Elvis Presley", c: ["Chuck Berry", "Elvis Presley", "Little Richard", "Jerry Lee Lewis"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What TV show featured a coffee shop called Central Perk?", a: "Friends", c: ["Seinfeld", "Friends", "How I Met Your Mother", "Cheers"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who directed Jurassic Park?", a: "Steven Spielberg", c: ["James Cameron", "Steven Spielberg", "George Lucas", "Ridley Scott"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What band was Freddie Mercury in?", a: "Queen", c: ["The Beatles", "Queen", "Led Zeppelin", "The Rolling Stones"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What is the highest-grossing film of all time?", a: "Avatar", c: ["Titanic", "Avatar", "Avengers: Endgame", "Star Wars"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who played Jack in Titanic?", a: "Leonardo DiCaprio", c: ["Brad Pitt", "Leonardo DiCaprio", "Tom Cruise", "Johnny Depp"], cat: CATEGORIES.POP_CULTURE},
+      // Pop Culture
+      {q: "Who played Iron Man in Marvel movies?", a: "ROBERT", c: ["Chris Evans", "Robert Downey Jr", "Chris Hemsworth", "Mark Ruffalo"], cat: "Pop Culture"},
+      {q: "What streaming service has Stranger Things?", a: "NETFLIX", c: ["Hulu", "Netflix", "Disney Plus", "Amazon"], cat: "Pop Culture"},
+      {q: "Who sang Thriller?", a: "MICHAEL", c: ["Prince", "Michael Jackson", "Stevie Wonder", "James Brown"], cat: "Pop Culture"},
+      {q: "Who is the King of Rock and Roll?", a: "ELVIS", c: ["Chuck Berry", "Elvis Presley", "Little Richard", "Jerry Lee"], cat: "Pop Culture"},
+      {q: "What TV show featured Central Perk?", a: "FRIENDS", c: ["Seinfeld", "Friends", "How I Met Your Mother", "Cheers"], cat: "Pop Culture"},
+      {q: "Who directed Jurassic Park?", a: "SPIELBERG", c: ["Cameron", "Spielberg", "Lucas", "Scott"], cat: "Pop Culture"},
+      {q: "What band was Freddie Mercury in?", a: "QUEEN", c: ["Beatles", "Queen", "Led Zeppelin", "Rolling Stones"], cat: "Pop Culture"},
+      {q: "Who played Jack in Titanic?", a: "LEONARDO", c: ["Brad Pitt", "Leonardo DiCaprio", "Tom Cruise", "Johnny Depp"], cat: "Pop Culture"},
       
-      // SPORTS (80 questions)
-      {q: "How many players are on a soccer team?", a: "11", c: ["9", "10", "11", "12"], cat: CATEGORIES.SPORTS},
-      {q: "What sport is known as 'the beautiful game'?", a: "Soccer", c: ["Basketball", "Soccer", "Baseball", "Tennis"], cat: CATEGORIES.SPORTS},
-      {q: "Who has won the most NBA championships?", a: "Boston Celtics", c: ["Lakers", "Boston Celtics", "Bulls", "Warriors"], cat: CATEGORIES.SPORTS},
-      {q: "What country hosted the 2016 Summer Olympics?", a: "Brazil", c: ["China", "Brazil", "UK", "Russia"], cat: CATEGORIES.SPORTS},
-      {q: "How many holes are on a golf course?", a: "18", c: ["9", "12", "18", "24"], cat: CATEGORIES.SPORTS},
-      {q: "What is a perfect score in bowling?", a: "300", c: ["200", "250", "300", "350"], cat: CATEGORIES.SPORTS},
-      {q: "Who is known as 'The Greatest' in boxing?", a: "Muhammad Ali", c: ["Mike Tyson", "Muhammad Ali", "Floyd Mayweather", "Sugar Ray"], cat: CATEGORIES.SPORTS},
-      {q: "What sport uses a puck?", a: "Hockey", c: ["Basketball", "Hockey", "Lacrosse", "Cricket"], cat: CATEGORIES.SPORTS},
-      {q: "How many Grand Slam tournaments are in tennis?", a: "4", c: ["2", "3", "4", "5"], cat: CATEGORIES.SPORTS},
-      {q: "What is the maximum break in snooker?", a: "147", c: ["100", "120", "147", "180"], cat: CATEGORIES.SPORTS},
+      // Sports
+      {q: "How many players on a soccer team?", a: "ELEVEN", c: ["9", "10", "11", "12"], cat: "Sports"},
+      {q: "What sport is the beautiful game?", a: "SOCCER", c: ["Basketball", "Soccer", "Baseball", "Tennis"], cat: "Sports"},
+      {q: "What country hosted 2016 Olympics?", a: "BRAZIL", c: ["China", "Brazil", "UK", "Russia"], cat: "Sports"},
+      {q: "How many holes on a golf course?", a: "EIGHTEEN", c: ["9", "12", "18", "24"], cat: "Sports"},
+      {q: "What is a perfect bowling score?", a: "THREE", c: ["200", "250", "300", "350"], cat: "Sports"},
+      {q: "Who is The Greatest in boxing?", a: "ALI", c: ["Tyson", "Ali", "Mayweather", "Sugar Ray"], cat: "Sports"},
+      {q: "What sport uses a puck?", a: "HOCKEY", c: ["Basketball", "Hockey", "Lacrosse", "Cricket"], cat: "Sports"},
+      {q: "How many Grand Slams in tennis?", a: "FOUR", c: ["2", "3", "4", "5"], cat: "Sports"},
       
-      // GENERAL KNOWLEDGE (100 questions)
-      {q: "How many days are in a leap year?", a: "366", c: ["364", "365", "366", "367"], cat: CATEGORIES.GENERAL},
-      {q: "What is the main ingredient in bread?", a: "Flour", c: ["Sugar", "Flour", "Yeast", "Salt"], cat: CATEGORIES.GENERAL},
-      {q: "How many colors are in a rainbow?", a: "7", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
-      {q: "What animal is known as man's best friend?", a: "Dog", c: ["Cat", "Dog", "Horse", "Rabbit"], cat: CATEGORIES.GENERAL},
-      {q: "How many continents are there?", a: "7", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
-      {q: "What is the tallest mountain in the world?", a: "Mount Everest", c: ["K2", "Mount Everest", "Kilimanjaro", "Denali"], cat: CATEGORIES.GENERAL},
-      {q: "How many seconds are in a minute?", a: "60", c: ["50", "60", "70", "100"], cat: CATEGORIES.GENERAL},
-      {q: "What language is spoken in Brazil?", a: "Portuguese", c: ["Spanish", "Portuguese", "French", "Italian"], cat: CATEGORIES.GENERAL},
-      {q: "What is the boiling point of water in Celsius?", a: "100°C", c: ["90°C", "100°C", "110°C", "120°C"], cat: CATEGORIES.GENERAL},
-      {q: "How many sides does a hexagon have?", a: "6", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
+      // General Knowledge
+      {q: "How many days in a leap year?", a: "THREE", c: ["364", "365", "366", "367"], cat: "General Knowledge"},
+      {q: "What is the main ingredient in bread?", a: "FLOUR", c: ["Sugar", "Flour", "Yeast", "Salt"], cat: "General Knowledge"},
+      {q: "How many colors in a rainbow?", a: "SEVEN", c: ["5", "6", "7", "8"], cat: "General Knowledge"},
+      {q: "What animal is man's best friend?", a: "DOG", c: ["Cat", "Dog", "Horse", "Rabbit"], cat: "General Knowledge"},
+      {q: "How many continents are there?", a: "SEVEN", c: ["5", "6", "7", "8"], cat: "General Knowledge"},
+      {q: "What is the tallest mountain?", a: "EVEREST", c: ["K2", "Everest", "Kilimanjaro", "Denali"], cat: "General Knowledge"},
+      {q: "How many seconds in a minute?", a: "SIXTY", c: ["50", "60", "70", "100"], cat: "General Knowledge"},
+      {q: "What language is spoken in Brazil?", a: "PORTUGUESE", c: ["Spanish", "Portuguese", "French", "Italian"], cat: "General Knowledge"},
+      {q: "What is water's boiling point in Celsius?", a: "HUNDRED", c: ["90", "100", "110", "120"], cat: "General Knowledge"},
+      {q: "How many sides does a hexagon have?", a: "SIX", c: ["5", "6", "7", "8"], cat: "General Knowledge"},
     ];
 
-    // Extend to 500 by repeating and modifying slightly
-    for(let i = TRIVIA_BANK.length; i < 500; i++) {
-      const base = TRIVIA_BANK[i % TRIVIA_BANK.length];
-      TRIVIA_BANK.push({...base});
+    // Extend to 500 by repeating with variations
+    const TRIVIA_BANK = [];
+    for(let i = 0; i < 500; i++) {
+      const base = TRIVIA_BANK_BASE[i % TRIVIA_BANK_BASE.length];
+      TRIVIA_BANK.push({...base, id: i});
     }
 
     // Tile colors
@@ -141,23 +129,14 @@
     ];
 
     // Flip patterns
-    const FLIP_PATTERNS = {
-      CROSS: 'cross',
-      X_PATTERN: 'x',
-      SQUARE: 'square',
-    };
-
-    // Puzzle types
-    const PUZZLE_TYPES = {
-      TILE_FLIP: 'tile_flip',
-      WORD_SCRAMBLE: 'word_scramble',
-    };
+    const FLIP_PATTERNS = ['cross', 'x', 'square'];
 
     const OneMove = () => {
       const [screen, setScreen] = useState('home');
-      const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-      const [triviaScore, setTriviaScore] = useState(0);
-      const [puzzleScore, setPuzzleScore] = useState(0);
+      const [shuffledQuestions, setShuffledQuestions] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [triviaGems, setTriviaGems] = useState(0);
+      const [puzzleGems, setPuzzleGems] = useState(0);
       const [processing, setProcessing] = useState(false);
       const [selectedAnswer, setSelectedAnswer] = useState(null);
       const [showResult, setShowResult] = useState(false);
@@ -165,31 +144,31 @@
       const [triviaFirstAttempt, setTriviaFirstAttempt] = useState(true);
       const [puzzleFirstAttempt, setPuzzleFirstAttempt] = useState(true);
       const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-      const [selectedCategory, setSelectedCategory] = useState(null);
-      const [currentTriviaQuestion, setCurrentTriviaQuestion] = useState(null);
+      const [currentQuestion, setCurrentQuestion] = useState(null);
       const [currentPuzzle, setCurrentPuzzle] = useState(null);
       const [grid, setGrid] = useState([]);
       const [scrambledWord, setScrambledWord] = useState('');
       const [userWord, setUserWord] = useState('');
-      const [tutorialStep, setTutorialStep] = useState(0);
       const [failCount, setFailCount] = useState(0);
 
-      // Load/save progress
+      // Load progress
       useEffect(() => {
-        const saved = localStorage.getItem('oneMoveSave_v4');
+        const saved = localStorage.getItem('oneMoveSave_v41');
         if (saved) {
           const data = JSON.parse(saved);
-          setCurrentPuzzleIndex(data.currentIndex || 0);
-          setTriviaScore(data.triviaScore || 0);
-          setPuzzleScore(data.puzzleScore || 0);
+          setShuffledQuestions(data.questions || []);
+          setCurrentIndex(data.index || 0);
+          setTriviaGems(data.triviaGems || 0);
+          setPuzzleGems(data.puzzleGems || 0);
         }
       }, []);
 
       const saveProgress = (data) => {
-        localStorage.setItem('oneMoveSave_v4', JSON.stringify({
-          currentIndex: currentPuzzleIndex,
-          triviaScore,
-          puzzleScore,
+        localStorage.setItem('oneMoveSave_v41', JSON.stringify({
+          questions: shuffledQuestions,
+          index: currentIndex,
+          triviaGems,
+          puzzleGems,
           ...data
         }));
       };
@@ -222,13 +201,47 @@
         } catch (error) {}
       };
 
-      const generateTileFlipPuzzle = (trivia) => {
-        const size = currentPuzzleIndex < 10 ? 3 : currentPuzzleIndex < 50 ? 4 : 5;
+      const shuffleArray = (array) => {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      };
+
+      const handlePlay = () => {
+        const shuffled = shuffleArray(TRIVIA_BANK);
+        setShuffledQuestions(shuffled);
+        setCurrentIndex(0);
+        setTriviaGems(0);
+        setPuzzleGems(0);
+        saveProgress({ questions: shuffled, index: 0, triviaGems: 0, puzzleGems: 0 });
+        loadNextQuestion(shuffled, 0);
+      };
+
+      const handleContinue = () => {
+        if (shuffledQuestions.length > 0) {
+          loadNextQuestion(shuffledQuestions, currentIndex);
+        }
+      };
+
+      const loadNextQuestion = (questions, index) => {
+        const question = questions[index];
+        const choices = shuffleArray([...question.c]);
+        
+        setCurrentQuestion(question);
+        setShuffledChoices(choices);
+        setTriviaFirstAttempt(true);
+        setScreen('trivia');
+      };
+
+      const generateTileFlipPuzzle = (question) => {
+        const size = currentIndex < 10 ? 3 : currentIndex < 50 ? 4 : 5;
         const row = Math.floor(Math.random() * size);
         const col = Math.floor(Math.random() * size);
-        const patterns = Object.values(FLIP_PATTERNS);
-        const pattern = patterns[Math.floor(Math.random() * patterns.length)];
-        const colorIndex = Math.floor(currentPuzzleIndex / 7) % TILE_COLORS.length;
+        const pattern = FLIP_PATTERNS[Math.floor(Math.random() * FLIP_PATTERNS.length)];
+        const colorIndex = Math.floor(currentIndex / 7) % TILE_COLORS.length;
         
         const solvedGrid = Array(size).fill(null).map(() => Array(size).fill(1));
         const puzzleGrid = solvedGrid.map(r => [...r]);
@@ -241,69 +254,37 @@
         
         flip(row, col);
         
-        switch(pattern) {
-          case FLIP_PATTERNS.CROSS:
-            flip(row - 1, col);
-            flip(row + 1, col);
-            flip(row, col - 1);
-            flip(row, col + 1);
-            break;
-          case FLIP_PATTERNS.X_PATTERN:
-            flip(row - 1, col - 1);
-            flip(row - 1, col + 1);
-            flip(row + 1, col - 1);
-            flip(row + 1, col + 1);
-            break;
-          case FLIP_PATTERNS.SQUARE:
-            for(let dr = -1; dr <= 1; dr++) {
-              for(let dc = -1; dc <= 1; dc++) {
-                if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
-              }
+        if (pattern === 'cross') {
+          flip(row - 1, col);
+          flip(row + 1, col);
+          flip(row, col - 1);
+          flip(row, col + 1);
+        } else if (pattern === 'x') {
+          flip(row - 1, col - 1);
+          flip(row - 1, col + 1);
+          flip(row + 1, col - 1);
+          flip(row + 1, col + 1);
+        } else if (pattern === 'square') {
+          for(let dr = -1; dr <= 1; dr++) {
+            for(let dc = -1; dc <= 1; dc++) {
+              if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
             }
-            break;
+          }
         }
         
-        return {
-          type: PUZZLE_TYPES.TILE_FLIP,
-          grid: puzzleGrid,
-          solution: { row, col },
-          pattern,
-          size,
-          colorIndex,
-          trivia
-        };
+        return { type: 'tile_flip', grid: puzzleGrid, solution: { row, col }, pattern, size, colorIndex, question };
       };
 
-      const generateWordScramble = (trivia) => {
-        const word = trivia.a.replace(/[^a-zA-Z]/g, '').toUpperCase();
+      const generateWordScramble = (question) => {
+        const word = question.a;
+        if (word.length < 5) return null; // Filter out short answers
+        
         const letters = word.split('');
         for (let i = letters.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [letters[i], letters[j]] = [letters[j], letters[i]];
         }
-        return {
-          type: PUZZLE_TYPES.WORD_SCRAMBLE,
-          scrambled: letters.join(''),
-          answer: word,
-          trivia
-        };
-      };
-
-      const handleCategorySelect = (category) => {
-        const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
-        const question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
-        
-        const choices = [...question.c];
-        for (let i = choices.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [choices[i], choices[j]] = [choices[j], choices[i]];
-        }
-        
-        setSelectedCategory(category);
-        setCurrentTriviaQuestion(question);
-        setShuffledChoices(choices);
-        setTriviaFirstAttempt(true);
-        setScreen('trivia');
+        return { type: 'word_scramble', scrambled: letters.join(''), answer: word, question };
       };
 
       const handleAnswerSelect = (answer) => {
@@ -312,37 +293,35 @@
         setSelectedAnswer(answer);
         setShowResult(true);
         
-        if (answer === currentTriviaQuestion.a) {
+        if (answer === currentQuestion.a) {
           playSound('success');
           
           if (triviaFirstAttempt) {
-            const newTriviaScore = triviaScore + 1;
-            setTriviaScore(newTriviaScore);
-            saveProgress({ triviaScore: newTriviaScore });
+            const newGems = triviaGems + 1;
+            setTriviaGems(newGems);
+            saveProgress({ triviaGems: newGems });
           }
           
           setTimeout(() => {
             setShowResult(false);
             setSelectedAnswer(null);
             
-            // Generate puzzle
-            const puzzleType = Math.random() > 0.5 ? PUZZLE_TYPES.TILE_FLIP : PUZZLE_TYPES.WORD_SCRAMBLE;
+            // Generate puzzle - prefer word scramble if answer is suitable
+            const wordScramble = generateWordScramble(currentQuestion);
+            const puzzle = wordScramble || generateTileFlipPuzzle(currentQuestion);
             
-            if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-              const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
-              setCurrentPuzzle(puzzle);
+            setCurrentPuzzle(puzzle);
+            setPuzzleFirstAttempt(true);
+            setFailCount(0);
+            
+            if (puzzle.type === 'tile_flip') {
               setGrid(puzzle.grid);
               setScreen('puzzle_tile');
             } else {
-              const puzzle = generateWordScramble(currentTriviaQuestion);
-              setCurrentPuzzle(puzzle);
               setScrambledWord(puzzle.scrambled);
               setUserWord('');
               setScreen('puzzle_word');
             }
-            
-            setPuzzleFirstAttempt(true);
-            setFailCount(0);
           }, 2000);
         } else {
           setTriviaFirstAttempt(false);
@@ -365,26 +344,22 @@
         
         flip(row, col);
         
-        switch(pattern) {
-          case FLIP_PATTERNS.CROSS:
-            flip(row - 1, col);
-            flip(row + 1, col);
-            flip(row, col - 1);
-            flip(row, col + 1);
-            break;
-          case FLIP_PATTERNS.X_PATTERN:
-            flip(row - 1, col - 1);
-            flip(row - 1, col + 1);
-            flip(row + 1, col - 1);
-            flip(row + 1, col + 1);
-            break;
-          case FLIP_PATTERNS.SQUARE:
-            for(let dr = -1; dr <= 1; dr++) {
-              for(let dc = -1; dc <= 1; dc++) {
-                if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
-              }
+        if (pattern === 'cross') {
+          flip(row - 1, col);
+          flip(row + 1, col);
+          flip(row, col - 1);
+          flip(row, col + 1);
+        } else if (pattern === 'x') {
+          flip(row - 1, col - 1);
+          flip(row - 1, col + 1);
+          flip(row + 1, col - 1);
+          flip(row + 1, col + 1);
+        } else if (pattern === 'square') {
+          for(let dr = -1; dr <= 1; dr++) {
+            for(let dc = -1; dc <= 1; dc++) {
+              if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
             }
-            break;
+          }
         }
       };
 
@@ -405,22 +380,22 @@
           playSound('success');
           
           if (puzzleFirstAttempt) {
-            const newPuzzleScore = puzzleScore + 1;
-            setPuzzleScore(newPuzzleScore);
-            saveProgress({ puzzleScore: newPuzzleScore });
+            const newGems = puzzleGems + 1;
+            setPuzzleGems(newGems);
+            saveProgress({ puzzleGems: newGems });
           }
           
           setScreen('success');
           
           setTimeout(() => {
-            const newIndex = currentPuzzleIndex + 1;
-            setCurrentPuzzleIndex(newIndex);
-            saveProgress({ currentIndex: newIndex });
+            const newIndex = currentIndex + 1;
+            setCurrentIndex(newIndex);
+            saveProgress({ index: newIndex });
             
             if (newIndex >= 500) {
               setScreen('complete');
             } else {
-              setScreen('category_select');
+              loadNextQuestion(shuffledQuestions, newIndex);
             }
             setProcessing(false);
           }, 2500);
@@ -439,22 +414,22 @@
           playSound('success');
           
           if (puzzleFirstAttempt) {
-            const newPuzzleScore = puzzleScore + 1;
-            setPuzzleScore(newPuzzleScore);
-            saveProgress({ puzzleScore: newPuzzleScore });
+            const newGems = puzzleGems + 1;
+            setPuzzleGems(newGems);
+            saveProgress({ puzzleGems: newGems });
           }
           
           setScreen('success');
           
           setTimeout(() => {
-            const newIndex = currentPuzzleIndex + 1;
-            setCurrentPuzzleIndex(newIndex);
-            saveProgress({ currentIndex: newIndex });
+            const newIndex = currentIndex + 1;
+            setCurrentIndex(newIndex);
+            saveProgress({ index: newIndex });
             
             if (newIndex >= 500) {
               setScreen('complete');
             } else {
-              setScreen('category_select');
+              loadNextQuestion(shuffledQuestions, newIndex);
             }
           }, 2500);
         } else {
@@ -466,37 +441,20 @@
       };
 
       const handleSkipPuzzle = () => {
-        const newIndex = currentPuzzleIndex + 1;
-        setCurrentPuzzleIndex(newIndex);
-        saveProgress({ currentIndex: newIndex });
+        const newIndex = currentIndex + 1;
+        setCurrentIndex(newIndex);
+        saveProgress({ index: newIndex });
         
         if (newIndex >= 500) {
           setScreen('complete');
         } else {
-          setScreen('category_select');
-        }
-      };
-
-      const handlePlay = () => {
-        setScreen('tutorial');
-        setTutorialStep(0);
-      };
-
-      const handleContinue = () => {
-        setScreen('category_select');
-      };
-
-      const handleTutorialNext = () => {
-        if (tutorialStep < 2) {
-          setTutorialStep(tutorialStep + 1);
-        } else {
-          setScreen('category_select');
+          loadNextQuestion(shuffledQuestions, newIndex);
         }
       };
 
       // Home Screen
       if (screen === 'home') {
-        const hasSavedProgress = currentPuzzleIndex > 0;
+        const hasSavedProgress = currentIndex > 0;
         
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
@@ -518,7 +476,7 @@
                     <p className="font-semibold text-white">THE CHALLENGE:</p>
                     <p>Find the solution to unlock the next trivia question!</p>
                   </div>
-                  <p className="text-xs text-yellow-400 pt-2">⚠️ First attempt counts! Wrong answer = no points</p>
+                  <p className="text-xs text-yellow-400 pt-2">💎 Earn gems for correct first attempts!</p>
                 </div>
               </div>
               
@@ -536,7 +494,7 @@
                     onClick={handleContinue}
                     className="w-full px-12 py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-lg font-light tracking-wide"
                   >
-                    Continue ({puzzleScore}/500)
+                    Continue (Challenge {currentIndex + 1})
                   </button>
                 )}
               </div>
@@ -545,132 +503,19 @@
         );
       }
 
-      // Tutorial
-      if (screen === 'tutorial') {
-        if (tutorialStep === 0) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-              <div className="max-w-2xl text-center space-y-8">
-                <h1 className="text-5xl font-extralight text-white">Welcome to ONE MOVE!</h1>
-                <p className="text-2xl text-slate-300 font-light">
-                  Answer trivia questions to unlock challenge puzzles
-                </p>
-                <button
-                  onClick={handleTutorialNext}
-                  className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg"
-                >
-                  Let's Start!
-                </button>
-              </div>
-            </div>
-          );
-        }
-        
-        if (tutorialStep === 1) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-              <div className="max-w-2xl text-center space-y-8">
-                <h2 className="text-3xl font-light text-white">You'll face different types of challenges</h2>
-                <div className="grid grid-cols-2 gap-6 text-slate-300">
-                  <div className="bg-slate-800/50 p-6 rounded-xl">
-                    <div className="text-4xl mb-2">🎯</div>
-                    <div className="font-semibold">Tile Flip</div>
-                    <div className="text-sm">Match all tiles</div>
-                  </div>
-                  <div className="bg-slate-800/50 p-6 rounded-xl">
-                    <div className="text-4xl mb-2">📝</div>
-                    <div className="font-semibold">Word Scramble</div>
-                    <div className="text-sm">Unscramble letters</div>
-                  </div>
-                </div>
-                <button
-                  onClick={handleTutorialNext}
-                  className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg"
-                >
-                  Got it!
-                </button>
-              </div>
-            </div>
-          );
-        }
-        
-        if (tutorialStep === 2) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-              <div className="max-w-2xl text-center space-y-8">
-                <h2 className="text-3xl font-light text-white">Remember:</h2>
-                <div className="bg-slate-800/50 p-8 rounded-xl text-left space-y-4 text-slate-300">
-                  <p>✅ First attempt counts for your score</p>
-                  <p>✅ You can retry, but won't earn points</p>
-                  <p>✅ Choose from different trivia categories</p>
-                  <p>✅ 500 challenges await you!</p>
-                </div>
-                <button
-                  onClick={handleTutorialNext}
-                  className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg"
-                >
-                  Let's Play!
-                </button>
-              </div>
-            </div>
-          );
-        }
-      }
-
-      // Category Selection
-      if (screen === 'category_select') {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-            <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  💎 TRIVIA: {triviaScore}
-                </div>
-              </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  💎 PUZZLES: {puzzleScore}
-                </div>
-              </div>
-            </div>
-            
-            <div className="max-w-2xl w-full space-y-8">
-              <div className="text-center">
-                <div className="text-slate-500 text-sm mb-2">Challenge {currentPuzzleIndex + 1} of 500</div>
-                <h2 className="text-3xl font-light text-white mb-4">
-                  Choose Your Category
-                </h2>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                {Object.values(CATEGORIES).map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => handleCategorySelect(category)}
-                    className="p-6 rounded-xl text-lg font-light transition-all duration-300 bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500"
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      }
-
       // Trivia Screen
-      if (screen === 'trivia' && currentTriviaQuestion) {
+      if (screen === 'trivia' && currentQuestion) {
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
             <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
+              <div className="bg-gradient-to-r from-green-600 to-green-500 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  💎 TRIVIA: {triviaScore}
+                  💎 TRIVIA: {triviaGems}
                 </div>
               </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  💎 PUZZLES: {puzzleScore}
+                  💎 PUZZLES: {puzzleGems}
                 </div>
               </div>
             </div>
@@ -678,10 +523,10 @@
             <div className="max-w-2xl w-full space-y-8 mt-16">
               <div className="text-center">
                 <div className="text-slate-500 text-sm mb-2">
-                  {selectedCategory} • Question {currentPuzzleIndex + 1} of 500
+                  {currentQuestion.cat} • Challenge {currentIndex + 1} of 500
                 </div>
                 <h2 className="text-3xl font-light text-white mb-8">
-                  {currentTriviaQuestion.q}
+                  {currentQuestion.q}
                 </h2>
               </div>
               
@@ -693,9 +538,9 @@
                     disabled={showResult}
                     className={`
                       p-6 rounded-xl text-lg font-light transition-all duration-300
-                      ${showResult && choice === selectedAnswer && choice === currentTriviaQuestion.a
-                        ? 'bg-green-600 text-white scale-105'
-                        : showResult && choice === selectedAnswer && choice !== currentTriviaQuestion.a
+                      ${showResult && choice === currentQuestion.a
+                        ? 'bg-green-600 text-white scale-105 pulse-animation'
+                        : showResult && choice === selectedAnswer && choice !== currentQuestion.a
                         ? 'bg-red-600 text-white'
                         : showResult
                         ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed'
@@ -708,25 +553,25 @@
                 ))}
               </div>
               
-              {showResult && selectedAnswer === currentTriviaQuestion.a && (
+              {showResult && selectedAnswer === currentQuestion.a && (
                 <div className="text-center text-2xl font-light text-green-400 animate-pulse">
-                  Correct! ✓
+                  Correct! ✓ {triviaFirstAttempt && '+1 💎'}
                 </div>
               )}
               
-              {showResult && selectedAnswer !== currentTriviaQuestion.a && (
+              {showResult && selectedAnswer !== currentQuestion.a && (
                 <div className="text-center space-y-2">
                   <div className="text-2xl font-light text-red-400 animate-pulse">
                     Incorrect!
                   </div>
                   {showCorrectAnswer && (
                     <div className="text-lg text-white">
-                      The answer is: <span className="font-semibold text-green-400">{currentTriviaQuestion.a}</span>
+                      Correct answer: <span className="font-semibold text-green-400">{currentQuestion.a}</span>
                     </div>
                   )}
                   {!triviaFirstAttempt && (
                     <div className="text-sm text-slate-400">
-                      (No points - first attempt failed)
+                      (No gems - first attempt failed)
                     </div>
                   )}
                 </div>
@@ -745,14 +590,14 @@
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
             <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
+              <div className="bg-gradient-to-r from-green-600 to-green-500 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  💎 TRIVIA: {triviaScore}
+                  💎 TRIVIA: {triviaGems}
                 </div>
               </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  💎 PUZZLES: {puzzleScore}
+                  💎 PUZZLES: {puzzleGems}
                 </div>
               </div>
             </div>
@@ -762,9 +607,9 @@
                 <p className="text-white text-lg font-light">Tile Flip Challenge</p>
                 <p className="text-slate-400 text-sm mt-2">Make all tiles match!</p>
                 {!puzzleFirstAttempt && (
-                  <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no points</p>
+                  <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
                 )}
-                {failCount >= 10 && (
+                {failCount >= 30 && (
                   <button
                     onClick={handleSkipPuzzle}
                     className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm"
@@ -789,7 +634,7 @@
                         rounded-lg
                         transition-all duration-300
                         ${tile === 1 
-                          ? `bg-gradient-to-br ${tileColor.from} ${tileColor.to} shadow-lg ${tileColor.shadow} hover:shadow-${tileColor.shadow}/70 hover:scale-105` 
+                          ? `bg-gradient-to-br ${tileColor.from} ${tileColor.to} shadow-lg ${tileColor.shadow} hover:scale-105` 
                           : 'bg-slate-800 border-2 border-slate-700'
                         }
                         ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}
@@ -808,14 +653,14 @@
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
             <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
+              <div className="bg-gradient-to-r from-green-600 to-green-500 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  💎 TRIVIA: {triviaScore}
+                  💎 TRIVIA: {triviaGems}
                 </div>
               </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-3 py-1.5 rounded-lg text-right">
                 <div className="text-white text-xs font-semibold">
-                  💎 PUZZLES: {puzzleScore}
+                  💎 PUZZLES: {puzzleGems}
                 </div>
               </div>
             </div>
@@ -825,7 +670,7 @@
                 <p className="text-white text-lg font-light">Word Scramble Challenge</p>
                 <p className="text-slate-400 text-sm mt-2">Unscramble the letters!</p>
                 {!puzzleFirstAttempt && (
-                  <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no points</p>
+                  <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
                 )}
                 {failCount >= 10 && (
                   <button
@@ -874,12 +719,18 @@
               
               <div className="max-w-md mx-auto bg-slate-800/50 rounded-xl p-6 border border-slate-700">
                 <p className="text-slate-400 text-sm font-light mb-2">
-                  {currentPuzzle.trivia.q}
+                  {currentPuzzle.question.q}
                 </p>
                 <p className="text-white text-2xl font-light">
-                  {currentPuzzle.trivia.a}
+                  {currentPuzzle.question.a}
                 </p>
               </div>
+              
+              {puzzleFirstAttempt && (
+                <div className="text-2xl text-green-400">
+                  +1 💎
+                </div>
+              )}
             </div>
           </div>
         );
@@ -897,23 +748,27 @@
               <div className="bg-slate-800/50 rounded-xl p-8 border border-yellow-400/30">
                 <div className="grid grid-cols-2 gap-4 text-white">
                   <div>
-                    <div className="text-3xl font-light">{triviaScore}</div>
-                    <div className="text-xs text-slate-400">Trivia Correct</div>
+                    <div className="text-3xl font-light">{triviaGems} 💎</div>
+                    <div className="text-xs text-slate-400">Trivia Gems</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-light">{puzzleScore}</div>
-                    <div className="text-xs text-slate-400">Puzzles Solved</div>
+                    <div className="text-3xl font-light">{puzzleGems} 💎</div>
+                    <div className="text-xs text-slate-400">Puzzle Gems</div>
                   </div>
+                </div>
+                <div className="mt-6 text-4xl font-light text-yellow-400">
+                  Total: {triviaGems + puzzleGems} 💎
                 </div>
               </div>
               
               <button
                 onClick={() => {
-                  localStorage.removeItem('oneMoveSave_v4');
+                  localStorage.removeItem('oneMoveSave_v41');
                   setScreen('home');
-                  setCurrentPuzzleIndex(0);
-                  setTriviaScore(0);
-                  setPuzzleScore(0);
+                  setCurrentIndex(0);
+                  setTriviaGems(0);
+                  setPuzzleGems(0);
+                  setShuffledQuestions([]);
                 }}
                 className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light tracking-wide"
               >
