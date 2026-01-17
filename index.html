@@ -185,6 +185,16 @@
         }
       }, []);
 
+      // Splash screen timer
+      useEffect(() => {
+        if (screen === 'splash') {
+          const timer = setTimeout(() => {
+            setScreen('home');
+          }, 2000);
+          return () => clearTimeout(timer);
+        }
+      }, [screen]);
+
       const saveProgress = (data) => {
         localStorage.setItem('oneMoveSave_v4', JSON.stringify({
           currentIndex: currentPuzzleIndex,
@@ -495,18 +505,36 @@
       };
 
       // Splash Screen
+      // Splash Screen
       if (screen === 'splash') {
-        useEffect(() => {
-          const timer = setTimeout(() => {
-            setScreen('home');
-          }, 2000);
-          return () => clearTimeout(timer);
-        }, []);
-        
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
-            <div className="text-center animate-pulse">
-              <h1 className="text-8xl font-extralight text-white tracking-wider">
+            <div className="text-center">
+              {/* CSS Glowing Tile */}
+              <div className="relative inline-block mb-8">
+                <div 
+                  className="w-48 h-48 rounded-3xl relative"
+                  style={{
+                    background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%)',
+                    boxShadow: '0 0 60px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.3)',
+                    transform: 'perspective(800px) rotateX(10deg) rotateY(-10deg)',
+                  }}
+                >
+                  {/* Glow center */}
+                  <div 
+                    className="absolute inset-0 rounded-3xl"
+                    style={{
+                      background: 'radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 60%)',
+                    }}
+                  />
+                  {/* Sparkles */}
+                  <div className="absolute top-4 right-4 w-2 h-2 bg-white rounded-full animate-pulse" style={{boxShadow: '0 0 10px #fff'}} />
+                  <div className="absolute top-8 right-12 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '0.5s', boxShadow: '0 0 8px #fff'}} />
+                </div>
+              </div>
+              
+              {/* Title */}
+              <h1 className="text-7xl font-extralight text-white tracking-wider animate-pulse">
                 ONE MOVE
               </h1>
             </div>
