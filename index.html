@@ -154,7 +154,7 @@
     };
 
     const OneMove = () => {
-      const [screen, setScreen] = useState('home');
+      const [screen, setScreen] = useState('splash');
       const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
       const [triviaScore, setTriviaScore] = useState(0);
       const [puzzleScore, setPuzzleScore] = useState(0);
@@ -493,6 +493,26 @@
           setScreen('category_select');
         }
       };
+
+      // Splash Screen
+      if (screen === 'splash') {
+        useEffect(() => {
+          const timer = setTimeout(() => {
+            setScreen('home');
+          }, 2000);
+          return () => clearTimeout(timer);
+        }, []);
+        
+        return (
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+            <div className="text-center animate-pulse">
+              <h1 className="text-8xl font-extralight text-white tracking-wider">
+                ONE MOVE
+              </h1>
+            </div>
+          </div>
+        );
+      }
 
       // Home Screen
       if (screen === 'home') {
