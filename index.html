@@ -488,8 +488,7 @@
       };
 
       const handlePlay = () => {
-        setScreen('tutorial');
-        setTutorialStep(0);
+        setScreen('category_select');
       };
 
       const handleContinue = () => {
@@ -553,34 +552,29 @@
                 ONE MOVE
               </h1>
               
-              <div className="bg-slate-800/50 rounded-xl p-6 text-left space-y-4 border border-slate-700">
-                <h2 className="text-xl font-light text-white mb-4">How to Play:</h2>
-                <div className="space-y-3 text-slate-300 text-sm leading-relaxed">
+              <div className="bg-slate-800/50 rounded-xl p-4 text-left space-y-3 border border-slate-700 max-h-[60vh] overflow-y-auto">
+                <h2 className="text-lg font-light text-white mb-2">How to Play:</h2>
+                <div className="space-y-2 text-slate-300 text-xs leading-relaxed">
                   <p><span className="text-blue-400 font-semibold">1.</span> Answer trivia to unlock a puzzle</p>
                   <p><span className="text-blue-400 font-semibold">2.</span> Then solve ONE of 2 puzzle types!</p>
                   
-                  <div className="mt-4 space-y-3">
-                    <p className="font-semibold text-white">THE GOAL:</p>
-                    <p className="text-xs">Complete the puzzle challenge to earn gems</p>
-                    
-                    <p className="font-semibold text-white mt-3">PUZZLE TYPE 1: TILE FLIP</p>
-                    <div className="text-xs space-y-1 ml-3">
-                      <p>• You'll see a grid with scrambled colored and dark tiles</p>
+                  <div className="mt-3 space-y-2">
+                    <p className="font-semibold text-white text-xs">PUZZLE TYPE 1: TILE FLIP</p>
+                    <div className="text-xs space-y-1 ml-2">
                       <p>• Goal: Find the ONE tile that makes all tiles the same color!</p>
-                      <p>• When you tap any tile, 5 tiles will flip:</p>
-                      <p className="ml-4">- The tile you tapped</p>
-                      <p className="ml-4">- The tiles directly above, below, left, and right</p>
+                      <p>• You'll see a grid with scrambled colored and dark tiles</p>
+                      <p>• When you tap any tile, 5 tiles flip (the tile you tapped + tiles above, below, left, right)</p>
                       <p>• Remember: Only ONE tapped tile solves the puzzle!</p>
                     </div>
                     
-                    <p className="font-semibold text-white mt-3">PUZZLE TYPE 2: WORD SCRAMBLE</p>
-                    <div className="text-xs space-y-1 ml-3">
+                    <p className="font-semibold text-white text-xs mt-2">PUZZLE TYPE 2: WORD SCRAMBLE</p>
+                    <div className="text-xs space-y-1 ml-2">
                       <p>• Unscramble the letters to spell a word or phrase</p>
                       <p>• Type your answer and submit</p>
                     </div>
                   </div>
                   
-                  <p className="text-xs text-yellow-400 pt-2">⚠️ Think carefully - only your first attempt counts towards gems!</p>
+                  <p className="text-xs text-yellow-400 pt-2">⚠️ Only your first attempt counts towards gems!</p>
                 </div>
               </div>
               
