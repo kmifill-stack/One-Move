@@ -326,7 +326,7 @@
           playSound('success');
           
           if (triviaFirstAttempt) {
-            const newTriviaScore = triviaScore + 1;
+            const newTriviaScore = triviaScore + 100;
             setTriviaScore(newTriviaScore);
             saveProgress({ triviaScore: newTriviaScore });
           }
@@ -415,7 +415,7 @@
           playSound('success');
           
           if (puzzleFirstAttempt) {
-            const newPuzzleScore = puzzleScore + 1;
+            const newPuzzleScore = puzzleScore + 100;
             setPuzzleScore(newPuzzleScore);
             saveProgress({ puzzleScore: newPuzzleScore });
           }
@@ -449,7 +449,7 @@
           playSound('success');
           
           if (puzzleFirstAttempt) {
-            const newPuzzleScore = puzzleScore + 1;
+            const newPuzzleScore = puzzleScore + 100;
             setPuzzleScore(newPuzzleScore);
             saveProgress({ puzzleScore: newPuzzleScore });
           }
@@ -677,15 +677,11 @@
       if (screen === 'category_select') {
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-            <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
-                </div>
-              </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+            <div className="absolute top-4 right-4">
+              <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg">
+                <div className="text-white text-xs font-light">GEMS</div>
+                <div className="text-white text-2xl font-bold">
+                  💎 {triviaScore + puzzleScore}
                 </div>
               </div>
             </div>
@@ -718,15 +714,11 @@
       if (screen === 'trivia' && currentTriviaQuestion) {
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-            <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
-                </div>
-              </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+            <div className="absolute top-4 right-4">
+              <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg">
+                <div className="text-white text-xs font-light">GEMS</div>
+                <div className="text-white text-2xl font-bold">
+                  💎 {triviaScore + puzzleScore}
                 </div>
               </div>
             </div>
@@ -800,15 +792,11 @@
         
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-            <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
-                </div>
-              </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+            <div className="absolute top-4 right-4">
+              <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg">
+                <div className="text-white text-xs font-light">GEMS</div>
+                <div className="text-white text-2xl font-bold">
+                  💎 {triviaScore + puzzleScore}
                 </div>
               </div>
             </div>
@@ -863,15 +851,11 @@
       if (screen === 'puzzle_word' && currentPuzzle) {
         return (
           <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-            <div className="absolute top-4 right-4 space-y-2">
-              <div className="bg-green-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  ✓ TRIVIA: {triviaScore}/500
-                </div>
-              </div>
-              <div className="bg-blue-600 px-3 py-1.5 rounded-lg text-right">
-                <div className="text-white text-xs font-semibold">
-                  🧩 PUZZLES: {puzzleScore}/500
+            <div className="absolute top-4 right-4">
+              <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg">
+                <div className="text-white text-xs font-light">GEMS</div>
+                <div className="text-white text-2xl font-bold">
+                  💎 {triviaScore + puzzleScore}
                 </div>
               </div>
             </div>
