@@ -480,18 +480,6 @@
         }
       };
 
-      const handleSkipPuzzle = () => {
-        const newIndex = currentPuzzleIndex + 1;
-        setCurrentPuzzleIndex(newIndex);
-        saveProgress({ currentIndex: newIndex });
-        
-        if (newIndex >= 500) {
-          setScreen('complete');
-        } else {
-          setScreen('category_select');
-        }
-      };
-
       const handlePlay = () => {
         setScreen('category_select');
       };
