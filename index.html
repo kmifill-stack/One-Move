@@ -1255,6 +1255,31 @@
                 </button>
               </div>
             </div>
+            
+            {/* Skip Confirmation Popup */}
+            {showSkipConfirm && (
+              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
+                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
+                  <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
+                  <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
+                  
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setShowSkipConfirm(false)}
+                      className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSkipPuzzle}
+                      className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
+                    >
+                      Skip
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
       }
