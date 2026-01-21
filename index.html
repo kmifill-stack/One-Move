@@ -27,6 +27,18 @@
       width: 100%;
       height: 100%;
     }
+    @keyframes glow-pulse {
+      0%, 100% {
+        box-shadow: 0 0 20px 5px rgba(251, 191, 36, 0.8), 0 0 40px 10px rgba(251, 191, 36, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 30px 8px rgba(251, 191, 36, 1), 0 0 60px 15px rgba(251, 191, 36, 0.6);
+      }
+    }
+    .hint-glow {
+      animation: glow-pulse 1.5s ease-in-out infinite;
+      border: 3px solid #fbbf24 !important;
+    }
   </style>
 </head>
 <body>
@@ -40,1316 +52,1289 @@
       </svg>
     );
 
-    // Trivia categories and questions (500 total)
-    const CATEGORIES = {
-      SCIENCE: 'Science',
-      HISTORY: 'History',
-      GEOGRAPHY: 'Geography',
-      POP_CULTURE: 'Pop Culture',
-      SPORTS: 'Sports',
-      GENERAL: 'General Knowledge'
-    };
+// Trivia categories and questions (500 total)
+const CATEGORIES = {
+  SCIENCE: 'Science',
+  HISTORY: 'History',
+  GEOGRAPHY: 'Geography',
+  POP_CULTURE: 'Pop Culture',
+  SPORTS: 'Sports',
+  GENERAL: 'General Knowledge'
+};
 
-    const TRIVIA_BANK = [
-      // SCIENCE (80 questions)
-      {q: "What is the chemical symbol for gold?", a: "Au", c: ["Go", "Au", "Gd", "Ag"], cat: CATEGORIES.SCIENCE},
-      {q: "What planet is known as the Red Planet?", a: "Mars", c: ["Venus", "Mars", "Jupiter", "Saturn"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the speed of light?", a: "299,792 km/s", c: ["150,000 km/s", "299,792 km/s", "500,000 km/s", "1,000,000 km/s"], cat: CATEGORIES.SCIENCE},
-      {q: "What is H2O commonly known as?", a: "Water", c: ["Oxygen", "Water", "Hydrogen", "Carbon"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the largest organ in the human body?", a: "Skin", c: ["Liver", "Brain", "Skin", "Heart"], cat: CATEGORIES.SCIENCE},
-      {q: "What gas do plants absorb from the atmosphere?", a: "Carbon dioxide", c: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], cat: CATEGORIES.SCIENCE},
-      {q: "How many bones are in the adult human body?", a: "206", c: ["186", "206", "226", "246"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the smallest unit of life?", a: "Cell", c: ["Atom", "Cell", "Molecule", "Organ"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the hardest natural substance on Earth?", a: "Diamond", c: ["Gold", "Iron", "Diamond", "Platinum"], cat: CATEGORIES.SCIENCE},
-      {q: "What is the center of an atom called?", a: "Nucleus", c: ["Electron", "Proton", "Nucleus", "Neutron"], cat: CATEGORIES.SCIENCE},
-      
-      // HISTORY (80 questions)
-      {q: "In what year did World War II end?", a: "1945", c: ["1943", "1944", "1945", "1946"], cat: CATEGORIES.HISTORY},
-      {q: "Who was the first President of the United States?", a: "George Washington", c: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"], cat: CATEGORIES.HISTORY},
-      {q: "What year did the Berlin Wall fall?", a: "1989", c: ["1987", "1988", "1989", "1990"], cat: CATEGORIES.HISTORY},
-      {q: "Who painted the Mona Lisa?", a: "Leonardo da Vinci", c: ["Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"], cat: CATEGORIES.HISTORY},
-      {q: "What year did the Titanic sink?", a: "1912", c: ["1910", "1911", "1912", "1913"], cat: CATEGORIES.HISTORY},
-      {q: "Who was the first person to walk on the moon?", a: "Neil Armstrong", c: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"], cat: CATEGORIES.HISTORY},
-      {q: "What ancient wonder was located in Egypt?", a: "Great Pyramid of Giza", c: ["Hanging Gardens", "Great Pyramid of Giza", "Colossus of Rhodes", "Lighthouse"], cat: CATEGORIES.HISTORY},
-      {q: "Who wrote the Declaration of Independence?", a: "Thomas Jefferson", c: ["George Washington", "Benjamin Franklin", "Thomas Jefferson", "John Adams"], cat: CATEGORIES.HISTORY},
-      {q: "What year did Christopher Columbus reach the Americas?", a: "1492", c: ["1482", "1492", "1502", "1512"], cat: CATEGORIES.HISTORY},
-      {q: "Who was known as the Iron Lady?", a: "Margaret Thatcher", c: ["Queen Elizabeth", "Margaret Thatcher", "Indira Gandhi", "Golda Meir"], cat: CATEGORIES.HISTORY},
-      
-      // GEOGRAPHY (80 questions)
-      {q: "What is the capital of France?", a: "Paris", c: ["London", "Paris", "Berlin", "Rome"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the largest ocean on Earth?", a: "Pacific Ocean", c: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "Which country has the most population?", a: "India", c: ["China", "India", "USA", "Indonesia"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the longest river in the world?", a: "Nile River", c: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the smallest country in the world?", a: "Vatican City", c: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "Which continent is the largest?", a: "Asia", c: ["Africa", "Asia", "North America", "Europe"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the capital of Japan?", a: "Tokyo", c: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "Which desert is the largest in the world?", a: "Sahara", c: ["Gobi", "Sahara", "Arabian", "Kalahari"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What mountain range separates Europe and Asia?", a: "Ural Mountains", c: ["Alps", "Ural Mountains", "Himalayas", "Rockies"], cat: CATEGORIES.GEOGRAPHY},
-      {q: "What is the capital of Australia?", a: "Canberra", c: ["Sydney", "Melbourne", "Canberra", "Brisbane"], cat: CATEGORIES.GEOGRAPHY},
-      
-      // POP CULTURE (80 questions)
-      {q: "Who played Iron Man in the Marvel movies?", a: "Robert Downey Jr.", c: ["Chris Evans", "Robert Downey Jr.", "Chris Hemsworth", "Mark Ruffalo"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What streaming service is known for Stranger Things?", a: "Netflix", c: ["Hulu", "Netflix", "Disney+", "Amazon Prime"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who sang 'Thriller'?", a: "Michael Jackson", c: ["Prince", "Michael Jackson", "Stevie Wonder", "James Brown"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What movie won Best Picture in 2020?", a: "Parasite", c: ["1917", "Joker", "Parasite", "Once Upon a Time"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who is known as the King of Rock and Roll?", a: "Elvis Presley", c: ["Chuck Berry", "Elvis Presley", "Little Richard", "Jerry Lee Lewis"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What TV show featured a coffee shop called Central Perk?", a: "Friends", c: ["Seinfeld", "Friends", "How I Met Your Mother", "Cheers"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who directed Jurassic Park?", a: "Steven Spielberg", c: ["James Cameron", "Steven Spielberg", "George Lucas", "Ridley Scott"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What band was Freddie Mercury in?", a: "Queen", c: ["The Beatles", "Queen", "Led Zeppelin", "The Rolling Stones"], cat: CATEGORIES.POP_CULTURE},
-      {q: "What is the highest-grossing film of all time?", a: "Avatar", c: ["Titanic", "Avatar", "Avengers: Endgame", "Star Wars"], cat: CATEGORIES.POP_CULTURE},
-      {q: "Who played Jack in Titanic?", a: "Leonardo DiCaprio", c: ["Brad Pitt", "Leonardo DiCaprio", "Tom Cruise", "Johnny Depp"], cat: CATEGORIES.POP_CULTURE},
-      
-      // SPORTS (80 questions)
-      {q: "How many players are on a soccer team?", a: "11", c: ["9", "10", "11", "12"], cat: CATEGORIES.SPORTS},
-      {q: "What sport is known as 'the beautiful game'?", a: "Soccer", c: ["Basketball", "Soccer", "Baseball", "Tennis"], cat: CATEGORIES.SPORTS},
-      {q: "Who has won the most NBA championships?", a: "Boston Celtics", c: ["Lakers", "Boston Celtics", "Bulls", "Warriors"], cat: CATEGORIES.SPORTS},
-      {q: "What country hosted the 2016 Summer Olympics?", a: "Brazil", c: ["China", "Brazil", "UK", "Russia"], cat: CATEGORIES.SPORTS},
-      {q: "How many holes are on a golf course?", a: "18", c: ["9", "12", "18", "24"], cat: CATEGORIES.SPORTS},
-      {q: "What is a perfect score in bowling?", a: "300", c: ["200", "250", "300", "350"], cat: CATEGORIES.SPORTS},
-      {q: "Who is known as 'The Greatest' in boxing?", a: "Muhammad Ali", c: ["Mike Tyson", "Muhammad Ali", "Floyd Mayweather", "Sugar Ray"], cat: CATEGORIES.SPORTS},
-      {q: "What sport uses a puck?", a: "Hockey", c: ["Basketball", "Hockey", "Lacrosse", "Cricket"], cat: CATEGORIES.SPORTS},
-      {q: "How many Grand Slam tournaments are in tennis?", a: "4", c: ["2", "3", "4", "5"], cat: CATEGORIES.SPORTS},
-      {q: "What is the maximum break in snooker?", a: "147", c: ["100", "120", "147", "180"], cat: CATEGORIES.SPORTS},
-      
-      // GENERAL KNOWLEDGE (100 questions)
-      {q: "How many days are in a leap year?", a: "366", c: ["364", "365", "366", "367"], cat: CATEGORIES.GENERAL},
-      {q: "What is the main ingredient in bread?", a: "Flour", c: ["Sugar", "Flour", "Yeast", "Salt"], cat: CATEGORIES.GENERAL},
-      {q: "How many colors are in a rainbow?", a: "7", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
-      {q: "What animal is known as man's best friend?", a: "Dog", c: ["Cat", "Dog", "Horse", "Rabbit"], cat: CATEGORIES.GENERAL},
-      {q: "How many continents are there?", a: "7", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
-      {q: "What is the tallest mountain in the world?", a: "Mount Everest", c: ["K2", "Mount Everest", "Kilimanjaro", "Denali"], cat: CATEGORIES.GENERAL},
-      {q: "How many seconds are in a minute?", a: "60", c: ["50", "60", "70", "100"], cat: CATEGORIES.GENERAL},
-      {q: "What language is spoken in Brazil?", a: "Portuguese", c: ["Spanish", "Portuguese", "French", "Italian"], cat: CATEGORIES.GENERAL},
-      {q: "What is the boiling point of water in Celsius?", a: "100°C", c: ["90°C", "100°C", "110°C", "120°C"], cat: CATEGORIES.GENERAL},
-      {q: "How many sides does a hexagon have?", a: "6", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
-    ];
+const TRIVIA_BANK = [
+  // SCIENCE (80 questions)
+  {q: "What is the chemical symbol for gold?", a: "Au", c: ["Go", "Au", "Gd", "Ag"], cat: CATEGORIES.SCIENCE},
+  {q: "What planet is known as the Red Planet?", a: "Mars", c: ["Venus", "Mars", "Jupiter", "Saturn"], cat: CATEGORIES.SCIENCE},
+  {q: "What is the speed of light?", a: "299,792 km/s", c: ["150,000 km/s", "299,792 km/s", "500,000 km/s", "1,000,000 km/s"], cat: CATEGORIES.SCIENCE},
+  {q: "What is H2O commonly known as?", a: "Water", c: ["Oxygen", "Water", "Hydrogen", "Carbon"], cat: CATEGORIES.SCIENCE},
+  {q: "What is the largest organ in the human body?", a: "Skin", c: ["Liver", "Brain", "Skin", "Heart"], cat: CATEGORIES.SCIENCE},
+  {q: "What gas do plants absorb from the atmosphere?", a: "Carbon dioxide", c: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"], cat: CATEGORIES.SCIENCE},
+  {q: "How many bones are in the adult human body?", a: "206", c: ["186", "206", "226", "246"], cat: CATEGORIES.SCIENCE},
+  {q: "What is the smallest unit of life?", a: "Cell", c: ["Atom", "Cell", "Molecule", "Organ"], cat: CATEGORIES.SCIENCE},
+  {q: "What is the hardest natural substance on Earth?", a: "Diamond", c: ["Gold", "Iron", "Diamond", "Platinum"], cat: CATEGORIES.SCIENCE},
+  {q: "What is the center of an atom called?", a: "Nucleus", c: ["Electron", "Proton", "Nucleus", "Neutron"], cat: CATEGORIES.SCIENCE},
+  
+  // HISTORY (80 questions)
+  {q: "In what year did World War II end?", a: "1945", c: ["1943", "1944", "1945", "1946"], cat: CATEGORIES.HISTORY},
+  {q: "Who was the first President of the United States?", a: "George Washington", c: ["Thomas Jefferson", "George Washington", "John Adams", "Benjamin Franklin"], cat: CATEGORIES.HISTORY},
+  {q: "What year did the Berlin Wall fall?", a: "1989", c: ["1987", "1988", "1989", "1990"], cat: CATEGORIES.HISTORY},
+  {q: "Who painted the Mona Lisa?", a: "Leonardo da Vinci", c: ["Michelangelo", "Leonardo da Vinci", "Raphael", "Donatello"], cat: CATEGORIES.HISTORY},
+  {q: "What year did the Titanic sink?", a: "1912", c: ["1910", "1911", "1912", "1913"], cat: CATEGORIES.HISTORY},
+  {q: "Who was the first person to walk on the moon?", a: "Neil Armstrong", c: ["Buzz Aldrin", "Neil Armstrong", "Yuri Gagarin", "John Glenn"], cat: CATEGORIES.HISTORY},
+  {q: "What ancient wonder was located in Egypt?", a: "Great Pyramid of Giza", c: ["Hanging Gardens", "Great Pyramid of Giza", "Colossus of Rhodes", "Lighthouse"], cat: CATEGORIES.HISTORY},
+  {q: "Who wrote the Declaration of Independence?", a: "Thomas Jefferson", c: ["George Washington", "Benjamin Franklin", "Thomas Jefferson", "John Adams"], cat: CATEGORIES.HISTORY},
+  {q: "What year did Christopher Columbus reach the Americas?", a: "1492", c: ["1482", "1492", "1502", "1512"], cat: CATEGORIES.HISTORY},
+  {q: "Who was known as the Iron Lady?", a: "Margaret Thatcher", c: ["Queen Elizabeth", "Margaret Thatcher", "Indira Gandhi", "Golda Meir"], cat: CATEGORIES.HISTORY},
+  
+  // GEOGRAPHY (80 questions)
+  {q: "What is the capital of France?", a: "Paris", c: ["London", "Paris", "Berlin", "Rome"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "What is the largest ocean on Earth?", a: "Pacific Ocean", c: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "Which country has the most population?", a: "India", c: ["China", "India", "USA", "Indonesia"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "What is the longest river in the world?", a: "Nile River", c: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "What is the smallest country in the world?", a: "Vatican City", c: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "Which continent is the largest?", a: "Asia", c: ["Africa", "Asia", "North America", "Europe"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "What is the capital of Japan?", a: "Tokyo", c: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "Which desert is the largest in the world?", a: "Sahara", c: ["Gobi", "Sahara", "Arabian", "Kalahari"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "What mountain range separates Europe and Asia?", a: "Ural Mountains", c: ["Alps", "Ural Mountains", "Himalayas", "Rockies"], cat: CATEGORIES.GEOGRAPHY},
+  {q: "What is the capital of Australia?", a: "Canberra", c: ["Sydney", "Melbourne", "Canberra", "Brisbane"], cat: CATEGORIES.GEOGRAPHY},
+  
+  // POP CULTURE (80 questions)
+  {q: "Who played Iron Man in the Marvel movies?", a: "Robert Downey Jr.", c: ["Chris Evans", "Robert Downey Jr.", "Chris Hemsworth", "Mark Ruffalo"], cat: CATEGORIES.POP_CULTURE},
+  {q: "What streaming service is known for Stranger Things?", a: "Netflix", c: ["Hulu", "Netflix", "Disney+", "Amazon Prime"], cat: CATEGORIES.POP_CULTURE},
+  {q: "Who sang 'Thriller'?", a: "Michael Jackson", c: ["Prince", "Michael Jackson", "Stevie Wonder", "James Brown"], cat: CATEGORIES.POP_CULTURE},
+  {q: "What movie won Best Picture in 2020?", a: "Parasite", c: ["1917", "Joker", "Parasite", "Once Upon a Time"], cat: CATEGORIES.POP_CULTURE},
+  {q: "Who is known as the King of Rock and Roll?", a: "Elvis Presley", c: ["Chuck Berry", "Elvis Presley", "Little Richard", "Jerry Lee Lewis"], cat: CATEGORIES.POP_CULTURE},
+  {q: "What TV show featured a coffee shop called Central Perk?", a: "Friends", c: ["Seinfeld", "Friends", "How I Met Your Mother", "Cheers"], cat: CATEGORIES.POP_CULTURE},
+  {q: "Who directed Jurassic Park?", a: "Steven Spielberg", c: ["James Cameron", "Steven Spielberg", "George Lucas", "Ridley Scott"], cat: CATEGORIES.POP_CULTURE},
+  {q: "What band was Freddie Mercury in?", a: "Queen", c: ["The Beatles", "Queen", "Led Zeppelin", "The Rolling Stones"], cat: CATEGORIES.POP_CULTURE},
+  {q: "What is the highest-grossing film of all time?", a: "Avatar", c: ["Titanic", "Avatar", "Avengers: Endgame", "Star Wars"], cat: CATEGORIES.POP_CULTURE},
+  {q: "Who played Jack in Titanic?", a: "Leonardo DiCaprio", c: ["Brad Pitt", "Leonardo DiCaprio", "Tom Cruise", "Johnny Depp"], cat: CATEGORIES.POP_CULTURE},
+  
+  // SPORTS (80 questions)
+  {q: "How many players are on a soccer team?", a: "11", c: ["9", "10", "11", "12"], cat: CATEGORIES.SPORTS},
+  {q: "What sport is known as 'the beautiful game'?", a: "Soccer", c: ["Basketball", "Soccer", "Baseball", "Tennis"], cat: CATEGORIES.SPORTS},
+  {q: "Who has won the most NBA championships?", a: "Boston Celtics", c: ["Lakers", "Boston Celtics", "Bulls", "Warriors"], cat: CATEGORIES.SPORTS},
+  {q: "What country hosted the 2016 Summer Olympics?", a: "Brazil", c: ["China", "Brazil", "UK", "Russia"], cat: CATEGORIES.SPORTS},
+  {q: "How many holes are on a golf course?", a: "18", c: ["9", "12", "18", "24"], cat: CATEGORIES.SPORTS},
+  {q: "What is a perfect score in bowling?", a: "300", c: ["200", "250", "300", "350"], cat: CATEGORIES.SPORTS},
+  {q: "Who is known as 'The Greatest' in boxing?", a: "Muhammad Ali", c: ["Mike Tyson", "Muhammad Ali", "Floyd Mayweather", "Sugar Ray"], cat: CATEGORIES.SPORTS},
+  {q: "What sport uses a puck?", a: "Hockey", c: ["Basketball", "Hockey", "Lacrosse", "Cricket"], cat: CATEGORIES.SPORTS},
+  {q: "How many Grand Slam tournaments are in tennis?", a: "4", c: ["2", "3", "4", "5"], cat: CATEGORIES.SPORTS},
+  {q: "What is the maximum break in snooker?", a: "147", c: ["100", "120", "147", "180"], cat: CATEGORIES.SPORTS},
+  
+  // GENERAL KNOWLEDGE (100 questions)
+  {q: "How many days are in a leap year?", a: "366", c: ["364", "365", "366", "367"], cat: CATEGORIES.GENERAL},
+  {q: "What is the main ingredient in bread?", a: "Flour", c: ["Sugar", "Flour", "Yeast", "Salt"], cat: CATEGORIES.GENERAL},
+  {q: "How many colors are in a rainbow?", a: "7", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
+  {q: "What animal is known as man's best friend?", a: "Dog", c: ["Cat", "Dog", "Horse", "Rabbit"], cat: CATEGORIES.GENERAL},
+  {q: "How many continents are there?", a: "7", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
+  {q: "What is the tallest mountain in the world?", a: "Mount Everest", c: ["K2", "Mount Everest", "Kilimanjaro", "Denali"], cat: CATEGORIES.GENERAL},
+  {q: "How many seconds are in a minute?", a: "60", c: ["50", "60", "70", "100"], cat: CATEGORIES.GENERAL},
+  {q: "What language is spoken in Brazil?", a: "Portuguese", c: ["Spanish", "Portuguese", "French", "Italian"], cat: CATEGORIES.GENERAL},
+  {q: "What is the boiling point of water in Celsius?", a: "100°C", c: ["90°C", "100°C", "110°C", "120°C"], cat: CATEGORIES.GENERAL},
+  {q: "How many sides does a hexagon have?", a: "6", c: ["5", "6", "7", "8"], cat: CATEGORIES.GENERAL},
+];
 
-    // Extend to 500 by repeating and modifying slightly
-    for(let i = TRIVIA_BANK.length; i < 500; i++) {
-      const base = TRIVIA_BANK[i % TRIVIA_BANK.length];
-      TRIVIA_BANK.push({...base});
+// Extend to 500 by repeating and modifying slightly
+for(let i = TRIVIA_BANK.length; i < 500; i++) {
+  const base = TRIVIA_BANK[i % TRIVIA_BANK.length];
+  TRIVIA_BANK.push({...base});
+}
+
+// Tile colors
+const TILE_COLORS = [
+  { from: 'from-blue-400', to: 'to-blue-600', shadow: 'shadow-blue-500/50' },
+  { from: 'from-purple-400', to: 'to-purple-600', shadow: 'shadow-purple-500/50' },
+  { from: 'from-green-400', to: 'to-green-600', shadow: 'shadow-green-500/50' },
+  { from: 'from-orange-400', to: 'to-orange-600', shadow: 'shadow-orange-500/50' },
+  { from: 'from-pink-400', to: 'to-pink-600', shadow: 'shadow-pink-500/50' },
+  { from: 'from-teal-400', to: 'to-teal-600', shadow: 'shadow-teal-500/50' },
+];
+
+// Flip patterns
+const FLIP_PATTERNS = {
+  CROSS: 'cross',
+  X_PATTERN: 'x',
+  SQUARE: 'square',
+};
+
+// Puzzle types
+const PUZZLE_TYPES = {
+  TILE_FLIP: 'tile_flip',
+  WORD_SCRAMBLE: 'word_scramble',
+};
+
+const OneMove = () => {
+  const [screen, setScreen] = useState('splash');
+  const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
+  const [triviaScore, setTriviaScore] = useState(0);
+  const [puzzleScore, setPuzzleScore] = useState(0);
+  const [processing, setProcessing] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [shuffledChoices, setShuffledChoices] = useState([]);
+  const [triviaFirstAttempt, setTriviaFirstAttempt] = useState(true);
+  const [puzzleFirstAttempt, setPuzzleFirstAttempt] = useState(true);
+  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [currentTriviaQuestion, setCurrentTriviaQuestion] = useState(null);
+  const [currentPuzzle, setCurrentPuzzle] = useState(null);
+  const [grid, setGrid] = useState([]);
+  const [scrambledWord, setScrambledWord] = useState('');
+  const [userWord, setUserWord] = useState('');
+  const [failCount, setFailCount] = useState(0);
+  const [showAboutGems, setShowAboutGems] = useState(false);
+  const [showGemBreakdown, setShowGemBreakdown] = useState(false);
+  const [gemsSpent, setGemsSpent] = useState(0);
+  const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const [hintLevel, setHintLevel] = useState(0);
+  const [revealedLetters, setRevealedLetters] = useState('');
+
+  // Splash screen timer
+  useEffect(() => {
+    if (screen === 'splash') {
+      const timer = setTimeout(() => {
+        setScreen('home');
+      }, 2000);
+      return () => clearTimeout(timer);
     }
+  }, [screen]);
 
-    // Tile colors
-    const TILE_COLORS = [
-      { from: 'from-blue-400', to: 'to-blue-600', shadow: 'shadow-blue-500/50' },
-      { from: 'from-purple-400', to: 'to-purple-600', shadow: 'shadow-purple-500/50' },
-      { from: 'from-green-400', to: 'to-green-600', shadow: 'shadow-green-500/50' },
-      { from: 'from-orange-400', to: 'to-orange-600', shadow: 'shadow-orange-500/50' },
-      { from: 'from-pink-400', to: 'to-pink-600', shadow: 'shadow-pink-500/50' },
-      { from: 'from-teal-400', to: 'to-teal-600', shadow: 'shadow-teal-500/50' },
-    ];
+  // Load/save progress
+  useEffect(() => {
+    const saved = localStorage.getItem('oneMoveSave_v4');
+    if (saved) {
+      const data = JSON.parse(saved);
+      setCurrentPuzzleIndex(data.currentIndex || 0);
+      setTriviaScore(data.triviaScore || 0);
+      setPuzzleScore(data.puzzleScore || 0);
+      setGemsSpent(data.gemsSpent || 0);
+      setPuzzlesSkipped(data.puzzlesSkipped || 0);
+    }
+  }, []);
 
-    // Flip patterns
-    const FLIP_PATTERNS = {
-      CROSS: 'cross',
-      X_PATTERN: 'x',
-      SQUARE: 'square',
+  const saveProgress = (data) => {
+    localStorage.setItem('oneMoveSave_v4', JSON.stringify({
+      currentIndex: currentPuzzleIndex,
+      triviaScore,
+      puzzleScore,
+      gemsSpent,
+      puzzlesSkipped,
+      ...data
+    }));
+  };
+
+  const playSound = (type) => {
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      const audioContext = new AudioContextClass();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      if (type === 'flip') {
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.05);
+      } else if (type === 'success') {
+        oscillator.frequency.value = 523.25;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.4);
+      }
+    } catch (error) {}
+  };
+
+  const generateTileFlipPuzzle = (trivia) => {
+    const size = currentPuzzleIndex < 10 ? 3 : currentPuzzleIndex < 50 ? 4 : 5;
+    const row = Math.floor(Math.random() * size);
+    const col = Math.floor(Math.random() * size);
+    const patterns = Object.values(FLIP_PATTERNS);
+    const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+    const colorIndex = Math.floor(currentPuzzleIndex / 7) % TILE_COLORS.length;
+    
+    const solvedGrid = Array(size).fill(null).map(() => Array(size).fill(1));
+    const puzzleGrid = solvedGrid.map(r => [...r]);
+    
+    const flip = (r, c) => {
+      if (r >= 0 && r < size && c >= 0 && c < size) {
+        puzzleGrid[r][c] = puzzleGrid[r][c] === 1 ? 0 : 1;
+      }
     };
-
-    // Puzzle types
-    const PUZZLE_TYPES = {
-      TILE_FLIP: 'tile_flip',
-      WORD_SCRAMBLE: 'word_scramble',
+    
+    flip(row, col);
+    
+    switch(pattern) {
+      case FLIP_PATTERNS.CROSS:
+        flip(row - 1, col);
+        flip(row + 1, col);
+        flip(row, col - 1);
+        flip(row, col + 1);
+        break;
+      case FLIP_PATTERNS.X_PATTERN:
+        flip(row - 1, col - 1);
+        flip(row - 1, col + 1);
+        flip(row + 1, col - 1);
+        flip(row + 1, col + 1);
+        break;
+      case FLIP_PATTERNS.SQUARE:
+        for(let dr = -1; dr <= 1; dr++) {
+          for(let dc = -1; dc <= 1; dc++) {
+            if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
+          }
+        }
+        break;
+    }
+    
+    return {
+      type: PUZZLE_TYPES.TILE_FLIP,
+      grid: puzzleGrid,
+      solution: { row, col },
+      pattern,
+      size,
+      colorIndex,
+      trivia
     };
+  };
 
-    const OneMove = () => {
-      const [screen, setScreen] = useState('splash');
-      const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
-      const [triviaScore, setTriviaScore] = useState(0);
-      const [puzzleScore, setPuzzleScore] = useState(0);
-      const [processing, setProcessing] = useState(false);
-      const [selectedAnswer, setSelectedAnswer] = useState(null);
-      const [showResult, setShowResult] = useState(false);
-      const [shuffledChoices, setShuffledChoices] = useState([]);
-      const [triviaFirstAttempt, setTriviaFirstAttempt] = useState(true);
-      const [puzzleFirstAttempt, setPuzzleFirstAttempt] = useState(true);
-      const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
-      const [selectedCategory, setSelectedCategory] = useState(null);
-      const [currentTriviaQuestion, setCurrentTriviaQuestion] = useState(null);
-      const [currentPuzzle, setCurrentPuzzle] = useState(null);
-      const [grid, setGrid] = useState([]);
-      const [scrambledWord, setScrambledWord] = useState('');
-      const [userWord, setUserWord] = useState('');
-      const [tutorialStep, setTutorialStep] = useState(0);
-      const [failCount, setFailCount] = useState(0);
-      const [showAboutGems, setShowAboutGems] = useState(false);
-      const [showGemBreakdown, setShowGemBreakdown] = useState(false);
-      const [gemsSpent, setGemsSpent] = useState(0);
-      const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
-      const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const generateWordScramble = (trivia) => {
+    const word = trivia.a.replace(/[^a-zA-Z]/g, '').toUpperCase();
+    const letters = word.split('');
+    for (let i = letters.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [letters[i], letters[j]] = [letters[j], letters[i]];
+    }
+    return {
+      type: PUZZLE_TYPES.WORD_SCRAMBLE,
+      scrambled: letters.join(''),
+      answer: word,
+      trivia
+    };
+  };
 
-      // Load/save progress
-      useEffect(() => {
-        const saved = localStorage.getItem('oneMoveSave_v4');
-        if (saved) {
-          const data = JSON.parse(saved);
-          setCurrentPuzzleIndex(data.currentIndex || 0);
-          setTriviaScore(data.triviaScore || 0);
-          setPuzzleScore(data.puzzleScore || 0);
-        }
-      }, []);
+  const handleCategorySelect = (category) => {
+    const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
+    const question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
+    
+    const choices = [...question.c];
+    for (let i = choices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [choices[i], choices[j]] = [choices[j], choices[i]];
+    }
+    
+    setSelectedCategory(category);
+    setCurrentTriviaQuestion(question);
+    setShuffledChoices(choices);
+    setTriviaFirstAttempt(true);
+    setScreen('trivia');
+  };
 
-      // Splash screen timer
-      useEffect(() => {
-        if (screen === 'splash') {
-          const timer = setTimeout(() => {
-            setScreen('home');
-          }, 2000);
-          return () => clearTimeout(timer);
-        }
-      }, [screen]);
-
-      const saveProgress = (data) => {
-        localStorage.setItem('oneMoveSave_v4', JSON.stringify({
-          currentIndex: currentPuzzleIndex,
-          triviaScore,
-          puzzleScore,
-          ...data
-        }));
-      };
-
-      const playSound = (type) => {
-        try {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (!AudioContextClass) return;
-          const audioContext = new AudioContextClass();
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-          
-          if (type === 'flip') {
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.05);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.05);
-          } else if (type === 'success') {
-            oscillator.frequency.value = 523.25;
-            oscillator.type = 'sine';
-            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.4);
-          }
-        } catch (error) {}
-      };
-
-      const generateTileFlipPuzzle = (trivia) => {
-        const size = currentPuzzleIndex < 10 ? 3 : currentPuzzleIndex < 50 ? 4 : 5;
-        const row = Math.floor(Math.random() * size);
-        const col = Math.floor(Math.random() * size);
-        const patterns = Object.values(FLIP_PATTERNS);
-        const pattern = patterns[Math.floor(Math.random() * patterns.length)];
-        const colorIndex = Math.floor(currentPuzzleIndex / 7) % TILE_COLORS.length;
+  const handleAnswerSelect = (answer) => {
+    if (processing || showResult) return;
+    
+    setSelectedAnswer(answer);
+    setShowResult(true);
+    
+    if (answer === currentTriviaQuestion.a) {
+      playSound('success');
+      
+      if (triviaFirstAttempt) {
+        const newTriviaScore = triviaScore + 100;
+        setTriviaScore(newTriviaScore);
+        saveProgress({ triviaScore: newTriviaScore });
+      }
+      
+      setTimeout(() => {
+        setShowResult(false);
+        setSelectedAnswer(null);
         
-        const solvedGrid = Array(size).fill(null).map(() => Array(size).fill(1));
-        const puzzleGrid = solvedGrid.map(r => [...r]);
+        // Generate puzzle
+        const puzzleType = Math.random() > 0.5 ? PUZZLE_TYPES.TILE_FLIP : PUZZLE_TYPES.WORD_SCRAMBLE;
         
-        const flip = (r, c) => {
-          if (r >= 0 && r < size && c >= 0 && c < size) {
-            puzzleGrid[r][c] = puzzleGrid[r][c] === 1 ? 0 : 1;
-          }
-        };
-        
-        flip(row, col);
-        
-        switch(pattern) {
-          case FLIP_PATTERNS.CROSS:
-            flip(row - 1, col);
-            flip(row + 1, col);
-            flip(row, col - 1);
-            flip(row, col + 1);
-            break;
-          case FLIP_PATTERNS.X_PATTERN:
-            flip(row - 1, col - 1);
-            flip(row - 1, col + 1);
-            flip(row + 1, col - 1);
-            flip(row + 1, col + 1);
-            break;
-          case FLIP_PATTERNS.SQUARE:
-            for(let dr = -1; dr <= 1; dr++) {
-              for(let dc = -1; dc <= 1; dc++) {
-                if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
-              }
-            }
-            break;
-        }
-        
-        return {
-          type: PUZZLE_TYPES.TILE_FLIP,
-          grid: puzzleGrid,
-          solution: { row, col },
-          pattern,
-          size,
-          colorIndex,
-          trivia
-        };
-      };
-
-      const generateWordScramble = (trivia) => {
-        const word = trivia.a.replace(/[^a-zA-Z]/g, '').toUpperCase();
-        const letters = word.split('');
-        for (let i = letters.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [letters[i], letters[j]] = [letters[j], letters[i]];
-        }
-        return {
-          type: PUZZLE_TYPES.WORD_SCRAMBLE,
-          scrambled: letters.join(''),
-          answer: word,
-          trivia
-        };
-      };
-
-      const handleCategorySelect = (category) => {
-        const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
-        const question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
-        
-        const choices = [...question.c];
-        for (let i = choices.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [choices[i], choices[j]] = [choices[j], choices[i]];
-        }
-        
-        setSelectedCategory(category);
-        setCurrentTriviaQuestion(question);
-        setShuffledChoices(choices);
-        setTriviaFirstAttempt(true);
-        setScreen('trivia');
-      };
-
-      const handleAnswerSelect = (answer) => {
-        if (processing || showResult) return;
-        
-        setSelectedAnswer(answer);
-        setShowResult(true);
-        
-        if (answer === currentTriviaQuestion.a) {
-          playSound('success');
-          
-          if (triviaFirstAttempt) {
-            const newTriviaScore = triviaScore + 100;
-            setTriviaScore(newTriviaScore);
-            saveProgress({ triviaScore: newTriviaScore });
-          }
-          
-          setTimeout(() => {
-            setShowResult(false);
-            setSelectedAnswer(null);
-            
-            // Generate puzzle
-            const puzzleType = Math.random() > 0.5 ? PUZZLE_TYPES.TILE_FLIP : PUZZLE_TYPES.WORD_SCRAMBLE;
-            
-            if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-              const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
-              setCurrentPuzzle(puzzle);
-              setGrid(puzzle.grid);
-              setScreen('puzzle_tile');
-            } else {
-              const puzzle = generateWordScramble(currentTriviaQuestion);
-              setCurrentPuzzle(puzzle);
-              setScrambledWord(puzzle.scrambled);
-              setUserWord('');
-              setScreen('puzzle_word');
-            }
-            
-            setPuzzleFirstAttempt(true);
-            setFailCount(0);
-          }, 2000);
+        if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+          const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
+          setCurrentPuzzle(puzzle);
+          setGrid(puzzle.grid);
+          setScreen('puzzle_tile');
         } else {
-          setTriviaFirstAttempt(false);
-          setShowCorrectAnswer(true);
-          
-          setTimeout(() => {
-            setShowResult(false);
-            setSelectedAnswer(null);
-            setShowCorrectAnswer(false);
-          }, 3000);
-        }
-      };
-
-      const applyFlipPattern = (row, col, gridCopy, pattern) => {
-        const flip = (r, c) => {
-          if (r >= 0 && r < gridCopy.length && c >= 0 && c < gridCopy[0].length) {
-            gridCopy[r][c] = gridCopy[r][c] === 1 ? 0 : 1;
-          }
-        };
-        
-        flip(row, col);
-        
-        switch(pattern) {
-          case FLIP_PATTERNS.CROSS:
-            flip(row - 1, col);
-            flip(row + 1, col);
-            flip(row, col - 1);
-            flip(row, col + 1);
-            break;
-          case FLIP_PATTERNS.X_PATTERN:
-            flip(row - 1, col - 1);
-            flip(row - 1, col + 1);
-            flip(row + 1, col - 1);
-            flip(row + 1, col + 1);
-            break;
-          case FLIP_PATTERNS.SQUARE:
-            for(let dr = -1; dr <= 1; dr++) {
-              for(let dc = -1; dc <= 1; dc++) {
-                if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
-              }
-            }
-            break;
-        }
-      };
-
-      const handleTileTap = async (row, col) => {
-        if (processing) return;
-        setProcessing(true);
-        
-        const newGrid = grid.map(r => [...r]);
-        applyFlipPattern(row, col, newGrid, currentPuzzle.pattern);
-        
-        playSound('flip');
-        setGrid(newGrid);
-        
-        await new Promise(resolve => setTimeout(resolve, 800));
-        const isSolved = newGrid.every(row => row.every(tile => tile === 1));
-        
-        if (isSolved) {
-          playSound('success');
-          
-          if (puzzleFirstAttempt) {
-            const newPuzzleScore = puzzleScore + 100;
-            setPuzzleScore(newPuzzleScore);
-            saveProgress({ puzzleScore: newPuzzleScore });
-          }
-          
-          setScreen('success');
-          
-          setTimeout(() => {
-            const newIndex = currentPuzzleIndex + 1;
-            setCurrentPuzzleIndex(newIndex);
-            saveProgress({ currentIndex: newIndex });
-            
-            if (newIndex >= 500) {
-              setScreen('complete');
-            } else {
-              setScreen('category_select');
-            }
-            setProcessing(false);
-          }, 2500);
-        } else {
-          setPuzzleFirstAttempt(false);
-          const newFailCount = failCount + 1;
-          setFailCount(newFailCount);
-          setProcessing(false);
-        }
-      };
-
-      const handleWordSubmit = () => {
-        if (processing) return;
-        
-        if (userWord.toUpperCase() === currentPuzzle.answer) {
-          playSound('success');
-          
-          if (puzzleFirstAttempt) {
-            const newPuzzleScore = puzzleScore + 100;
-            setPuzzleScore(newPuzzleScore);
-            saveProgress({ puzzleScore: newPuzzleScore });
-          }
-          
-          setScreen('success');
-          
-          setTimeout(() => {
-            const newIndex = currentPuzzleIndex + 1;
-            setCurrentPuzzleIndex(newIndex);
-            saveProgress({ currentIndex: newIndex });
-            
-            if (newIndex >= 500) {
-              setScreen('complete');
-            } else {
-              setScreen('category_select');
-            }
-          }, 2500);
-        } else {
-          setPuzzleFirstAttempt(false);
-          const newFailCount = failCount + 1;
-          setFailCount(newFailCount);
+          const puzzle = generateWordScramble(currentTriviaQuestion);
+          setCurrentPuzzle(puzzle);
+          setScrambledWord(puzzle.scrambled);
           setUserWord('');
+          setRevealedLetters('');
+          setScreen('puzzle_word');
         }
-      };
-
-      const handlePlay = () => {
-        setScreen('category_select');
-      };
-
-      const handleContinue = () => {
-        setScreen('category_select');
-      };
-
-      const handleTutorialNext = () => {
-        if (tutorialStep < 2) {
-          setTutorialStep(tutorialStep + 1);
-        } else {
-          setScreen('category_select');
-        }
-      };
-
-      const handleSkipPuzzle = () => {
-        const newSkipped = puzzlesSkipped + 1;
-        setPuzzlesSkipped(newSkipped);
-        setShowSkipConfirm(false);
         
+        setPuzzleFirstAttempt(true);
+        setFailCount(0);
+        setHintLevel(0);
+      }, 2000);
+    } else {
+      setTriviaFirstAttempt(false);
+      setShowCorrectAnswer(true);
+      
+      setTimeout(() => {
+        setShowResult(false);
+        setSelectedAnswer(null);
+        setShowCorrectAnswer(false);
+      }, 3000);
+    }
+  };
+
+  const applyFlipPattern = (row, col, gridCopy, pattern) => {
+    const flip = (r, c) => {
+      if (r >= 0 && r < gridCopy.length && c >= 0 && c < gridCopy[0].length) {
+        gridCopy[r][c] = gridCopy[r][c] === 1 ? 0 : 1;
+      }
+    };
+    
+    flip(row, col);
+    
+    switch(pattern) {
+      case FLIP_PATTERNS.CROSS:
+        flip(row - 1, col);
+        flip(row + 1, col);
+        flip(row, col - 1);
+        flip(row, col + 1);
+        break;
+      case FLIP_PATTERNS.X_PATTERN:
+        flip(row - 1, col - 1);
+        flip(row - 1, col + 1);
+        flip(row + 1, col - 1);
+        flip(row + 1, col + 1);
+        break;
+      case FLIP_PATTERNS.SQUARE:
+        for(let dr = -1; dr <= 1; dr++) {
+          for(let dc = -1; dc <= 1; dc++) {
+            if(dr !== 0 || dc !== 0) flip(row + dr, col + dc);
+          }
+        }
+        break;
+    }
+  };
+
+  const handleTileTap = async (row, col) => {
+    if (processing) return;
+    setProcessing(true);
+    
+    const newGrid = grid.map(r => [...r]);
+    applyFlipPattern(row, col, newGrid, currentPuzzle.pattern);
+    
+    playSound('flip');
+    setGrid(newGrid);
+    
+    await new Promise(resolve => setTimeout(resolve, 800));
+    const isSolved = newGrid.every(row => row.every(tile => tile === 1));
+    
+    if (isSolved) {
+      playSound('success');
+      
+      if (puzzleFirstAttempt) {
+        const newPuzzleScore = puzzleScore + 100;
+        setPuzzleScore(newPuzzleScore);
+        saveProgress({ puzzleScore: newPuzzleScore });
+      }
+      
+      setScreen('success');
+      
+      setTimeout(() => {
         const newIndex = currentPuzzleIndex + 1;
         setCurrentPuzzleIndex(newIndex);
-        saveProgress({ currentIndex: newIndex, puzzlesSkipped: newSkipped });
+        saveProgress({ currentIndex: newIndex });
         
         if (newIndex >= 500) {
           setScreen('complete');
         } else {
           setScreen('category_select');
         }
-      };
+        setProcessing(false);
+      }, 2500);
+    } else {
+      setPuzzleFirstAttempt(false);
+      const newFailCount = failCount + 1;
+      setFailCount(newFailCount);
+      setProcessing(false);
+    }
+  };
 
-      // Splash Screen
-      // Splash Screen
-      if (screen === 'splash') {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
-            <div className="text-center">
-              {/* CSS Glowing Tile */}
-              <div className="relative inline-block mb-8">
-                <div 
-                  className="w-48 h-48 rounded-3xl relative"
-                  style={{
-                    background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%)',
-                    boxShadow: '0 0 60px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.3)',
-                    transform: 'perspective(800px) rotateX(10deg) rotateY(-10deg)',
-                  }}
-                >
-                  {/* Glow center */}
-                  <div 
-                    className="absolute inset-0 rounded-3xl"
-                    style={{
-                      background: 'radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 60%)',
-                    }}
-                  />
-                  {/* Sparkles */}
-                  <div className="absolute top-4 right-4 w-2 h-2 bg-white rounded-full animate-pulse" style={{boxShadow: '0 0 10px #fff'}} />
-                  <div className="absolute top-8 right-12 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '0.5s', boxShadow: '0 0 8px #fff'}} />
-                </div>
-              </div>
-              
-              {/* Title */}
-              <h1 className="text-7xl font-extralight text-white tracking-wider animate-pulse">
-                ONE MOVE
-              </h1>
-            </div>
-          </div>
-        );
+  const handleWordSubmit = () => {
+    if (processing) return;
+    
+    if (userWord.toUpperCase() === currentPuzzle.answer) {
+      playSound('success');
+      
+      if (puzzleFirstAttempt) {
+        const newPuzzleScore = puzzleScore + 100;
+        setPuzzleScore(newPuzzleScore);
+        saveProgress({ puzzleScore: newPuzzleScore });
       }
-
-      // Home Screen
-      if (screen === 'home') {
-        const hasSavedProgress = currentPuzzleIndex > 0;
+      
+      setScreen('success');
+      
+      setTimeout(() => {
+        const newIndex = currentPuzzleIndex + 1;
+        setCurrentPuzzleIndex(newIndex);
+        saveProgress({ currentIndex: newIndex });
         
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-            {/* About Gems Popup */}
-            {showAboutGems && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowAboutGems(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-light text-white text-center mb-6">💎 ABOUT GEMS</h2>
-                  
-                  <div className="space-y-6 text-slate-300 text-sm">
-                    <div>
-                      <p className="text-amber-400 font-semibold mb-2">EARN GEMS:</p>
-                      <div className="space-y-1 ml-3">
-                        <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
-                        <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-red-400 font-semibold mb-2">SPEND GEMS (HINTS):</p>
-                      <div className="space-y-1 ml-3 text-xs">
-                        <p>💡 Hint 1 (small help): <span className="text-white font-bold">-50</span></p>
-                        <p>💡 Hint 2 (medium help): <span className="text-white font-bold">-100</span></p>
-                        <p>💡 Hint 3 (major help): <span className="text-white font-bold">-150</span></p>
-                        <p>💡 Hint 4 (full solution): <span className="text-white font-bold">-200</span></p>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
-                      <div className="ml-3 text-xs">
-                        <p>⏭️ Skip (Free, no gems earned)</p>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-slate-700/50 rounded-lg p-3 text-xs">
-                      <p className="text-center">Your gem total shows in the top right corner. Tap it anytime to see your full breakdown!</p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => setShowAboutGems(false)}
-                    className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-                  >
-                    Got It!
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <div className="text-center space-y-8 max-w-md">
-              <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
-                ONE MOVE
-              </h1>
-              
-              <div className="bg-slate-800/50 rounded-xl p-4 text-left space-y-3 border border-slate-700 max-h-[60vh] overflow-y-auto">
-                <h2 className="text-lg font-light text-white mb-2">How to Play:</h2>
-                <div className="space-y-2 text-slate-300 text-xs leading-relaxed">
-                  <p><span className="text-blue-400 font-semibold">1.</span> Answer trivia to unlock a puzzle</p>
-                  <p><span className="text-blue-400 font-semibold">2.</span> Then solve ONE of 2 puzzle types!</p>
-                  <p><span className="text-blue-400 font-semibold">3.</span> Earn gems for correct first attempts!</p>
-                  
-                  <div className="mt-3 space-y-2">
-                    <p className="font-semibold text-white text-xs">PUZZLE TYPE 1: TILE FLIP</p>
-                    <div className="text-xs space-y-1 ml-2">
-                      <p>• Goal: Find the ONE tile that makes all tiles the same color!</p>
-                      <p>• You'll see a grid with scrambled colored and dark tiles</p>
-                      <p>• When you tap any tile, 5 tiles flip (the tile you tapped + tiles above, below, left, right)</p>
-                      <p>• Remember: Only ONE tapped tile solves the puzzle!</p>
-                    </div>
-                    
-                    <p className="font-semibold text-white text-xs mt-2">PUZZLE TYPE 2: WORD SCRAMBLE</p>
-                    <div className="text-xs space-y-1 ml-2">
-                      <p>• Unscramble the letters to spell a word or phrase</p>
-                      <p>• Type your answer and submit</p>
-                    </div>
-                  </div>
-                  
-                  <p className="text-xs text-yellow-400 pt-2">⚠️ Only your first attempt counts towards gems!</p>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => setShowAboutGems(true)}
-                  className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-                >
-                  💎 About Gems
-                </button>
-                
-                <button
-                  onClick={handlePlay}
-                  className="w-full px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-lg font-light tracking-wide"
-                >
-                  <Play className="w-5 h-5" />
-                  <span>START</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      // Tutorial
-      if (screen === 'tutorial') {
-        if (tutorialStep === 0) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-              <div className="max-w-2xl text-center space-y-8">
-                <h1 className="text-5xl font-extralight text-white">Welcome to ONE MOVE!</h1>
-                <p className="text-2xl text-slate-300 font-light">
-                  Answer trivia questions to unlock challenge puzzles
-                </p>
-                <button
-                  onClick={handleTutorialNext}
-                  className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg"
-                >
-                  Let's Start!
-                </button>
-              </div>
-            </div>
-          );
+        if (newIndex >= 500) {
+          setScreen('complete');
+        } else {
+          setScreen('category_select');
         }
-        
-        if (tutorialStep === 1) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-              <div className="max-w-2xl text-center space-y-8">
-                <h2 className="text-3xl font-light text-white">You'll face different types of challenges</h2>
-                <div className="grid grid-cols-2 gap-6 text-slate-300">
-                  <div className="bg-slate-800/50 p-6 rounded-xl">
-                    <div className="text-4xl mb-2">🎯</div>
-                    <div className="font-semibold">Tile Flip</div>
-                    <div className="text-sm">Match all tiles</div>
-                  </div>
-                  <div className="bg-slate-800/50 p-6 rounded-xl">
-                    <div className="text-4xl mb-2">📝</div>
-                    <div className="font-semibold">Word Scramble</div>
-                    <div className="text-sm">Unscramble letters</div>
-                  </div>
-                </div>
-                <button
-                  onClick={handleTutorialNext}
-                  className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg"
-                >
-                  Got it!
-                </button>
-              </div>
-            </div>
-          );
-        }
-        
-        if (tutorialStep === 2) {
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-              <div className="max-w-2xl text-center space-y-8">
-                <h2 className="text-3xl font-light text-white">Remember:</h2>
-                <div className="bg-slate-800/50 p-8 rounded-xl text-left space-y-4 text-slate-300">
-                  <p>✅ First attempt counts for your score</p>
-                  <p>✅ You can retry, but won't earn points</p>
-                  <p>✅ Choose from different trivia categories</p>
-                  <p>✅ 500 challenges await you!</p>
-                </div>
-                <button
-                  onClick={handleTutorialNext}
-                  className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg"
-                >
-                  Let's Play!
-                </button>
-              </div>
-            </div>
-          );
-        }
-      }
+      }, 2500);
+    } else {
+      setPuzzleFirstAttempt(false);
+      const newFailCount = failCount + 1;
+      setFailCount(newFailCount);
+      setUserWord('');
+    }
+  };
 
-      // Category Selection
-      if (screen === 'category_select') {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-            <div className="absolute top-4 right-4">
-              <button 
-                onClick={() => setShowGemBreakdown(true)}
-                className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-              >
-                <div className="text-white text-xs font-light">GEMS</div>
-                <div className="text-white text-2xl font-bold">
-                  💎 {triviaScore + puzzleScore - gemsSpent}
-                </div>
-              </button>
-            </div>
-            
-            {/* Gem Breakdown Popup */}
-            {showGemBreakdown && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
-                  
-                  <div className="space-y-6 text-slate-300">
-                    <div>
-                      <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
-                      <div className="space-y-2 ml-3">
-                        <p className="flex justify-between">
-                          <span>💎 Trivia:</span>
-                          <span className="text-white font-bold">{triviaScore}</span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span>💎 Puzzles:</span>
-                          <span className="text-white font-bold">{puzzleScore}</span>
-                        </p>
-                        {puzzlesSkipped > 0 && (
-                          <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
-                        )}
-                      </div>
-                      <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                        <p className="flex justify-between text-sm">
-                          <span>Subtotal:</span>
-                          <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {gemsSpent > 0 && (
-                      <div>
-                        <p className="text-red-400 font-semibold mb-3">SPENT:</p>
-                        <div className="ml-3">
-                          <p className="flex justify-between">
-                            <span>💡 Hints used:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                        <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                          <p className="flex justify-between text-sm">
-                            <span>Total spent:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="border-t-2 border-amber-500 pt-4">
-                      <p className="flex justify-between text-xl">
-                        <span className="text-white font-bold">💎 TOTAL:</span>
-                        <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => setShowGemBreakdown(false)}
-                    className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <div className="max-w-2xl w-full space-y-8">
-              <div className="text-center">
-                <div className="text-slate-500 text-sm mb-2">Challenge {currentPuzzleIndex + 1} of 500</div>
-                <h2 className="text-3xl font-light text-white mb-4">
-                  Choose Your Category
-                </h2>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                {Object.values(CATEGORIES).map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => handleCategorySelect(category)}
-                    className="p-6 rounded-xl text-lg font-light transition-all duration-300 bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500"
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      }
+  const handlePlay = () => {
+    setScreen('category_select');
+  };
 
-      // Trivia Screen
-      if (screen === 'trivia' && currentTriviaQuestion) {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-            <div className="absolute top-4 right-4">
-              <button 
-                onClick={() => setShowGemBreakdown(true)}
-                className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-              >
-                <div className="text-white text-xs font-light">GEMS</div>
-                <div className="text-white text-2xl font-bold">
-                  💎 {triviaScore + puzzleScore - gemsSpent}
-                </div>
-              </button>
-            </div>
-            
-            {/* Gem Breakdown Popup */}
-            {showGemBreakdown && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
-                  
-                  <div className="space-y-6 text-slate-300">
-                    <div>
-                      <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
-                      <div className="space-y-2 ml-3">
-                        <p className="flex justify-between">
-                          <span>💎 Trivia:</span>
-                          <span className="text-white font-bold">{triviaScore}</span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span>💎 Puzzles:</span>
-                          <span className="text-white font-bold">{puzzleScore}</span>
-                        </p>
-                        {puzzlesSkipped > 0 && (
-                          <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
-                        )}
-                      </div>
-                      <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                        <p className="flex justify-between text-sm">
-                          <span>Subtotal:</span>
-                          <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {gemsSpent > 0 && (
-                      <div>
-                        <p className="text-red-400 font-semibold mb-3">SPENT:</p>
-                        <div className="ml-3">
-                          <p className="flex justify-between">
-                            <span>💡 Hints used:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                        <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                          <p className="flex justify-between text-sm">
-                            <span>Total spent:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="border-t-2 border-amber-500 pt-4">
-                      <p className="flex justify-between text-xl">
-                        <span className="text-white font-bold">💎 TOTAL:</span>
-                        <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => setShowGemBreakdown(false)}
-                    className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <div className="max-w-2xl w-full space-y-8 mt-16">
-              <div className="text-center">
-                <div className="text-slate-500 text-sm mb-2">
-                  {selectedCategory} • Question {currentPuzzleIndex + 1} of 500
-                </div>
-                <h2 className="text-3xl font-light text-white mb-8">
-                  {currentTriviaQuestion.q}
-                </h2>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-4">
-                {shuffledChoices.map((choice, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswerSelect(choice)}
-                    disabled={showResult}
-                    className={`
-                      p-6 rounded-xl text-lg font-light transition-all duration-300
-                      ${showResult && choice === selectedAnswer && choice === currentTriviaQuestion.a
-                        ? 'bg-green-600 text-white scale-105'
-                        : showResult && choice === selectedAnswer && choice !== currentTriviaQuestion.a
-                        ? 'bg-red-600 text-white'
-                        : showResult
-                        ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed'
-                        : 'bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500'
-                      }
-                    `}
-                  >
-                    {choice}
-                  </button>
-                ))}
-              </div>
-              
-              {showResult && selectedAnswer === currentTriviaQuestion.a && (
-                <div className="text-center text-2xl font-light text-green-400 animate-pulse">
-                  Correct! ✓
-                </div>
-              )}
-              
-              {showResult && selectedAnswer !== currentTriviaQuestion.a && (
-                <div className="text-center space-y-2">
-                  <div className="text-2xl font-light text-red-400 animate-pulse">
-                    Incorrect!
-                  </div>
-                  {showCorrectAnswer && (
-                    <div className="text-lg text-white">
-                      The answer is: <span className="font-semibold text-green-400">{currentTriviaQuestion.a}</span>
-                    </div>
-                  )}
-                  {!triviaFirstAttempt && (
-                    <div className="text-sm text-slate-400">
-                      (No points - first attempt failed)
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      }
+  const handleSkipPuzzle = () => {
+    const newSkipped = puzzlesSkipped + 1;
+    setPuzzlesSkipped(newSkipped);
+    setShowSkipConfirm(false);
+    
+    const newIndex = currentPuzzleIndex + 1;
+    setCurrentPuzzleIndex(newIndex);
+    saveProgress({ currentIndex: newIndex, puzzlesSkipped: newSkipped });
+    
+    if (newIndex >= 500) {
+      setScreen('complete');
+    } else {
+      setScreen('category_select');
+    }
+  };
 
-      // Tile Flip Puzzle
-      if (screen === 'puzzle_tile' && currentPuzzle) {
-        const gridSize = currentPuzzle.size;
-        const tileSize = gridSize === 3 ? 'w-24 h-24' : gridSize === 4 ? 'w-20 h-20' : 'w-16 h-16';
-        const tileColor = TILE_COLORS[currentPuzzle.colorIndex];
-        
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-            <div className="absolute top-4 right-4">
-              <button 
-                onClick={() => setShowGemBreakdown(true)}
-                className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-              >
-                <div className="text-white text-xs font-light">GEMS</div>
-                <div className="text-white text-2xl font-bold">
-                  💎 {triviaScore + puzzleScore - gemsSpent}
-                </div>
-              </button>
-            </div>
-            
-            {/* Gem Breakdown Popup */}
-            {showGemBreakdown && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
-                  
-                  <div className="space-y-6 text-slate-300">
-                    <div>
-                      <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
-                      <div className="space-y-2 ml-3">
-                        <p className="flex justify-between">
-                          <span>💎 Trivia:</span>
-                          <span className="text-white font-bold">{triviaScore}</span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span>💎 Puzzles:</span>
-                          <span className="text-white font-bold">{puzzleScore}</span>
-                        </p>
-                        {puzzlesSkipped > 0 && (
-                          <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
-                        )}
-                      </div>
-                      <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                        <p className="flex justify-between text-sm">
-                          <span>Subtotal:</span>
-                          <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {gemsSpent > 0 && (
-                      <div>
-                        <p className="text-red-400 font-semibold mb-3">SPENT:</p>
-                        <div className="ml-3">
-                          <p className="flex justify-between">
-                            <span>💡 Hints used:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                        <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                          <p className="flex justify-between text-sm">
-                            <span>Total spent:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="border-t-2 border-amber-500 pt-4">
-                      <p className="flex justify-between text-xl">
-                        <span className="text-white font-bold">💎 TOTAL:</span>
-                        <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => setShowGemBreakdown(false)}
-                    className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <div className="space-y-8">
-              <div className="text-center">
-                <p className="text-white text-lg font-light">Tile Flip Challenge</p>
-                <p className="text-slate-400 text-sm mt-2">Make all tiles match!</p>
-                {!puzzleFirstAttempt && (
-                  <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
-                )}
-              </div>
-              
+  const handleHint1 = () => {
+    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    if (totalGems < 50) return; // Not enough gems
+    
+    const newGemsSpent = gemsSpent + 50;
+    setGemsSpent(newGemsSpent);
+    setHintLevel(1);
+    saveProgress({ gemsSpent: newGemsSpent });
+    
+    // For word scramble, reveal first letter
+    if (currentPuzzle.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
+      setRevealedLetters(currentPuzzle.answer[0]);
+    }
+  };
+
+  // Splash Screen
+  if (screen === 'splash') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+        <div className="text-center">
+          {/* CSS Glowing Tile */}
+          <div className="relative inline-block mb-8">
+            <div 
+              className="w-48 h-48 rounded-3xl relative"
+              style={{
+                background: 'linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%)',
+                boxShadow: '0 0 60px rgba(59, 130, 246, 0.6), 0 0 100px rgba(59, 130, 246, 0.4), inset 0 0 40px rgba(255, 255, 255, 0.3)',
+                transform: 'perspective(800px) rotateX(10deg) rotateY(-10deg)',
+              }}
+            >
+              {/* Glow center */}
               <div 
-                className="inline-grid gap-2 p-6 bg-slate-800/30 rounded-2xl backdrop-blur-sm"
-                style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
-              >
-                {grid.map((row, rowIndex) => (
-                  row.map((tile, colIndex) => (
-                    <button
-                      key={`${rowIndex}-${colIndex}`}
-                      onClick={() => handleTileTap(rowIndex, colIndex)}
-                      disabled={processing}
-                      className={`
-                        ${tileSize}
-                        rounded-lg
-                        transition-all duration-300
-                        ${tile === 1 
-                          ? `bg-gradient-to-br ${tileColor.from} ${tileColor.to} shadow-lg ${tileColor.shadow} hover:shadow-${tileColor.shadow}/70 hover:scale-105` 
-                          : 'bg-slate-800 border-2 border-slate-700'
-                        }
-                        ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}
-                      `}
-                    />
-                  ))
-                ))}
-              </div>
-              
-              <div className="text-center">
-                <button
-                  onClick={() => setShowSkipConfirm(true)}
-                  className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300"
-                >
-                  ⏭️ Skip Puzzle (Free, 0 gems)
-                </button>
-              </div>
-            </div>
-            
-            {/* Skip Confirmation Popup */}
-            {showSkipConfirm && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
-                  <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
-                  
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => setShowSkipConfirm(false)}
-                      className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSkipPuzzle}
-                      className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
-                    >
-                      Skip
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      }
-
-      // Word Scramble Puzzle
-      if (screen === 'puzzle_word' && currentPuzzle) {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-            <div className="absolute top-4 right-4">
-              <button 
-                onClick={() => setShowGemBreakdown(true)}
-                className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-              >
-                <div className="text-white text-xs font-light">GEMS</div>
-                <div className="text-white text-2xl font-bold">
-                  💎 {triviaScore + puzzleScore - gemsSpent}
-                </div>
-              </button>
-            </div>
-            
-            {/* Gem Breakdown Popup */}
-            {showGemBreakdown && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
-                  
-                  <div className="space-y-6 text-slate-300">
-                    <div>
-                      <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
-                      <div className="space-y-2 ml-3">
-                        <p className="flex justify-between">
-                          <span>💎 Trivia:</span>
-                          <span className="text-white font-bold">{triviaScore}</span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span>💎 Puzzles:</span>
-                          <span className="text-white font-bold">{puzzleScore}</span>
-                        </p>
-                        {puzzlesSkipped > 0 && (
-                          <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
-                        )}
-                      </div>
-                      <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                        <p className="flex justify-between text-sm">
-                          <span>Subtotal:</span>
-                          <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {gemsSpent > 0 && (
-                      <div>
-                        <p className="text-red-400 font-semibold mb-3">SPENT:</p>
-                        <div className="ml-3">
-                          <p className="flex justify-between">
-                            <span>💡 Hints used:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                        <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                          <p className="flex justify-between text-sm">
-                            <span>Total spent:</span>
-                            <span className="text-white font-bold">-{gemsSpent}</span>
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="border-t-2 border-amber-500 pt-4">
-                      <p className="flex justify-between text-xl">
-                        <span className="text-white font-bold">💎 TOTAL:</span>
-                        <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => setShowGemBreakdown(false)}
-                    className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <div className="max-w-2xl w-full space-y-8">
-              <div className="text-center">
-                <p className="text-white text-lg font-light">Word Scramble Challenge</p>
-                <p className="text-slate-400 text-sm mt-2">Unscramble the letters!</p>
-                {!puzzleFirstAttempt && (
-                  <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
-                )}
-              </div>
-              
-              <div className="bg-slate-800/50 rounded-xl p-8 text-center space-y-6">
-                <div className="text-4xl font-light text-white tracking-widest">
-                  {scrambledWord}
-                </div>
-                
-                <input
-                  type="text"
-                  value={userWord}
-                  onChange={(e) => setUserWord(e.target.value.toUpperCase())}
-                  placeholder="Type your answer..."
-                  className="w-full px-6 py-4 bg-slate-900 text-white text-center text-2xl rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none"
-                  maxLength={scrambledWord.length}
-                />
-                
-                <button
-                  onClick={handleWordSubmit}
-                  className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg font-light"
-                >
-                  Submit Answer
-                </button>
-                
-                <button
-                  onClick={() => setShowSkipConfirm(true)}
-                  className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300"
-                >
-                  ⏭️ Skip Puzzle (Free, 0 gems)
-                </button>
-              </div>
-            </div>
-            
-            {/* Skip Confirmation Popup */}
-            {showSkipConfirm && (
-              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
-                <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
-                  <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
-                  <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
-                  
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => setShowSkipConfirm(false)}
-                      className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSkipPuzzle}
-                      className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
-                    >
-                      Skip
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      }
-
-      // Success Screen
-      if (screen === 'success') {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-            <div className="text-center space-y-8">
-              <h2 className="text-5xl font-extralight text-white tracking-wider">
-                Solved! ✓
-              </h2>
-              
-              <div className="max-w-md mx-auto bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-                <p className="text-slate-400 text-sm font-light mb-2">
-                  {currentPuzzle.trivia.q}
-                </p>
-                <p className="text-white text-2xl font-light">
-                  {currentPuzzle.trivia.a}
-                </p>
-              </div>
+                className="absolute inset-0 rounded-3xl"
+                style={{
+                  background: 'radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 60%)',
+                }}
+              />
+              {/* Sparkles */}
+              <div className="absolute top-4 right-4 w-2 h-2 bg-white rounded-full animate-pulse" style={{boxShadow: '0 0 10px #fff'}} />
+              <div className="absolute top-8 right-12 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '0.5s', boxShadow: '0 0 8px #fff'}} />
             </div>
           </div>
-        );
-      }
+          
+          {/* Title */}
+          <h1 className="text-7xl font-extralight text-white tracking-wider animate-pulse">
+            ONE MOVE
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
-      // Complete Screen
-      if (screen === 'complete') {
-        return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 flex items-center justify-center p-6">
-            <div className="text-center space-y-8 max-w-2xl">
-              <h2 className="text-5xl font-extralight text-white tracking-wider mb-4">
-                Complete! 🎉
-              </h2>
+  // Home Screen
+  if (screen === 'home') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+        {/* About Gems Popup */}
+        {showAboutGems && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowAboutGems(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">💎 ABOUT GEMS</h2>
               
-              <div className="bg-slate-800/50 rounded-xl p-8 border border-yellow-400/30">
-                <div className="grid grid-cols-2 gap-4 text-white">
-                  <div>
-                    <div className="text-3xl font-light">{triviaScore}</div>
-                    <div className="text-xs text-slate-400">Trivia Correct</div>
+              <div className="space-y-6 text-slate-300 text-sm">
+                <div>
+                  <p className="text-amber-400 font-semibold mb-2">EARN GEMS:</p>
+                  <div className="space-y-1 ml-3">
+                    <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
+                    <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
                   </div>
-                  <div>
-                    <div className="text-3xl font-light">{puzzleScore}</div>
-                    <div className="text-xs text-slate-400">Puzzles Solved</div>
+                </div>
+                
+                <div>
+                  <p className="text-red-400 font-semibold mb-2">SPEND GEMS (HINTS):</p>
+                  <div className="space-y-1 ml-3 text-xs">
+                    <p>💡 Hint 1 (small help): <span className="text-white font-bold">-50</span></p>
+                    <p>💡 Hint 2 (medium help): <span className="text-white font-bold">-100</span></p>
+                    <p>💡 Hint 3 (major help): <span className="text-white font-bold">-150</span></p>
+                    <p>💡 Hint 4 (full solution): <span className="text-white font-bold">-200</span></p>
                   </div>
+                </div>
+                
+                <div>
+                  <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
+                  <div className="ml-3 text-xs">
+                    <p>⏭️ Skip (Free, no gems earned)</p>
+                  </div>
+                </div>
+                
+                <div className="bg-slate-700/50 rounded-lg p-3 text-xs">
+                  <p className="text-center">Your gem total shows in the top right corner. Tap it anytime to see your full breakdown!</p>
                 </div>
               </div>
               
               <button
-                onClick={() => {
-                  localStorage.removeItem('oneMoveSave_v4');
-                  setScreen('home');
-                  setCurrentPuzzleIndex(0);
-                  setTriviaScore(0);
-                  setPuzzleScore(0);
-                }}
-                className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light tracking-wide"
+                onClick={() => setShowAboutGems(false)}
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
               >
-                Play Again
+                Got It!
               </button>
             </div>
           </div>
-        );
-      }
+        )}
+        
+        <div className="text-center space-y-8 max-w-md">
+          <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
+            ONE MOVE
+          </h1>
+          
+          <div className="bg-slate-800/50 rounded-xl p-4 text-left space-y-3 border border-slate-700 max-h-[60vh] overflow-y-auto">
+            <h2 className="text-lg font-light text-white mb-2">How to Play:</h2>
+            <div className="space-y-2 text-slate-300 text-xs leading-relaxed">
+              <p><span className="text-blue-400 font-semibold">1.</span> Answer trivia to unlock a puzzle</p>
+              <p><span className="text-blue-400 font-semibold">2.</span> Then solve ONE of 2 puzzle types!</p>
+              <p><span className="text-blue-400 font-semibold">3.</span> Earn gems for correct first attempts!</p>
+              
+              <div className="mt-3 space-y-2">
+                <p className="font-semibold text-white text-xs">PUZZLE TYPE 1: TILE FLIP</p>
+                <div className="text-xs space-y-1 ml-2">
+                  <p>• Goal: Find the ONE tile that makes all tiles the same color!</p>
+                  <p>• You'll see a grid with scrambled colored and dark tiles</p>
+                  <p>• When you tap any tile, 5 tiles flip (the tile you tapped + tiles above, below, left, right)</p>
+                  <p>• Remember: Only ONE tapped tile solves the puzzle!</p>
+                </div>
+                
+                <p className="font-semibold text-white text-xs mt-2">PUZZLE TYPE 2: WORD SCRAMBLE</p>
+                <div className="text-xs space-y-1 ml-2">
+                  <p>• Unscramble the letters to spell a word or phrase</p>
+                  <p>• Type your answer and submit</p>
+                </div>
+              </div>
+              
+              <p className="text-xs text-yellow-400 pt-2">⚠️ Think carefully - only your first attempt counts towards gems!</p>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <button
+              onClick={() => setShowAboutGems(true)}
+              className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+            >
+              💎 About Gems
+            </button>
+            
+            <button
+              onClick={handlePlay}
+              className="w-full px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-lg font-light tracking-wide"
+            >
+              <Play className="w-5 h-5" />
+              <span>START</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-      return null;
-    };
+  // Category Selection
+  if (screen === 'category_select') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+        <div className="absolute top-4 right-4">
+          <button 
+            onClick={() => setShowGemBreakdown(true)}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="text-white text-xs font-light">GEMS</div>
+            <div className="text-white text-2xl font-bold">
+              💎 {triviaScore + puzzleScore - gemsSpent}
+            </div>
+          </button>
+        </div>
+        
+        {/* Gem Breakdown Popup */}
+        {showGemBreakdown && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
+              
+              <div className="space-y-6 text-slate-300">
+                <div>
+                  <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
+                  <div className="space-y-2 ml-3">
+                    <p className="flex justify-between">
+                      <span>💎 Trivia:</span>
+                      <span className="text-white font-bold">{triviaScore}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>💎 Puzzles:</span>
+                      <span className="text-white font-bold">{puzzleScore}</span>
+                    </p>
+                    {puzzlesSkipped > 0 && (
+                      <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
+                    )}
+                  </div>
+                  <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                    <p className="flex justify-between text-sm">
+                      <span>Subtotal:</span>
+                      <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                {gemsSpent > 0 && (
+                  <div>
+                    <p className="text-red-400 font-semibold mb-3">SPENT:</p>
+                    <div className="ml-3">
+                      <p className="flex justify-between">
+                        <span>💡 Hints used:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                    <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                      <p className="flex justify-between text-sm">
+                        <span>Total spent:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="border-t-2 border-amber-500 pt-4">
+                  <p className="flex justify-between text-xl">
+                    <span className="text-white font-bold">💎 TOTAL:</span>
+                    <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowGemBreakdown(false)}
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div className="max-w-2xl w-full space-y-8">
+          <div className="text-center">
+            <div className="text-slate-500 text-sm mb-2">Challenge {currentPuzzleIndex + 1} of 500</div>
+            <h2 className="text-3xl font-light text-white mb-4">
+              Choose Your Category
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {Object.values(CATEGORIES).map((category) => (
+              <button
+                key={category}
+                onClick={() => handleCategorySelect(category)}
+                className="p-6 rounded-xl text-lg font-light transition-all duration-300 bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500"
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<OneMove />);
+  // Trivia Screen
+  if (screen === 'trivia' && currentTriviaQuestion) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+        <div className="absolute top-4 right-4">
+          <button 
+            onClick={() => setShowGemBreakdown(true)}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="text-white text-xs font-light">GEMS</div>
+            <div className="text-white text-2xl font-bold">
+              💎 {triviaScore + puzzleScore - gemsSpent}
+            </div>
+          </button>
+        </div>
+        
+        {/* Gem Breakdown Popup */}
+        {showGemBreakdown && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
+              
+              <div className="space-y-6 text-slate-300">
+                <div>
+                  <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
+                  <div className="space-y-2 ml-3">
+                    <p className="flex justify-between">
+                      <span>💎 Trivia:</span>
+                      <span className="text-white font-bold">{triviaScore}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>💎 Puzzles:</span>
+                      <span className="text-white font-bold">{puzzleScore}</span>
+                    </p>
+                    {puzzlesSkipped > 0 && (
+                      <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
+                    )}
+                  </div>
+                  <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                    <p className="flex justify-between text-sm">
+                      <span>Subtotal:</span>
+                      <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                {gemsSpent > 0 && (
+                  <div>
+                    <p className="text-red-400 font-semibold mb-3">SPENT:</p>
+                    <div className="ml-3">
+                      <p className="flex justify-between">
+                        <span>💡 Hints used:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                    <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                      <p className="flex justify-between text-sm">
+                        <span>Total spent:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="border-t-2 border-amber-500 pt-4">
+                  <p className="flex justify-between text-xl">
+                    <span className="text-white font-bold">💎 TOTAL:</span>
+                    <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowGemBreakdown(false)}
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div className="max-w-2xl w-full space-y-8 mt-16">
+          <div className="text-center">
+            <div className="text-slate-500 text-sm mb-2">
+              {selectedCategory} • Question {currentPuzzleIndex + 1} of 500
+            </div>
+            <h2 className="text-3xl font-light text-white mb-8">
+              {currentTriviaQuestion.q}
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {shuffledChoices.map((choice, index) => (
+              <button
+                key={index}
+                onClick={() => handleAnswerSelect(choice)}
+                disabled={showResult}
+                className={`
+                  p-6 rounded-xl text-lg font-light transition-all duration-300
+                  ${showResult && choice === selectedAnswer && choice === currentTriviaQuestion.a
+                    ? 'bg-green-600 text-white scale-105'
+                    : showResult && choice === selectedAnswer && choice !== currentTriviaQuestion.a
+                    ? 'bg-red-600 text-white'
+                    : showResult
+                    ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed'
+                    : 'bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500'
+                  }
+                `}
+              >
+                {choice}
+              </button>
+            ))}
+          </div>
+          
+          {showResult && selectedAnswer === currentTriviaQuestion.a && (
+            <div className="text-center text-2xl font-light text-green-400 animate-pulse">
+              Correct! ✓
+            </div>
+          )}
+          
+          {showResult && selectedAnswer !== currentTriviaQuestion.a && (
+            <div className="text-center space-y-2">
+              <div className="text-2xl font-light text-red-400 animate-pulse">
+                Incorrect!
+              </div>
+              {showCorrectAnswer && (
+                <div className="text-lg text-white">
+                  The answer is: <span className="font-semibold text-green-400">{currentTriviaQuestion.a}</span>
+                </div>
+              )}
+              {!triviaFirstAttempt && (
+                <div className="text-sm text-slate-400">
+                  (No points - first attempt failed)
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Tile Flip Puzzle
+  if (screen === 'puzzle_tile' && currentPuzzle) {
+    const gridSize = currentPuzzle.size;
+    const tileSize = gridSize === 3 ? 'w-24 h-24' : gridSize === 4 ? 'w-20 h-20' : 'w-16 h-16';
+    const tileColor = TILE_COLORS[currentPuzzle.colorIndex];
+    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const canAffordHint1 = totalGems >= 50;
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+        <div className="absolute top-4 right-4">
+          <button 
+            onClick={() => setShowGemBreakdown(true)}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="text-white text-xs font-light">GEMS</div>
+            <div className="text-white text-2xl font-bold">
+              💎 {totalGems}
+            </div>
+          </button>
+        </div>
+        
+        {/* Gem Breakdown Popup */}
+        {showGemBreakdown && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
+              
+              <div className="space-y-6 text-slate-300">
+                <div>
+                  <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
+                  <div className="space-y-2 ml-3">
+                    <p className="flex justify-between">
+                      <span>💎 Trivia:</span>
+                      <span className="text-white font-bold">{triviaScore}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>💎 Puzzles:</span>
+                      <span className="text-white font-bold">{puzzleScore}</span>
+                    </p>
+                    {puzzlesSkipped > 0 && (
+                      <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
+                    )}
+                  </div>
+                  <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                    <p className="flex justify-between text-sm">
+                      <span>Subtotal:</span>
+                      <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                {gemsSpent > 0 && (
+                  <div>
+                    <p className="text-red-400 font-semibold mb-3">SPENT:</p>
+                    <div className="ml-3">
+                      <p className="flex justify-between">
+                        <span>💡 Hints used:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                    <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                      <p className="flex justify-between text-sm">
+                        <span>Total spent:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="border-t-2 border-amber-500 pt-4">
+                  <p className="flex justify-between text-xl">
+                    <span className="text-white font-bold">💎 TOTAL:</span>
+                    <span className="text-amber-400 font-bold">{totalGems}</span>
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowGemBreakdown(false)}
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div className="space-y-8">
+          <div className="text-center">
+            <p className="text-white text-lg font-light">Tile Flip Challenge</p>
+            <p className="text-slate-400 text-sm mt-2">Make all tiles match!</p>
+            {!puzzleFirstAttempt && (
+              <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
+            )}
+          </div>
+          
+          <div 
+            className="inline-grid gap-2 p-6 bg-slate-800/30 rounded-2xl backdrop-blur-sm"
+            style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
+          >
+            {grid.map((row, rowIndex) => (
+              row.map((tile, colIndex) => (
+                <button
+                  key={`${rowIndex}-${colIndex}`}
+                  onClick={() => handleTileTap(rowIndex, colIndex)}
+                  disabled={processing}
+                  className={`
+                    ${tileSize}
+                    rounded-lg
+                    transition-all duration-300
+                    ${tile === 1 
+                      ? `bg-gradient-to-br ${tileColor.from} ${tileColor.to} shadow-lg ${tileColor.shadow} hover:shadow-${tileColor.shadow}/70 hover:scale-105` 
+                      : 'bg-slate-800 border-2 border-slate-700'
+                    }
+                    ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}
+                    ${hintLevel >= 1 && rowIndex === currentPuzzle.solution.row && colIndex === currentPuzzle.solution.col ? 'hint-glow' : ''}
+                  `}
+                />
+              ))
+            ))}
+          </div>
+          
+          <div className="text-center space-y-3">
+            <button
+              onClick={handleHint1}
+              disabled={!canAffordHint1 || hintLevel >= 1}
+              className={`px-6 py-3 rounded-lg text-sm transition-all duration-300 ${
+                canAffordHint1 && hintLevel < 1
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer'
+                  : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              }`}
+            >
+              💡 Hint 1 (50 gems)
+            </button>
+            
+            <button
+              onClick={() => setShowSkipConfirm(true)}
+              className="block w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300"
+            >
+              ⏭️ Skip Puzzle (Free, 0 gems)
+            </button>
+          </div>
+        </div>
+        
+        {/* Skip Confirmation Popup */}
+        {showSkipConfirm && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
+              <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
+              
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowSkipConfirm(false)}
+                  className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSkipPuzzle}
+                  className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Word Scramble Puzzle
+  if (screen === 'puzzle_word' && currentPuzzle) {
+    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const canAffordHint1 = totalGems >= 50;
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+        <div className="absolute top-4 right-4">
+          <button 
+            onClick={() => setShowGemBreakdown(true)}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+          >
+            <div className="text-white text-xs font-light">GEMS</div>
+            <div className="text-white text-2xl font-bold">
+              💎 {totalGems}
+            </div>
+          </button>
+        </div>
+        
+        {/* Gem Breakdown Popup */}
+        {showGemBreakdown && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
+              
+              <div className="space-y-6 text-slate-300">
+                <div>
+                  <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
+                  <div className="space-y-2 ml-3">
+                    <p className="flex justify-between">
+                      <span>💎 Trivia:</span>
+                      <span className="text-white font-bold">{triviaScore}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span>💎 Puzzles:</span>
+                      <span className="text-white font-bold">{puzzleScore}</span>
+                    </p>
+                    {puzzlesSkipped > 0 && (
+                      <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
+                    )}
+                  </div>
+                  <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                    <p className="flex justify-between text-sm">
+                      <span>Subtotal:</span>
+                      <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                {gemsSpent > 0 && (
+                  <div>
+                    <p className="text-red-400 font-semibold mb-3">SPENT:</p>
+                    <div className="ml-3">
+                      <p className="flex justify-between">
+                        <span>💡 Hints used:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                    <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                      <p className="flex justify-between text-sm">
+                        <span>Total spent:</span>
+                        <span className="text-white font-bold">-{gemsSpent}</span>
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="border-t-2 border-amber-500 pt-4">
+                  <p className="flex justify-between text-xl">
+                    <span className="text-white font-bold">💎 TOTAL:</span>
+                    <span className="text-amber-400 font-bold">{totalGems}</span>
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowGemBreakdown(false)}
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
+        <div className="max-w-2xl w-full space-y-8">
+          <div className="text-center">
+            <p className="text-white text-lg font-light">Word Scramble Challenge</p>
+            <p className="text-slate-400 text-sm mt-2">Unscramble the letters!</p>
+            {!puzzleFirstAttempt && (
+              <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
+            )}
+          </div>
+          
+          <div className="bg-slate-800/50 rounded-xl p-8 text-center space-y-6">
+            <div className="text-4xl font-light text-white tracking-widest">
+              {scrambledWord}
+            </div>
+            
+            {hintLevel >= 1 && revealedLetters && (
+              <div className="text-2xl text-yellow-400 font-semibold">
+                Hint: Starts with "{revealedLetters}"
+              </div>
+            )}
+            
+            <input
+              type="text"
+              value={userWord}
+              onChange={(e) => setUserWord(e.target.value.toUpperCase())}
+              placeholder="Type your answer..."
+              className="w-full px-6 py-4 bg-slate-900 text-white text-center text-2xl rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none"
+              maxLength={scrambledWord.length}
+            />
+            
+            <button
+              onClick={handleWordSubmit}
+              className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg font-light"
+            >
+              Submit Answer
+            </button>
+            
+            <button
+              onClick={handleHint1}
+              disabled={!canAffordHint1 || hintLevel >= 1}
+              className={`w-full px-6 py-3 rounded-lg text-sm transition-all duration-300 ${
+                canAffordHint1 && hintLevel < 1
+                  ? 'bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer'
+                  : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              }`}
+            >
+              💡 Hint 1 (50 gems)
+            </button>
+            
+            <button
+              onClick={() => setShowSkipConfirm(true)}
+              className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300"
+            >
+              ⏭️ Skip Puzzle (Free, 0 gems)
+            </button>
+          </div>
+        </div>
+        
+        {/* Skip Confirmation Popup */}
+        {showSkipConfirm && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
+              <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
+              
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowSkipConfirm(false)}
+                  className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSkipPuzzle}
+                  className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Success Screen
+  if (screen === 'success') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+        <div className="text-center space-y-8">
+          <h2 className="text-5xl font-extralight text-white tracking-wider">
+            Solved! ✓
+          </h2>
+          
+          <div className="max-w-md mx-auto bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <p className="text-slate-400 text-sm font-light mb-2">
+              {currentPuzzle.trivia.q}
+            </p>
+            <p className="text-white text-2xl font-light">
+              {currentPuzzle.trivia.a}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Complete Screen
+  if (screen === 'complete') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800 flex items-center justify-center p-6">
+        <div className="text-center space-y-8 max-w-2xl">
+          <h2 className="text-5xl font-extralight text-white tracking-wider mb-4">
+            Complete! 🎉
+          </h2>
+          
+          <div className="bg-slate-800/50 rounded-xl p-8 border border-yellow-400/30">
+            <div className="grid grid-cols-2 gap-4 text-white">
+              <div>
+                <div className="text-3xl font-light">{triviaScore}</div>
+                <div className="text-xs text-slate-400">Trivia Gems</div>
+              </div>
+              <div>
+                <div className="text-3xl font-light">{puzzleScore}</div>
+                <div className="text-xs text-slate-400">Puzzle Gems</div>
+              </div>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => {
+              localStorage.removeItem('oneMoveSave_v4');
+              setScreen('home');
+              setCurrentPuzzleIndex(0);
+              setTriviaScore(0);
+              setPuzzleScore(0);
+              setGemsSpent(0);
+              setPuzzlesSkipped(0);
+            }}
+            className="px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light tracking-wide"
+          >
+            Play Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<OneMove />);
   </script>
 </body>
 </html>
