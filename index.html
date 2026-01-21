@@ -39,6 +39,10 @@
       animation: glow-pulse 1.5s ease-in-out infinite;
       border: 3px solid #fbbf24 !important;
     }
+    .hint-area-glow {
+      animation: glow-pulse 2s ease-in-out infinite;
+      border: 2px solid #fbbf24 !important;
+    }
   </style>
 </head>
 <body>
@@ -191,6 +195,8 @@ const OneMove = () => {
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
   const [revealedLetters, setRevealedLetters] = useState('');
+  const [hintDirection, setHintDirection] = useState(null); // 'row' or 'col' for Hint 1
+  const [hintValue, setHintValue] = useState(null); // which row/col number
 
   // Splash screen timer
   useEffect(() => {
@@ -377,6 +383,8 @@ const OneMove = () => {
         setPuzzleFirstAttempt(true);
         setFailCount(0);
         setHintLevel(0);
+        setHintDirection(null);
+        setHintValue(null);
       }, 2000);
     } else {
       setTriviaFirstAttempt(false);
@@ -528,10 +536,27 @@ const OneMove = () => {
     setHintLevel(1);
     saveProgress({ gemsSpent: newGemsSpent });
     
+    // For tile flip, randomly highlight row OR column
+    if (currentPuzzle.type === PUZZLE_TYPES.TILE_FLIP) {
+      const useRow = Math.random() > 0.5;
+      setHintDirection(useRow ? 'row' : 'col');
+      setHintValue(useRow ? currentPuzzle.solution.row : currentPuzzle.solution.col);
+    }
+    
     // For word scramble, reveal first letter
     if (currentPuzzle.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
       setRevealedLetters(currentPuzzle.answer[0]);
     }
+  };
+
+  const handleHint2 = () => {
+    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    if (totalGems < 100 || hintLevel < 1) return; // Not enough gems or haven't used Hint 1
+    
+    const newGemsSpent = gemsSpent + 100;
+    setGemsSpent(newGemsSpent);
+    setHintLevel(2);
+    saveProgress({ gemsSpent: newGemsSpent });
   };
 
   // Splash Screen
@@ -1044,28 +1069,41 @@ const OneMove = () => {
             style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
           >
             {grid.map((row, rowIndex) => (
-              row.map((tile, colIndex) => (
-                <button
-                  key={`${rowIndex}-${colIndex}`}
-                  onClick={() => handleTileTap(rowIndex, colIndex)}
-                  disabled={processing}
-                  className={`
-                    ${tileSize}
-                    rounded-lg
-                    transition-all duration-300
-                    ${tile === 1 
-                      ? `bg-gradient-to-br ${tileColor.from} ${tileColor.to} shadow-lg ${tileColor.shadow} hover:shadow-${tileColor.shadow}/70 hover:scale-105` 
-                      : 'bg-slate-800 border-2 border-slate-700'
-                    }
-                    ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}
-                    ${hintLevel >= 1 && rowIndex === currentPuzzle.solution.row && colIndex === currentPuzzle.solution.col ? 'hint-glow' : ''}
-                  `}
-                />
-              ))
+              row.map((tile, colIndex) => {
+                const isHintArea = hintLevel >= 1 && (
+                  (hintDirection === 'row' && rowIndex === hintValue) ||
+                  (hintDirection === 'col' && colIndex === hintValue)
+                );
+                
+                return (
+                  <button
+                    key={`${rowIndex}-${colIndex}`}
+                    onClick={() => handleTileTap(rowIndex, colIndex)}
+                    disabled={processing}
+                    className={`
+                      ${tileSize}
+                      rounded-lg
+                      transition-all duration-300
+                      ${tile === 1 
+                        ? `bg-gradient-to-br ${tileColor.from} ${tileColor.to} shadow-lg ${tileColor.shadow} hover:shadow-${tileColor.shadow}/70 hover:scale-105` 
+                        : 'bg-slate-800 border-2 border-slate-700'
+                      }
+                      ${processing ? 'cursor-not-allowed' : 'cursor-pointer'}
+                      ${isHintArea ? 'hint-area-glow' : ''}
+                    `}
+                  />
+                );
+              })
             ))}
           </div>
           
           <div className="text-center space-y-3">
+            {hintLevel >= 2 && (
+              <div className="mb-4 text-yellow-400 text-lg font-semibold">
+                Pattern: {currentPuzzle.pattern === 'cross' ? 'Cross (+)' : currentPuzzle.pattern === 'x' ? 'X Pattern' : 'Square (3x3)'}
+              </div>
+            )}
+            
             <button
               onClick={handleHint1}
               disabled={!canAffordHint1 || hintLevel >= 1}
@@ -1077,6 +1115,20 @@ const OneMove = () => {
             >
               💡 Hint 1 (50 gems)
             </button>
+            
+            {hintLevel >= 1 && (
+              <button
+                onClick={handleHint2}
+                disabled={totalGems < 100 || hintLevel >= 2}
+                className={`px-6 py-3 rounded-lg text-sm transition-all duration-300 ${
+                  totalGems >= 100 && hintLevel < 2
+                    ? 'bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer'
+                    : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                }`}
+              >
+                💡 Hint 2 (100 gems)
+              </button>
+            )}
             
             <button
               onClick={() => setShowSkipConfirm(true)}
