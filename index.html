@@ -315,6 +315,7 @@ const OneMove = () => {
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
   const [highlightedArea, setHighlightedArea] = useState(null);
+  const [usedWords, setUsedWords] = useState([]);
 
   // Load/save progress
   useEffect(() => {
@@ -326,6 +327,7 @@ const OneMove = () => {
       setPuzzleScore(data.puzzleScore || 0);
       setGemsSpent(data.gemsSpent || 0);
       setPuzzlesSkipped(data.puzzlesSkipped || 0);
+      setUsedWords(data.usedWords || []);
     }
   }, []);
 
@@ -346,6 +348,7 @@ const OneMove = () => {
       puzzleScore,
       gemsSpent,
       puzzlesSkipped,
+      usedWords,
       ...data
     }));
   };
@@ -431,8 +434,22 @@ const OneMove = () => {
   };
 
   const generateWordScramble = () => {
-    // Pick random word from scramble bank
-    const scrambleItem = SCRAMBLE_BANK[Math.floor(Math.random() * SCRAMBLE_BANK.length)];
+    // Pick random word from scramble bank, avoiding recently used words
+    let scrambleItem;
+    let attempts = 0;
+    do {
+      scrambleItem = SCRAMBLE_BANK[Math.floor(Math.random() * SCRAMBLE_BANK.length)];
+      attempts++;
+    } while (usedWords.includes(scrambleItem.word) && attempts < 50);
+    
+    // Add word to used list and maintain 100-word buffer
+    const newUsedWords = [...usedWords, scrambleItem.word];
+    if (newUsedWords.length > 100) {
+      newUsedWords.shift(); // Remove oldest word
+    }
+    setUsedWords(newUsedWords);
+    saveProgress({ usedWords: newUsedWords });
+    
     const word = scrambleItem.word;
     const letters = word.split('');
     for (let i = letters.length - 1; i > 0; i--) {
@@ -628,18 +645,27 @@ const OneMove = () => {
 
   const getPrefilledWord = () => {
     const answer = currentPuzzle.answer;
-    let prefilled = '';
+    const currentTyped = userWord.toUpperCase();
+    let prefilled = currentTyped;
     
     if (hintLevel === 1) {
-      // First letter
-      prefilled = answer[0];
+      // Reveal up to first letter (or keep what user has if they typed more)
+      const targetLength = 1;
+      if (currentTyped.length < targetLength) {
+        prefilled = answer.substring(0, targetLength);
+      }
     } else if (hintLevel === 2) {
-      // First 3 letters
-      prefilled = answer.substring(0, Math.min(3, answer.length));
+      // Reveal up to first 3 letters
+      const targetLength = Math.min(3, answer.length);
+      if (currentTyped.length < targetLength) {
+        prefilled = answer.substring(0, targetLength);
+      }
     } else if (hintLevel === 3) {
-      // All but last 2
-      const numToReveal = Math.max(1, answer.length - 2);
-      prefilled = answer.substring(0, numToReveal);
+      // Reveal all but last 2
+      const targetLength = Math.max(1, answer.length - 2);
+      if (currentTyped.length < targetLength) {
+        prefilled = answer.substring(0, targetLength);
+      }
     } else if (hintLevel >= 4) {
       // Full answer
       prefilled = answer;
@@ -650,7 +676,10 @@ const OneMove = () => {
 
   useEffect(() => {
     if (screen === 'puzzle_word' && hintLevel > 0) {
-      setUserWord(getPrefilledWord());
+      const newWord = getPrefilledWord();
+      if (newWord !== userWord) {
+        setUserWord(newWord);
+      }
     }
   }, [hintLevel]);
 
@@ -955,7 +984,7 @@ const OneMove = () => {
         
         <div className="max-w-2xl w-full space-y-8">
           <div className="text-center">
-            <div className="text-slate-500 text-sm mb-2">Challenge {currentPuzzleIndex + 1} of 500</div>
+            <div className="text-slate-500 text-sm mb-2">Challenge {currentPuzzleIndex + 1}</div>
             <h2 className="text-3xl font-light text-white mb-4">
               Choose Your Category
             </h2>
@@ -1091,10 +1120,15 @@ const OneMove = () => {
             {!puzzleFirstAttempt && (
               <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
             )}
-            {hintLevel >= 2 && (
-              <p className="text-amber-400 text-sm mt-2">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
-            )}
           </div>
+          
+          {hintLevel >= 2 && (
+            <div className="text-center">
+              <div className="inline-block bg-amber-500/20 border-2 border-amber-500 rounded-lg px-6 py-3">
+                <p className="text-amber-400 text-lg font-bold">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
+              </div>
+            </div>
+          )}
           
           <div 
             className="inline-grid gap-2 p-6 bg-slate-800/30 rounded-2xl backdrop-blur-sm"
@@ -1259,7 +1293,7 @@ const OneMove = () => {
         
         <div className="max-w-2xl w-full space-y-6">
           <div className="text-center">
-            <p className="text-slate-500 text-sm">{currentPuzzle.category}</p>
+            <p className="text-amber-400 text-xl font-semibold mb-2">{currentPuzzle.category}</p>
             <p className="text-white text-lg font-light">Word Scramble Challenge</p>
             <p className="text-slate-400 text-sm mt-2">Unscramble the letters!</p>
             {!puzzleFirstAttempt && (
