@@ -646,40 +646,42 @@ const OneMove = () => {
   const getPrefilledWord = () => {
     const answer = currentPuzzle.answer;
     const currentTyped = userWord.toUpperCase();
-    let prefilled = currentTyped;
     
+    let targetLength = 0;
     if (hintLevel === 1) {
-      // Reveal up to first letter (or keep what user has if they typed more)
-      const targetLength = 1;
-      if (currentTyped.length < targetLength) {
-        prefilled = answer.substring(0, targetLength);
-      }
+      targetLength = 1;
     } else if (hintLevel === 2) {
-      // Reveal up to first 3 letters
-      const targetLength = Math.min(3, answer.length);
-      if (currentTyped.length < targetLength) {
-        prefilled = answer.substring(0, targetLength);
-      }
+      targetLength = Math.min(3, answer.length);
     } else if (hintLevel === 3) {
-      // Reveal all but last 2
-      const targetLength = Math.max(1, answer.length - 2);
-      if (currentTyped.length < targetLength) {
-        prefilled = answer.substring(0, targetLength);
-      }
+      targetLength = Math.max(1, answer.length - 2);
     } else if (hintLevel >= 4) {
-      // Full answer
-      prefilled = answer;
+      targetLength = answer.length;
     }
     
-    return prefilled;
+    // Check how many correct letters user already has from the start
+    let correctLetters = 0;
+    for (let i = 0; i < Math.min(currentTyped.length, answer.length); i++) {
+      if (currentTyped[i] === answer[i]) {
+        correctLetters++;
+      } else {
+        break; // Stop at first mismatch
+      }
+    }
+    
+    // Only reveal up to target, keeping what user correctly typed
+    if (correctLetters >= targetLength) {
+      // User already has enough correct letters
+      return currentTyped;
+    } else {
+      // Reveal up to target length
+      return answer.substring(0, targetLength);
+    }
   };
 
   useEffect(() => {
     if (screen === 'puzzle_word' && hintLevel > 0) {
       const newWord = getPrefilledWord();
-      if (newWord !== userWord) {
-        setUserWord(newWord);
-      }
+      setUserWord(newWord);
     }
   }, [hintLevel]);
 
@@ -732,7 +734,10 @@ const OneMove = () => {
   };
 
   const handlePlay = () => {
-    setScreen('category_select');
+    // Auto-select random category
+    const categories = Object.values(CATEGORIES);
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+    handleCategorySelect(randomCategory);
   };
 
   const handleHomeClick = () => {
@@ -1031,8 +1036,8 @@ const OneMove = () => {
         
         <div className="max-w-2xl w-full space-y-8 mt-16">
           <div className="text-center">
-            <div className="text-slate-500 text-sm mb-2">
-              {selectedCategory} • Question {currentPuzzleIndex + 1} of 500
+            <div className="mb-4">
+              <span className="text-amber-400 text-2xl font-bold uppercase">{selectedCategory}</span>
             </div>
             <h2 className="text-3xl font-light text-white mb-8">
               {currentTriviaQuestion.q}
@@ -1088,7 +1093,7 @@ const OneMove = () => {
   // Tile Flip Puzzle
   if (screen === 'puzzle_tile' && currentPuzzle) {
     const gridSize = currentPuzzle.size;
-    const tileSize = gridSize === 3 ? 'w-24 h-24' : gridSize === 4 ? 'w-20 h-20' : 'w-16 h-16';
+    const tileSize = gridSize === 3 ? 'w-20 h-20' : gridSize === 4 ? 'w-16 h-16' : 'w-12 h-12';
     const tileColor = TILE_COLORS[currentPuzzle.colorIndex];
     const totalGems = triviaScore + puzzleScore - gemsSpent;
     
@@ -1113,10 +1118,10 @@ const OneMove = () => {
           </button>
         </div>
         
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="text-center">
             <p className="text-white text-lg font-light">Tile Flip Challenge</p>
-            <p className="text-slate-400 text-sm mt-2">Make all tiles match!</p>
+            <p className="text-slate-400 text-sm mt-1">Make all tiles match!</p>
             {!puzzleFirstAttempt && (
               <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
             )}
@@ -1124,14 +1129,14 @@ const OneMove = () => {
           
           {hintLevel >= 2 && (
             <div className="text-center">
-              <div className="inline-block bg-amber-500/20 border-2 border-amber-500 rounded-lg px-6 py-3">
-                <p className="text-amber-400 text-lg font-bold">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
+              <div className="inline-block bg-amber-500/20 border-2 border-amber-500 rounded-lg px-4 py-2">
+                <p className="text-amber-400 text-base font-bold">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
               </div>
             </div>
           )}
           
           <div 
-            className="inline-grid gap-2 p-6 bg-slate-800/30 rounded-2xl backdrop-blur-sm"
+            className="inline-grid gap-2 p-4 bg-slate-800/30 rounded-2xl backdrop-blur-sm"
             style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
           >
             {grid.map((row, rowIndex) => (
