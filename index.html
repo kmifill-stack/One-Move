@@ -316,6 +316,7 @@ const OneMove = () => {
   const [hintLevel, setHintLevel] = useState(0);
   const [highlightedArea, setHighlightedArea] = useState(null);
   const [usedWords, setUsedWords] = useState([]);
+  const [usedTrivia, setUsedTrivia] = useState([]);
 
   // Load/save progress
   useEffect(() => {
@@ -328,6 +329,7 @@ const OneMove = () => {
       setGemsSpent(data.gemsSpent || 0);
       setPuzzlesSkipped(data.puzzlesSkipped || 0);
       setUsedWords(data.usedWords || []);
+      setUsedTrivia(data.usedTrivia || []);
     }
   }, []);
 
@@ -349,6 +351,7 @@ const OneMove = () => {
       gemsSpent,
       puzzlesSkipped,
       usedWords,
+      usedTrivia,
       ...data
     }));
   };
@@ -442,9 +445,9 @@ const OneMove = () => {
       attempts++;
     } while (usedWords.includes(scrambleItem.word) && attempts < 50);
     
-    // Add word to used list and maintain 100-word buffer
+    // Add word to used list and maintain 500-word buffer
     const newUsedWords = [...usedWords, scrambleItem.word];
-    if (newUsedWords.length > 100) {
+    if (newUsedWords.length > 500) {
       newUsedWords.shift(); // Remove oldest word
     }
     setUsedWords(newUsedWords);
@@ -466,7 +469,22 @@ const OneMove = () => {
 
   const handleCategorySelect = (category) => {
     const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
-    const question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
+    
+    // Pick a question that hasn't been used recently (500-question buffer)
+    let question;
+    let attempts = 0;
+    do {
+      question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
+      attempts++;
+    } while (usedTrivia.includes(question.q) && attempts < 50);
+    
+    // Add question to used list and maintain 500-question buffer
+    const newUsedTrivia = [...usedTrivia, question.q];
+    if (newUsedTrivia.length > 500) {
+      newUsedTrivia.shift(); // Remove oldest question
+    }
+    setUsedTrivia(newUsedTrivia);
+    saveProgress({ usedTrivia: newUsedTrivia });
     
     const choices = [...question.c];
     for (let i = choices.length - 1; i > 0; i--) {
@@ -616,7 +634,11 @@ const OneMove = () => {
   const handleWordSubmit = () => {
     if (processing) return;
     
-    if (userWord.toUpperCase() === currentPuzzle.answer) {
+    // Remove underscores and spaces, compare case-insensitive
+    const cleanUserWord = userWord.replace(/_/g, '').replace(/\s/g, '').toUpperCase();
+    const cleanAnswer = currentPuzzle.answer.replace(/\s/g, '').toUpperCase();
+    
+    if (cleanUserWord === cleanAnswer) {
       playSound('success');
       
       if (puzzleFirstAttempt) {
@@ -650,13 +672,15 @@ const OneMove = () => {
   };
 
   const revealRandomLetters = (numLetters) => {
-    const answer = currentPuzzle.answer;
+    const answer = currentPuzzle.answer.toUpperCase();
     const currentTyped = userWord.toUpperCase();
     
-    // Find all positions that are not yet revealed
+    // Find all positions that are not yet revealed (excluding spaces)
     const hiddenPositions = [];
     for (let i = 0; i < answer.length; i++) {
-      if (i >= currentTyped.length || currentTyped[i] !== answer[i]) {
+      if (answer[i] === ' ') continue; // Skip spaces
+      const currentChar = i < currentTyped.length ? currentTyped[i] : '_';
+      if (currentChar === '_' || currentChar !== answer[i]) {
         hiddenPositions.push(i);
       }
     }
@@ -675,43 +699,55 @@ const OneMove = () => {
       hiddenPositions.splice(randomIndex, 1);
     }
     
-    // Build new word with revealed letters
-    let newWord = currentTyped.split('');
-    // Extend array if needed
-    while (newWord.length < answer.length) {
-      newWord.push('');
+    // Build new word with revealed letters and underscores
+    let newWord = [];
+    for (let i = 0; i < answer.length; i++) {
+      if (answer[i] === ' ') {
+        newWord.push(' '); // Keep spaces
+      } else if (revealedPositions.includes(i)) {
+        newWord.push(answer[i]); // Reveal this position
+      } else if (i < currentTyped.length && currentTyped[i] !== '_' && currentTyped[i] === answer[i]) {
+        newWord.push(currentTyped[i]); // Keep correct user input
+      } else {
+        newWord.push('_'); // Show underscore for hidden
+      }
     }
-    
-    // Reveal the selected positions
-    revealedPositions.forEach(pos => {
-      newWord[pos] = answer[pos];
-    });
     
     return newWord.join('');
   };
+  
+  const initializeWordWithUnderscores = () => {
+    if (!currentPuzzle) return '';
+    const answer = currentPuzzle.answer.toUpperCase();
+    return answer.split('').map(char => char === ' ' ? ' ' : '_').join('');
+  };
 
   useEffect(() => {
-    if (screen === 'puzzle_word' && hintLevel > 0 && currentPuzzle) {
-      let newWord = userWord;
-      
-      if (hintLevel === 1) {
+    if (screen === 'puzzle_word' && currentPuzzle) {
+      if (hintLevel === 0) {
+        // Initialize with underscores
+        setUserWord(initializeWordWithUnderscores());
+      } else if (hintLevel === 1) {
         // Reveal 1 random letter
-        newWord = revealRandomLetters(1);
+        setUserWord(revealRandomLetters(1));
       } else if (hintLevel === 2) {
         // Reveal 2 more random letters (total 3)
-        newWord = revealRandomLetters(3);
+        setUserWord(revealRandomLetters(3));
       } else if (hintLevel === 3) {
         // Reveal all but last 2
-        const answer = currentPuzzle.answer;
-        newWord = answer.substring(0, answer.length - 2);
+        const answer = currentPuzzle.answer.toUpperCase();
+        const underscored = answer.split('').map((char, i) => {
+          if (char === ' ') return ' ';
+          if (i < answer.length - 2) return char;
+          return '_';
+        }).join('');
+        setUserWord(underscored);
       } else if (hintLevel >= 4) {
         // Full answer
-        newWord = currentPuzzle.answer;
+        setUserWord(currentPuzzle.answer.toUpperCase());
       }
-      
-      setUserWord(newWord);
     }
-  }, [hintLevel]);
+  }, [hintLevel, screen, currentPuzzle]);
 
   const handleHint1 = () => {
     const totalGems = triviaScore + puzzleScore - gemsSpent;
