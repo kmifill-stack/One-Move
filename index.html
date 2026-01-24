@@ -437,15 +437,15 @@ const OneMove = () => {
   };
 
   const generateWordScramble = () => {
-    // Pick random word from scramble bank, avoiding recently used words
+    // Pick random word from scramble bank (5+ letters only), avoiding recently used words
     let scrambleItem;
     let attempts = 0;
     do {
       scrambleItem = SCRAMBLE_BANK[Math.floor(Math.random() * SCRAMBLE_BANK.length)];
       attempts++;
-    } while (usedWords.includes(scrambleItem.word) && attempts < 50);
+    } while ((usedWords.includes(scrambleItem.word) || scrambleItem.word.length < 5) && attempts < 100);
     
-    // Add word to used list and maintain 100-word buffer
+    // Add word to used list and maintain 500-word buffer
     const newUsedWords = [...usedWords, scrambleItem.word];
     if (newUsedWords.length > 500) {
       newUsedWords.shift(); // Remove oldest word
@@ -505,7 +505,8 @@ const OneMove = () => {
     setSelectedAnswer(answer);
     setShowResult(true);
     
-    if (answer === currentTriviaQuestion.a) {
+    // Case-insensitive comparison
+    if (answer.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()) {
       playSound('success');
       
       if (triviaFirstAttempt) {
@@ -1064,10 +1065,12 @@ const OneMove = () => {
                 disabled={showResult}
                 className={`
                   p-6 rounded-xl text-lg font-light transition-all duration-300
-                  ${showResult && choice === selectedAnswer && choice === currentTriviaQuestion.a
+                  ${showResult && choice === selectedAnswer && choice.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()
                     ? 'bg-green-600 text-white scale-105'
-                    : showResult && choice === selectedAnswer && choice !== currentTriviaQuestion.a
+                    : showResult && choice === selectedAnswer && choice.toLowerCase().trim() !== currentTriviaQuestion.a.toLowerCase().trim()
                     ? 'bg-red-600 text-white'
+                    : showResult && choice.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()
+                    ? 'bg-green-600 text-white animate-pulse'
                     : showResult
                     ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed'
                     : 'bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500'
@@ -1079,13 +1082,13 @@ const OneMove = () => {
             ))}
           </div>
           
-          {showResult && selectedAnswer === currentTriviaQuestion.a && (
+          {showResult && selectedAnswer.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim() && (
             <div className="text-center text-2xl font-light text-green-400 animate-pulse">
               Correct! ✓
             </div>
           )}
           
-          {showResult && selectedAnswer !== currentTriviaQuestion.a && (
+          {showResult && selectedAnswer.toLowerCase().trim() !== currentTriviaQuestion.a.toLowerCase().trim() && (
             <div className="text-center space-y-2">
               <div className="text-2xl font-light text-red-400 animate-pulse">
                 Incorrect!
@@ -1133,6 +1136,9 @@ const OneMove = () => {
         <div className="space-y-4">
           <div className="text-center">
             <p className="text-white text-lg font-light">Tile Flip Challenge</p>
+            {gridSize >= 4 && (
+              <p className="text-orange-400 text-sm font-bold mt-1">⚠️ HARD PUZZLE</p>
+            )}
             <p className="text-slate-400 text-sm mt-1">Make all tiles match!</p>
             {!puzzleFirstAttempt && (
               <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
