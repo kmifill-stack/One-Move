@@ -715,19 +715,19 @@ const OneMove = () => {
     
     return newWord.join('');
   };
-  
-  const initializeWordWithUnderscores = () => {
-    if (!currentPuzzle) return '';
-    const answer = currentPuzzle.answer.toUpperCase();
-    return answer.split('').map(char => char === ' ' ? ' ' : '_').join('');
-  };
 
   useEffect(() => {
-    if (screen === 'puzzle_word' && currentPuzzle) {
-      if (hintLevel === 0) {
-        // Initialize with underscores
-        setUserWord(initializeWordWithUnderscores());
-      } else if (hintLevel === 1) {
+    if (screen === 'puzzle_word' && currentPuzzle && hintLevel === 0 && userWord === '') {
+      // Initialize with underscores only when first entering puzzle
+      const answer = currentPuzzle.answer.toUpperCase();
+      const underscored = answer.split('').map(char => char === ' ' ? ' ' : '_').join('');
+      setUserWord(underscored);
+    }
+  }, [screen, currentPuzzle]);
+  
+  useEffect(() => {
+    if (screen === 'puzzle_word' && currentPuzzle && hintLevel > 0) {
+      if (hintLevel === 1) {
         // Reveal 1 random letter
         setUserWord(revealRandomLetters(1));
       } else if (hintLevel === 2) {
@@ -747,7 +747,7 @@ const OneMove = () => {
         setUserWord(currentPuzzle.answer.toUpperCase());
       }
     }
-  }, [hintLevel, screen, currentPuzzle]);
+  }, [hintLevel]);
 
   const handleHint1 = () => {
     const totalGems = triviaScore + puzzleScore - gemsSpent;
