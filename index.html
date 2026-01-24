@@ -693,22 +693,6 @@ const OneMove = () => {
       setUserWord(newWord);
     }
   }, [hintLevel]);
-      } else if (hintLevel === 3) {
-        // Reveal all but last 2
-        const answer = currentPuzzle.answer.toUpperCase();
-        newWord = answer.split('').map((c, i) => {
-          if (c === ' ') return ' ';
-          if (i < answer.length - 2) return c;
-          return '_';
-        }).join('');
-      } else if (hintLevel >= 4) {
-        // Full answer
-        newWord = currentPuzzle.answer.toUpperCase();
-      }
-      
-      setUserWord(newWord);
-    }
-  }, [hintLevel]);
 
   const handleHint1 = () => {
     const totalGems = triviaScore + puzzleScore - gemsSpent;
