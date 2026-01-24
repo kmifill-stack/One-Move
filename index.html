@@ -532,9 +532,7 @@ const OneMove = () => {
           const puzzle = generateWordScramble();
           setCurrentPuzzle(puzzle);
           setScrambledWord(puzzle.scrambled);
-          // Initialize with underscores for hidden letters
-          const underscored = puzzle.answer.toUpperCase().split('').map(c => c === ' ' ? ' ' : '_').join('');
-          setUserWord(underscored);
+          setUserWord('');
           setHintLevel(0);
           setScreen('puzzle_word');
         }
@@ -669,57 +667,32 @@ const OneMove = () => {
       setPuzzleFirstAttempt(false);
       const newFailCount = failCount + 1;
       setFailCount(newFailCount);
-      // Reset to underscores
-      const underscored = currentPuzzle.answer.toUpperCase().split('').map(c => c === ' ' ? ' ' : '_').join('');
-      setUserWord(underscored);
+      setUserWord('');
     }
-  };
-
-  const revealRandomLetters = (numLetters) => {
-    const answer = currentPuzzle.answer.toUpperCase();
-    const current = userWord.toUpperCase();
-    
-    // Find all underscore positions (hidden letters, excluding spaces)
-    const hiddenPositions = [];
-    for (let i = 0; i < answer.length; i++) {
-      if (answer[i] !== ' ' && current[i] === '_') {
-        hiddenPositions.push(i);
-      }
-    }
-    
-    // If no hidden positions, return current
-    if (hiddenPositions.length === 0) {
-      return current;
-    }
-    
-    // Select random positions to reveal
-    const numToReveal = Math.min(numLetters, hiddenPositions.length);
-    const revealedPositions = [];
-    for (let i = 0; i < numToReveal; i++) {
-      const randomIndex = Math.floor(Math.random() * hiddenPositions.length);
-      revealedPositions.push(hiddenPositions[randomIndex]);
-      hiddenPositions.splice(randomIndex, 1);
-    }
-    
-    // Build new word with revealed letters
-    let newWord = current.split('');
-    revealedPositions.forEach(pos => {
-      newWord[pos] = answer[pos];
-    });
-    
-    return newWord.join('');
   };
 
   useEffect(() => {
     if (screen === 'puzzle_word' && hintLevel > 0 && currentPuzzle) {
-      let newWord = userWord;
+      const answer = currentPuzzle.answer.toUpperCase();
+      let newWord = '';
       
       if (hintLevel === 1) {
-        // Reveal 1 random letter
-        newWord = revealRandomLetters(1);
+        // Reveal first letter
+        newWord = answer[0];
       } else if (hintLevel === 2) {
-        // Reveal 2 more random letters (total 3)
-        newWord = revealRandomLetters(3);
+        // Reveal first 3 letters
+        newWord = answer.substring(0, Math.min(3, answer.length));
+      } else if (hintLevel === 3) {
+        // Reveal all but last 2
+        newWord = answer.substring(0, Math.max(1, answer.length - 2));
+      } else if (hintLevel >= 4) {
+        // Full answer
+        newWord = answer;
+      }
+      
+      setUserWord(newWord);
+    }
+  }, [hintLevel]);
       } else if (hintLevel === 3) {
         // Reveal all but last 2
         const answer = currentPuzzle.answer.toUpperCase();
@@ -1342,27 +1315,25 @@ const OneMove = () => {
         <div className="absolute top-4 right-4">
           <button 
             onClick={() => setShowGemBreakdown(true)}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
-            <div className="text-white text-xs font-light">GEMS</div>
-            <div className="text-white text-2xl font-bold">
-              💎 {totalGems}
-            </div>
+            <span className="text-white text-lg">💎</span>
+            <div className="text-white text-sm font-bold">{totalGems}</div>
           </button>
         </div>
         
-        <div className="max-w-2xl w-full space-y-6">
-          <div className="text-center">
-            <p className="text-amber-400 text-xl font-semibold mb-2">{currentPuzzle.category}</p>
+        <div className="max-w-2xl w-full space-y-4 mt-20">
+          <div className="text-center space-y-3">
+            <p className="text-amber-400 text-2xl font-bold mb-3">{currentPuzzle.category}</p>
             <p className="text-white text-lg font-light">Word Scramble Challenge</p>
-            <p className="text-slate-400 text-sm mt-2">Unscramble the letters!</p>
+            <p className="text-slate-400 text-sm">Unscramble the letters!</p>
             {!puzzleFirstAttempt && (
-              <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
+              <p className="text-yellow-400 text-xs mt-2">⚠️ First attempt failed - no gems</p>
             )}
           </div>
           
-          <div className="bg-slate-800/50 rounded-xl p-8 text-center space-y-6">
-            <div className="text-4xl font-light text-white tracking-widest">
+          <div className="bg-slate-800/50 rounded-xl p-6 text-center space-y-4">
+            <div className="text-3xl font-light text-white tracking-widest mb-4">
               {scrambledWord}
             </div>
             
@@ -1371,13 +1342,15 @@ const OneMove = () => {
               value={userWord}
               onChange={(e) => setUserWord(e.target.value.toUpperCase())}
               placeholder="Type your answer..."
-              className="w-full px-6 py-4 bg-slate-900 text-white text-center text-2xl rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none"
-              maxLength={scrambledWord.length}
+              className="w-full px-6 py-3 bg-slate-900 text-white text-center text-xl rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none"
+              autoCapitalize="characters"
+              autoComplete="off"
+              autoCorrect="off"
             />
             
             <button
               onClick={handleWordSubmit}
-              className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg font-light"
+              className="w-full px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg font-light"
             >
               Submit Answer
             </button>
@@ -1392,7 +1365,7 @@ const OneMove = () => {
                     : 'bg-amber-600 hover:bg-amber-700 text-white'
                 }`}
               >
-                💡 Hint 1: Reveal 1 Letter (-50 gems) {hintLevel >= 1 ? '✓' : ''}
+                💡 Hint 1: First Letter (-50 gems) {hintLevel >= 1 ? '✓' : ''}
               </button>
               
               {hintLevel >= 1 && (
@@ -1405,7 +1378,7 @@ const OneMove = () => {
                       : 'bg-amber-600 hover:bg-amber-700 text-white'
                   }`}
                 >
-                  💡 Hint 2: Reveal 2 More Letters (-100 gems) {hintLevel >= 2 ? '✓' : ''}
+                  💡 Hint 2: First 3 Letters (-100 gems) {hintLevel >= 2 ? '✓' : ''}
                 </button>
               )}
               
