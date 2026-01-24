@@ -445,7 +445,7 @@ const OneMove = () => {
       attempts++;
     } while (usedWords.includes(scrambleItem.word) && attempts < 50);
     
-    // Add word to used list and maintain 500-word buffer
+    // Add word to used list and maintain 100-word buffer
     const newUsedWords = [...usedWords, scrambleItem.word];
     if (newUsedWords.length > 500) {
       newUsedWords.shift(); // Remove oldest word
@@ -470,7 +470,7 @@ const OneMove = () => {
   const handleCategorySelect = (category) => {
     const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
     
-    // Pick a question that hasn't been used recently (500-question buffer)
+    // Pick question not recently used (500-question buffer)
     let question;
     let attempts = 0;
     do {
@@ -478,10 +478,10 @@ const OneMove = () => {
       attempts++;
     } while (usedTrivia.includes(question.q) && attempts < 50);
     
-    // Add question to used list and maintain 500-question buffer
+    // Add to buffer
     const newUsedTrivia = [...usedTrivia, question.q];
     if (newUsedTrivia.length > 500) {
-      newUsedTrivia.shift(); // Remove oldest question
+      newUsedTrivia.shift();
     }
     setUsedTrivia(newUsedTrivia);
     saveProgress({ usedTrivia: newUsedTrivia });
@@ -532,7 +532,9 @@ const OneMove = () => {
           const puzzle = generateWordScramble();
           setCurrentPuzzle(puzzle);
           setScrambledWord(puzzle.scrambled);
-          setUserWord('');
+          // Initialize with underscores for hidden letters
+          const underscored = puzzle.answer.toUpperCase().split('').map(c => c === ' ' ? ' ' : '_').join('');
+          setUserWord(underscored);
           setHintLevel(0);
           setScreen('puzzle_word');
         }
@@ -635,10 +637,10 @@ const OneMove = () => {
     if (processing) return;
     
     // Remove underscores and spaces, compare case-insensitive
-    const cleanUserWord = userWord.replace(/_/g, '').replace(/\s/g, '').toUpperCase();
+    const cleanUser = userWord.replace(/_/g, '').replace(/\s/g, '').toUpperCase();
     const cleanAnswer = currentPuzzle.answer.replace(/\s/g, '').toUpperCase();
     
-    if (cleanUserWord === cleanAnswer) {
+    if (cleanUser === cleanAnswer) {
       playSound('success');
       
       if (puzzleFirstAttempt) {
@@ -667,27 +669,27 @@ const OneMove = () => {
       setPuzzleFirstAttempt(false);
       const newFailCount = failCount + 1;
       setFailCount(newFailCount);
-      setUserWord('');
+      // Reset to underscores
+      const underscored = currentPuzzle.answer.toUpperCase().split('').map(c => c === ' ' ? ' ' : '_').join('');
+      setUserWord(underscored);
     }
   };
 
   const revealRandomLetters = (numLetters) => {
     const answer = currentPuzzle.answer.toUpperCase();
-    const currentTyped = userWord.toUpperCase();
+    const current = userWord.toUpperCase();
     
-    // Find all positions that are not yet revealed (excluding spaces)
+    // Find all underscore positions (hidden letters, excluding spaces)
     const hiddenPositions = [];
     for (let i = 0; i < answer.length; i++) {
-      if (answer[i] === ' ') continue; // Skip spaces
-      const currentChar = i < currentTyped.length ? currentTyped[i] : '_';
-      if (currentChar === '_' || currentChar !== answer[i]) {
+      if (answer[i] !== ' ' && current[i] === '_') {
         hiddenPositions.push(i);
       }
     }
     
-    // If no hidden positions, return current word
+    // If no hidden positions, return current
     if (hiddenPositions.length === 0) {
-      return currentTyped;
+      return current;
     }
     
     // Select random positions to reveal
@@ -699,53 +701,39 @@ const OneMove = () => {
       hiddenPositions.splice(randomIndex, 1);
     }
     
-    // Build new word with revealed letters and underscores
-    let newWord = [];
-    for (let i = 0; i < answer.length; i++) {
-      if (answer[i] === ' ') {
-        newWord.push(' '); // Keep spaces
-      } else if (revealedPositions.includes(i)) {
-        newWord.push(answer[i]); // Reveal this position
-      } else if (i < currentTyped.length && currentTyped[i] !== '_' && currentTyped[i] === answer[i]) {
-        newWord.push(currentTyped[i]); // Keep correct user input
-      } else {
-        newWord.push('_'); // Show underscore for hidden
-      }
-    }
+    // Build new word with revealed letters
+    let newWord = current.split('');
+    revealedPositions.forEach(pos => {
+      newWord[pos] = answer[pos];
+    });
     
     return newWord.join('');
   };
 
   useEffect(() => {
-    if (screen === 'puzzle_word' && currentPuzzle && hintLevel === 0 && userWord === '') {
-      // Initialize with underscores only when first entering puzzle
-      const answer = currentPuzzle.answer.toUpperCase();
-      const underscored = answer.split('').map(char => char === ' ' ? ' ' : '_').join('');
-      setUserWord(underscored);
-    }
-  }, [screen, currentPuzzle]);
-  
-  useEffect(() => {
-    if (screen === 'puzzle_word' && currentPuzzle && hintLevel > 0) {
+    if (screen === 'puzzle_word' && hintLevel > 0 && currentPuzzle) {
+      let newWord = userWord;
+      
       if (hintLevel === 1) {
         // Reveal 1 random letter
-        setUserWord(revealRandomLetters(1));
+        newWord = revealRandomLetters(1);
       } else if (hintLevel === 2) {
         // Reveal 2 more random letters (total 3)
-        setUserWord(revealRandomLetters(3));
+        newWord = revealRandomLetters(3);
       } else if (hintLevel === 3) {
         // Reveal all but last 2
         const answer = currentPuzzle.answer.toUpperCase();
-        const underscored = answer.split('').map((char, i) => {
-          if (char === ' ') return ' ';
-          if (i < answer.length - 2) return char;
+        newWord = answer.split('').map((c, i) => {
+          if (c === ' ') return ' ';
+          if (i < answer.length - 2) return c;
           return '_';
         }).join('');
-        setUserWord(underscored);
       } else if (hintLevel >= 4) {
         // Full answer
-        setUserWord(currentPuzzle.answer.toUpperCase());
+        newWord = currentPuzzle.answer.toUpperCase();
       }
+      
+      setUserWord(newWord);
     }
   }, [hintLevel]);
 
