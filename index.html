@@ -484,6 +484,7 @@ const OneMove = () => {
   const [highlightedArea, setHighlightedArea] = useState(null);
   const [usedWords, setUsedWords] = useState([]);
   const [usedTrivia, setUsedTrivia] = useState([]);
+  const [showInstructionPopup, setShowInstructionPopup] = useState(null);
 
   // Load/save progress
   useEffect(() => {
@@ -972,10 +973,19 @@ const OneMove = () => {
 
   // Splash Screen  
   if (screen === 'splash') {
+    // Auto-advance after 2 seconds or tap to continue
+    React.useEffect(() => {
+      const timer = setTimeout(() => setScreen('home'), 2000);
+      return () => clearTimeout(timer);
+    }, []);
+    
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative inline-block mb-8">
+      <div 
+        className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center cursor-pointer"
+        onClick={() => setScreen('home')}
+      >
+        <div className="text-center space-y-8">
+          <div className="relative inline-block">
             <div 
               className="w-48 h-48 rounded-3xl relative"
               style={{
@@ -995,9 +1005,14 @@ const OneMove = () => {
             </div>
           </div>
           
-          <h1 className="text-7xl font-extralight text-white tracking-wider animate-pulse">
-            ONE MOVE
-          </h1>
+          <div>
+            <h1 className="text-7xl font-extralight text-white tracking-wider mb-4">
+              ONE MOVE
+            </h1>
+            <p className="text-3xl font-light text-blue-300 tracking-wide animate-pulse">
+              WELCOME
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -1058,50 +1073,260 @@ const OneMove = () => {
             ONE MOVE
           </h1>
           
-          <div className="bg-slate-800/50 rounded-xl p-4 text-left space-y-3 border border-slate-700 max-h-[60vh] overflow-y-auto">
-            <h2 className="text-lg font-light text-white mb-2">How to Play:</h2>
-            <div className="space-y-2 text-slate-300 text-xs leading-relaxed">
-              <p><span className="text-blue-400 font-semibold">1.</span> Answer trivia to unlock a puzzle</p>
-              <p><span className="text-blue-400 font-semibold">2.</span> Then solve ONE of 2 puzzle types!</p>
-              <p><span className="text-blue-400 font-semibold">3.</span> Earn gems for correct first attempts!</p>
-              
-              <div className="mt-3 space-y-2">
-                <p className="font-semibold text-white text-xs">PUZZLE TYPE 1: TILE FLIP</p>
-                <div className="text-xs space-y-1 ml-2">
-                  <p>• Goal: Find the ONE tile that makes all tiles the same color!</p>
-                  <p>• You'll see a grid with scrambled colored and dark tiles</p>
-                  <p>• When you tap any tile, 5 tiles flip</p>
-                  <p>• Remember: Only ONE tapped tile solves the puzzle!</p>
-                </div>
-                
-                <p className="font-semibold text-white text-xs mt-2">PUZZLE TYPE 2: WORD SCRAMBLE</p>
-                <div className="text-xs space-y-1 ml-2">
-                  <p>• Unscramble the letters to spell a word</p>
-                  <p>• Type your answer and submit</p>
-                </div>
-              </div>
-              
-              <p className="text-xs text-yellow-400 pt-2">⚠️ Only your first attempt counts towards gems!</p>
-            </div>
+          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <p className="text-slate-300 text-lg font-light mb-2">Challenge {currentPuzzleIndex + 1}</p>
+            <p className="text-slate-400 text-sm">Answer trivia • Solve puzzles • Earn gems</p>
           </div>
           
           <div className="space-y-3">
+            <button
+              onClick={handlePlay}
+              className="w-full px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-xl font-light tracking-wide shadow-lg"
+            >
+              <Play className="w-6 h-6" />
+              <span>PLAY</span>
+            </button>
+            
+            <button
+              onClick={() => setScreen('instructions')}
+              className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+            >
+              HOW TO PLAY
+            </button>
+            
             <button
               onClick={() => setShowAboutGems(true)}
               className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               💎 About Gems
             </button>
-            
-            <button
-              onClick={handlePlay}
-              className="w-full px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-lg font-light tracking-wide"
-            >
-              <Play className="w-5 h-5" />
-              <span>START</span>
-            </button>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  // Instructions Screen
+  if (screen === 'instructions') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-6">
+        <button 
+          onClick={() => setScreen('home')}
+          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+        >
+          <Home className="w-6 h-6 text-white" />
+        </button>
+
+        <div className="max-w-2xl mx-auto pt-20">
+          <h1 className="text-4xl font-light text-white text-center mb-3">How to Play</h1>
+          <p className="text-slate-400 text-center mb-12">Tap a puzzle type to learn more</p>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {/* Tile Flip Card */}
+            <button
+              onClick={() => setShowInstructionPopup('tile_flip')}
+              className="bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 rounded-xl p-6 text-left transition-all duration-300 shadow-lg transform hover:scale-105"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                  <div className="grid grid-cols-2 gap-1">
+                    <div className="w-3 h-3 bg-blue-300 rounded"></div>
+                    <div className="w-3 h-3 bg-slate-700 rounded"></div>
+                    <div className="w-3 h-3 bg-slate-700 rounded"></div>
+                    <div className="w-3 h-3 bg-blue-300 rounded"></div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">TILE FLIP</h3>
+                  <p className="text-blue-200 text-sm">Find the one correct tile</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Word Scramble Card */}
+            <button
+              onClick={() => setShowInstructionPopup('word_scramble')}
+              className="bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 rounded-xl p-6 text-left transition-all duration-300 shadow-lg transform hover:scale-105"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">ABC</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">WORD SCRAMBLE</h3>
+                  <p className="text-purple-200 text-sm">Unscramble the letters</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Coming Soon Cards */}
+            <div className="bg-slate-800/50 border-2 border-slate-700 border-dashed rounded-xl p-6 text-left opacity-50">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-slate-700 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🔢</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-400">QUICK MATH</h3>
+                  <p className="text-slate-500 text-sm">Coming soon...</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-800/50 border-2 border-slate-700 border-dashed rounded-xl p-6 text-left opacity-50">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-slate-700 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🧠</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-400">MEMORY MATCH</h3>
+                  <p className="text-slate-500 text-sm">Coming soon...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tile Flip Popup */}
+        {showInstructionPopup === 'tile_flip' && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6" onClick={() => setShowInstructionPopup(null)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-lg border-2 border-blue-500 overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">TILE FLIP</h2>
+              
+              <div className="space-y-6">
+                <p className="text-slate-300 text-center text-lg">
+                  Goal: Find the <span className="text-yellow-400 font-bold">ONE</span> tile that makes all tiles the same color!
+                </p>
+
+                {/* Visual Demo */}
+                <div className="bg-slate-900 rounded-xl p-6">
+                  <div className="flex items-center justify-center gap-8 mb-4">
+                    <div className="text-center">
+                      <p className="text-slate-400 text-xs mb-2">BEFORE</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-yellow-400 rounded border-4 border-yellow-300 animate-pulse"></div>
+                        <div className="w-12 h-12 bg-slate-700 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-slate-700 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="text-2xl text-blue-400">→</div>
+                    
+                    <div className="text-center">
+                      <p className="text-slate-400 text-xs mb-2">AFTER</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                        <div className="w-12 h-12 bg-blue-500 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-center text-xs text-slate-400">Tap the highlighted tile to flip 5 tiles!</p>
+                </div>
+
+                <div className="space-y-3 text-slate-300">
+                  <p className="flex items-start gap-2">
+                    <span className="text-blue-400 font-bold">•</span>
+                    <span>Tapping 1 tile flips that tile and nearby tiles</span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="text-blue-400 font-bold">•</span>
+                    <span>Only <span className="text-yellow-400 font-bold">ONE</span> tap solves the puzzle</span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="text-blue-400 font-bold">•</span>
+                    <span>Solve on first try for gems!</span>
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowInstructionPopup(null)}
+                className="w-full mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Word Scramble Popup */}
+        {showInstructionPopup === 'word_scramble' && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6" onClick={() => setShowInstructionPopup(null)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-lg border-2 border-purple-500 overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">WORD SCRAMBLE</h2>
+              
+              <div className="space-y-6">
+                <p className="text-slate-300 text-center text-lg">
+                  Goal: Unscramble the letters to form the correct word
+                </p>
+
+                {/* Visual Demo */}
+                <div className="bg-slate-900 rounded-xl p-6">
+                  <div className="text-center space-y-4">
+                    <div>
+                      <p className="text-slate-400 text-xs mb-2">SCRAMBLED</p>
+                      <div className="flex justify-center gap-2">
+                        {['O', 'G', 'L', 'M', 'I', 'N', 'A', 'B'].map((letter, i) => (
+                          <div key={i} className="w-10 h-10 bg-purple-600 rounded flex items-center justify-center text-white font-bold text-lg">
+                            {letter}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="text-2xl text-purple-400">↓</div>
+                    
+                    <div>
+                      <p className="text-slate-400 text-xs mb-2">UNSCRAMBLED</p>
+                      <div className="flex justify-center gap-2">
+                        {['M', 'O', 'N', 'G', 'O', 'L', 'I', 'A'].map((letter, i) => (
+                          <div key={i} className="w-10 h-10 bg-green-600 rounded flex items-center justify-center text-white font-bold text-lg">
+                            {letter}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3 text-slate-300">
+                  <p className="flex items-start gap-2">
+                    <span className="text-purple-400 font-bold">•</span>
+                    <span>Type the unscrambled word</span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="text-purple-400 font-bold">•</span>
+                    <span>Use hints if you get stuck</span>
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <span className="text-purple-400 font-bold">•</span>
+                    <span>Solve on first try for gems!</span>
+                  </p>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowInstructionPopup(null)}
+                className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
