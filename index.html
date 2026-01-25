@@ -709,14 +709,35 @@ const OneMove = () => {
         setFailCount(0);
       }, 2000);
     } else {
+      // Wrong answer - show correct answer and auto-advance
       setTriviaFirstAttempt(false);
-      setShowCorrectAnswer(true);
       
       setTimeout(() => {
         setShowResult(false);
         setSelectedAnswer(null);
-        setShowCorrectAnswer(false);
-      }, 3000);
+        
+        // Auto-advance to puzzle
+        const puzzleType = Math.random() > 0.5 ? PUZZLE_TYPES.TILE_FLIP : PUZZLE_TYPES.WORD_SCRAMBLE;
+        
+        if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+          const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
+          setCurrentPuzzle(puzzle);
+          setGrid(puzzle.grid);
+          setHintLevel(0);
+          setHighlightedArea(null);
+          setScreen('puzzle_tile');
+        } else {
+          const puzzle = generateWordScramble();
+          setCurrentPuzzle(puzzle);
+          setScrambledWord(puzzle.scrambled);
+          setUserWord('');
+          setHintLevel(0);
+          setScreen('puzzle_word');
+        }
+        
+        setPuzzleFirstAttempt(true);
+        setFailCount(0);
+      }, 2000);
     }
   };
 
@@ -1260,11 +1281,6 @@ const OneMove = () => {
               <div className="text-2xl font-light text-red-400 animate-pulse">
                 Incorrect!
               </div>
-              {showCorrectAnswer && (
-                <div className="text-lg text-white">
-                  The answer is: <span className="font-semibold text-green-400">{currentTriviaQuestion.a}</span>
-                </div>
-              )}
             </div>
           )}
         </div>
