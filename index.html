@@ -1268,7 +1268,7 @@ const OneMove = () => {
         
         <div className="text-center space-y-8 max-w-md">
           <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
-            ONE MOVE <span className="text-green-400 text-2xl">v6.2-TEST</span>
+            ONE MOVE <span className="text-green-400 text-2xl">v6.3-BYPASS</span>
           </h1>
           
           <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
@@ -1581,28 +1581,32 @@ const OneMove = () => {
   }
 
   // Trivia Screen
-  if (screen === 'trivia' && currentTriviaQuestion) {
+  if (screen === 'trivia') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-        <button 
-          onClick={handleHomeClick}
-          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
-        >
-          <Home className="w-6 h-6 text-white" />
-        </button>
-        
-        <div className="absolute top-4 right-4 z-50">
-          <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
-            <span className="text-white text-lg font-bold">💎</span>
-            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
-          </div>
-        </div>
-        
-        <div className="max-w-2xl w-full space-y-8 mt-16">
-          <div className="text-center">
-            <div className="mb-4">
-              <span className="text-amber-400 text-2xl font-bold uppercase">{selectedCategory}</span>
+        {!currentTriviaQuestion ? (
+          <div className="text-white text-2xl">Loading question...</div>
+        ) : (
+          <>
+            <button 
+              onClick={handleHomeClick}
+              className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+            >
+              <Home className="w-6 h-6 text-white" />
+            </button>
+            
+            <div className="absolute top-4 right-4 z-50">
+              <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
+                <span className="text-white text-lg font-bold">💎</span>
+                <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
+              </div>
             </div>
+            
+            <div className="max-w-2xl w-full space-y-8 mt-16">
+              <div className="text-center">
+                <div className="mb-4">
+                  <span className="text-amber-400 text-2xl font-bold uppercase">{selectedCategory}</span>
+                </div>
             <h2 className="text-3xl font-light text-white mb-8">
               {currentTriviaQuestion.q}
             </h2>
@@ -1646,7 +1650,8 @@ const OneMove = () => {
               </div>
             </div>
           )}
-        </div>
+        </>
+        )}
         
         {renderLevelUpPopup()}
       </div>
