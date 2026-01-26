@@ -675,6 +675,7 @@ const OneMove = () => {
     setCurrentTriviaQuestion(question);
     setShuffledChoices(choices);
     setTriviaFirstAttempt(true);
+    setShowGemBreakdown(false); // Reset popup state
     setScreen('trivia');
   };
 
@@ -1939,8 +1940,6 @@ const OneMove = () => {
             </div>
           )}
         </div>
-        
-        {renderGemBreakdown()}
       </div>
     );
   }
