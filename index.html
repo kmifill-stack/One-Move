@@ -711,6 +711,12 @@ const OneMove = () => {
   const handleCategorySelect = (category) => {
     const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
     
+    if (categoryQuestions.length === 0) {
+      console.error('No questions found for category:', category);
+      setScreen('home');
+      return;
+    }
+    
     // Pick question not recently used (500-question buffer)
     let question;
     let attempts = 0;
@@ -718,6 +724,12 @@ const OneMove = () => {
       question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
       attempts++;
     } while (usedTrivia.includes(question.q) && attempts < 50);
+    
+    if (!question) {
+      console.error('Failed to select question');
+      setScreen('home');
+      return;
+    }
     
     // Add to buffer
     const newUsedTrivia = [...usedTrivia, question.q];
@@ -1593,7 +1605,17 @@ const OneMove = () => {
       // Loading state while question loads
       return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-          <div className="text-white text-2xl">Loading question...</div>
+          <div className="text-center space-y-4">
+            <div className="text-white text-2xl">Loading question...</div>
+            <div className="text-slate-400 text-sm">Category: {selectedCategory || 'None'}</div>
+            <div className="text-slate-400 text-sm">Question: {currentTriviaQuestion ? 'Yes' : 'No'}</div>
+            <button
+              onClick={() => setScreen('home')}
+              className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+            >
+              Return Home
+            </button>
+          </div>
         </div>
       );
     }
