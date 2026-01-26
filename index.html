@@ -825,10 +825,27 @@ const OneMove = () => {
         setProcessing(false);
       }, 2500);
     } else {
+      // Wrong attempt - show for 2 seconds then auto-advance
       setPuzzleFirstAttempt(false);
       const newFailCount = failCount + 1;
       setFailCount(newFailCount);
-      setProcessing(false);
+      
+      // Auto-advance after 2 seconds
+      setTimeout(() => {
+        const newIndex = currentPuzzleIndex + 1;
+        setCurrentPuzzleIndex(newIndex);
+        saveProgress({ currentIndex: newIndex });
+        
+        if (newIndex >= 500) {
+          setScreen('complete');
+        } else {
+          // Auto-select random category for next trivia
+          const categories = Object.values(CATEGORIES);
+          const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+          handleCategorySelect(randomCategory);
+        }
+        setProcessing(false);
+      }, 2000);
     }
   };
 
@@ -865,10 +882,27 @@ const OneMove = () => {
         }
       }, 2500);
     } else {
+      // Wrong attempt - show for 2 seconds then auto-advance
       setPuzzleFirstAttempt(false);
       const newFailCount = failCount + 1;
       setFailCount(newFailCount);
       setUserWord('');
+      
+      // Auto-advance after 2 seconds
+      setTimeout(() => {
+        const newIndex = currentPuzzleIndex + 1;
+        setCurrentPuzzleIndex(newIndex);
+        saveProgress({ currentIndex: newIndex });
+        
+        if (newIndex >= 500) {
+          setScreen('complete');
+        } else {
+          // Auto-select random category for next trivia
+          const categories = Object.values(CATEGORIES);
+          const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+          handleCategorySelect(randomCategory);
+        }
+      }, 2000);
     }
   };
 
@@ -971,6 +1005,69 @@ const OneMove = () => {
       const randomCategory = categories[Math.floor(Math.random() * categories.length)];
       handleCategorySelect(randomCategory);
     }
+  };
+
+  const renderGemBreakdown = () => {
+    if (!showGemBreakdown) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
+        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+          <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
+          
+          <div className="space-y-6 text-slate-300">
+            <div>
+              <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
+              <div className="space-y-2 ml-3">
+                <p className="flex justify-between">
+                  <span>💎 Trivia:</span>
+                  <span className="text-white font-bold">{triviaScore}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span>💎 Puzzles:</span>
+                  <span className="text-white font-bold">{puzzleScore}</span>
+                </p>
+                {puzzlesSkipped > 0 && (
+                  <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
+                )}
+              </div>
+              <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                <p className="flex justify-between text-sm">
+                  <span>Subtotal:</span>
+                  <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
+                </p>
+              </div>
+            </div>
+            
+            {gemsSpent > 0 && (
+              <div>
+                <p className="text-red-400 font-semibold mb-3">SPENT:</p>
+                <div className="ml-3">
+                  <p className="flex justify-between">
+                    <span>💡 Hints used:</span>
+                    <span className="text-white font-bold">-{gemsSpent}</span>
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="border-t-2 border-amber-500 pt-4">
+              <p className="flex justify-between text-xl">
+                <span className="text-white font-bold">💎 TOTAL:</span>
+                <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+              </p>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => setShowGemBreakdown(false)}
+            className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const getPatternName = (pattern) => {
@@ -1207,18 +1304,18 @@ const OneMove = () => {
                   <div className="flex items-center justify-center gap-6 mb-4">
                     <div className="text-center">
                       <p className="text-slate-400 text-xs mb-3 font-semibold">BEFORE TAP</p>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
+                      <div className="grid grid-cols-3 gap-1 bg-slate-950 p-2 rounded-lg">
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
                         <div className="w-14 h-14 bg-yellow-400 rounded-lg shadow-lg border-4 border-yellow-300 relative" style={{boxShadow: '0 0 20px rgba(251, 191, 36, 0.8)'}}>
                           <div className="absolute inset-0 flex items-center justify-center text-slate-800 font-bold text-xs">TAP</div>
                         </div>
-                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
+                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-slate-700 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
                       </div>
                       <p className="text-slate-500 text-xs mt-2 italic">Mixed colors</p>
                     </div>
@@ -1227,16 +1324,16 @@ const OneMove = () => {
                     
                     <div className="text-center">
                       <p className="text-slate-400 text-xs mb-3 font-semibold">AFTER TAP</p>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
-                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg"></div>
+                      <div className="grid grid-cols-3 gap-1 bg-slate-950 p-2 rounded-lg">
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
+                        <div className="w-14 h-14 bg-blue-500 rounded-lg shadow-lg border-2 border-slate-800"></div>
                       </div>
                       <p className="text-green-400 text-xs mt-2 italic font-semibold">✓ All same!</p>
                     </div>
@@ -1363,64 +1460,7 @@ const OneMove = () => {
           </button>
         </div>
         
-        {showGemBreakdown && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
-              
-              <div className="space-y-6 text-slate-300">
-                <div>
-                  <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
-                  <div className="space-y-2 ml-3">
-                    <p className="flex justify-between">
-                      <span>💎 Trivia:</span>
-                      <span className="text-white font-bold">{triviaScore}</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span>💎 Puzzles:</span>
-                      <span className="text-white font-bold">{puzzleScore}</span>
-                    </p>
-                    {puzzlesSkipped > 0 && (
-                      <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
-                    )}
-                  </div>
-                  <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
-                    <p className="flex justify-between text-sm">
-                      <span>Subtotal:</span>
-                      <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
-                    </p>
-                  </div>
-                </div>
-                
-                {gemsSpent > 0 && (
-                  <div>
-                    <p className="text-red-400 font-semibold mb-3">SPENT:</p>
-                    <div className="ml-3">
-                      <p className="flex justify-between">
-                        <span>💡 Hints used:</span>
-                        <span className="text-white font-bold">-{gemsSpent}</span>
-                      </p>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="border-t-2 border-amber-500 pt-4">
-                  <p className="flex justify-between text-xl">
-                    <span className="text-white font-bold">💎 TOTAL:</span>
-                    <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-                  </p>
-                </div>
-              </div>
-              
-              <button
-                onClick={() => setShowGemBreakdown(false)}
-                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
+        {renderGemBreakdown()}
         
         <div className="max-w-2xl w-full space-y-8">
           <div className="text-center">
@@ -1702,6 +1742,8 @@ const OneMove = () => {
             </div>
           </div>
         )}
+        
+        {renderGemBreakdown()}
       </div>
     );
   }
@@ -1892,6 +1934,8 @@ const OneMove = () => {
             </div>
           )}
         </div>
+        
+        {renderGemBreakdown()}
       </div>
     );
   }
