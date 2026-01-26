@@ -1448,15 +1448,16 @@ const OneMove = () => {
           <Home className="w-6 h-6 text-white" />
         </button>
         
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 z-50">
           <button 
-            onClick={() => setShowGemBreakdown(true)}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowGemBreakdown(true);
+            }}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
-            <div className="text-white text-xs font-light">GEMS</div>
-            <div className="text-white text-2xl font-bold">
-              💎 {triviaScore + puzzleScore - gemsSpent}
-            </div>
+            <span className="text-white text-lg font-bold">💎</span>
+            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
           </button>
         </div>
         
@@ -1565,7 +1566,7 @@ const OneMove = () => {
   // Tile Flip Puzzle
   if (screen === 'puzzle_tile' && currentPuzzle) {
     const gridSize = currentPuzzle.size;
-    const tileSize = gridSize === 3 ? 'w-20 h-20' : gridSize === 4 ? 'w-16 h-16' : 'w-12 h-12';
+    const tileSize = gridSize === 3 ? 'w-16 h-16' : gridSize === 4 ? 'w-14 h-14' : 'w-10 h-10';
     const tileColor = TILE_COLORS[currentPuzzle.colorIndex];
     const totalGems = triviaScore + puzzleScore - gemsSpent;
     
@@ -1573,32 +1574,33 @@ const OneMove = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
-          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
         >
           <Home className="w-6 h-6 text-white" />
         </button>
         
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 z-50">
           <button 
-            onClick={() => setShowGemBreakdown(true)}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-xl text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowGemBreakdown(true);
+            }}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
-            <div className="text-white text-xs font-light">GEMS</div>
-            <div className="text-white text-2xl font-bold">
-              💎 {totalGems}
-            </div>
+            <span className="text-white text-lg font-bold">💎</span>
+            <span className="text-white text-xl font-bold">{totalGems}</span>
           </button>
         </div>
         
-        <div className="space-y-4">
-          <div className="text-center">
-            <p className="text-white text-lg font-light">Tile Flip Challenge</p>
+        <div className="space-y-3 max-w-sm">
+          <div className="text-center mb-2">
+            <p className="text-white text-base font-light">Tile Flip Challenge</p>
             {gridSize >= 4 && (
-              <p className="text-orange-400 text-sm font-bold mt-1">⚠️ HARD PUZZLE</p>
+              <p className="text-orange-400 text-xs font-bold mt-0.5">⚠️ HARD PUZZLE</p>
             )}
-            <p className="text-slate-400 text-sm mt-1">Make all tiles match!</p>
+            <p className="text-slate-400 text-xs mt-0.5">Make all tiles match!</p>
             {!puzzleFirstAttempt && (
-              <p className="text-yellow-400 text-xs mt-1">⚠️ First attempt failed - no gems</p>
+              <p className="text-yellow-400 text-xs mt-0.5">⚠️ First attempt failed</p>
             )}
           </div>
           
@@ -1761,13 +1763,16 @@ const OneMove = () => {
           <Home className="w-6 h-6 text-white" />
         </button>
         
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 z-50">
           <button 
-            onClick={() => setShowGemBreakdown(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowGemBreakdown(true);
+            }}
             className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
-            <span className="text-white text-lg">💎</span>
-            <div className="text-white text-sm font-bold">{totalGems}</div>
+            <span className="text-white text-lg font-bold">💎</span>
+            <span className="text-white text-xl font-bold">{totalGems}</span>
           </button>
         </div>
         
