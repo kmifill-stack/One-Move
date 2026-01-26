@@ -1580,7 +1580,9 @@ const OneMove = () => {
   }
 
   // Trivia Screen
-  if (screen === 'trivia' && currentTriviaQuestion) {
+  if (screen === 'trivia') {
+    if (!currentTriviaQuestion) return null; // Safety check
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
         <button 
