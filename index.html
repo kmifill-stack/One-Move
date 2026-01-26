@@ -1171,6 +1171,28 @@ const OneMove = () => {
           </div>
         )}
         
+        <button 
+          onClick={() => setScreen('home')}
+          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
+        >
+          <Home className="w-6 h-6 text-white" />
+        </button>
+        
+        <div className="absolute top-4 right-4 z-50">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowGemBreakdown(true);
+            }}
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
+          >
+            <span className="text-white text-lg font-bold">💎</span>
+            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+          </button>
+        </div>
+        
+        {renderGemBreakdown()}
+        
         <div className="text-center space-y-8 max-w-md">
           <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
             ONE MOVE
@@ -1450,19 +1472,11 @@ const OneMove = () => {
         </button>
         
         <div className="absolute top-4 right-4 z-50">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGemBreakdown(true);
-            }}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-          >
+          <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
             <span className="text-white text-lg font-bold">💎</span>
             <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-          </button>
+          </div>
         </div>
-        
-        {renderGemBreakdown()}
         
         <div className="max-w-2xl w-full space-y-8">
           <div className="text-center">
@@ -1500,16 +1514,10 @@ const OneMove = () => {
         </button>
         
         <div className="absolute top-4 right-4 z-50">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGemBreakdown(true);
-            }}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-          >
+          <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
             <span className="text-white text-lg font-bold">💎</span>
             <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-          </button>
+          </div>
         </div>
         
         <div className="max-w-2xl w-full space-y-8 mt-16">
@@ -1582,16 +1590,10 @@ const OneMove = () => {
         </button>
         
         <div className="absolute top-4 right-4 z-50">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGemBreakdown(true);
-            }}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-          >
+          <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
             <span className="text-white text-lg font-bold">💎</span>
             <span className="text-white text-xl font-bold">{totalGems}</span>
-          </button>
+          </div>
         </div>
         
         <div className="space-y-3 max-w-sm">
@@ -1746,8 +1748,6 @@ const OneMove = () => {
             </div>
           </div>
         )}
-        
-        {renderGemBreakdown()}
       </div>
     );
   }
@@ -1766,16 +1766,10 @@ const OneMove = () => {
         </button>
         
         <div className="absolute top-4 right-4 z-50">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGemBreakdown(true);
-            }}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-          >
+          <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg shadow-lg flex items-center gap-2">
             <span className="text-white text-lg font-bold">💎</span>
             <span className="text-white text-xl font-bold">{totalGems}</span>
-          </button>
+          </div>
         </div>
         
         <div className="max-w-2xl w-full space-y-4 mt-20">
@@ -1941,8 +1935,6 @@ const OneMove = () => {
             </div>
           )}
         </div>
-        
-        {renderGemBreakdown()}
       </div>
     );
   }
