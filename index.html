@@ -996,7 +996,7 @@ const OneMove = () => {
   }, [hintLevel]);
 
   const handleHint1 = () => {
-    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
     if (totalGems < 50 || hintLevel >= 1) return;
     
     const newGemsSpent = gemsSpent + 50;
@@ -1014,7 +1014,7 @@ const OneMove = () => {
   };
 
   const handleHint2 = () => {
-    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
     if (totalGems < 100 || hintLevel < 1 || hintLevel >= 2) return;
     
     const newGemsSpent = gemsSpent + 100;
@@ -1024,7 +1024,7 @@ const OneMove = () => {
   };
 
   const handleHint3 = () => {
-    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
     if (totalGems < 150 || hintLevel < 2 || hintLevel >= 3) return;
     
     const newGemsSpent = gemsSpent + 150;
@@ -1034,7 +1034,7 @@ const OneMove = () => {
   };
 
   const handleHint4 = () => {
-    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
     if (totalGems < 200 || hintLevel < 3 || hintLevel >= 4) return;
     
     const newGemsSpent = gemsSpent + 200;
@@ -1093,6 +1093,12 @@ const OneMove = () => {
                   <span>💎 Puzzles:</span>
                   <span className="text-white font-bold">{puzzleScore}</span>
                 </p>
+                {bonusGems > 0 && (
+                  <p className="flex justify-between">
+                    <span>🏆 Bonus Gems:</span>
+                    <span className="text-white font-bold">{bonusGems}</span>
+                  </p>
+                )}
                 {puzzlesSkipped > 0 && (
                   <p className="text-xs text-slate-400 ml-4">(Skipped: {puzzlesSkipped})</p>
                 )}
@@ -1100,7 +1106,7 @@ const OneMove = () => {
               <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
                 <p className="flex justify-between text-sm">
                   <span>Subtotal:</span>
-                  <span className="text-white font-bold">{triviaScore + puzzleScore}</span>
+                  <span className="text-white font-bold">{triviaScore + puzzleScore + bonusGems}</span>
                 </p>
               </div>
             </div>
@@ -1120,7 +1126,7 @@ const OneMove = () => {
             <div className="border-t-2 border-amber-500 pt-4">
               <p className="flex justify-between text-xl">
                 <span className="text-white font-bold">💎 TOTAL:</span>
-                <span className="text-amber-400 font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+                <span className="text-amber-400 font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
               </p>
             </div>
           </div>
@@ -1275,7 +1281,7 @@ const OneMove = () => {
               className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
             >
               <span className="text-white text-lg font-bold">💎</span>
-              <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+              <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
             </button>
           </div>
         </div>
@@ -1564,7 +1570,7 @@ const OneMove = () => {
         <div className="absolute top-4 right-4 z-50">
           <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
             <span className="text-white text-lg font-bold">💎</span>
-            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
           </div>
         </div>
         
@@ -1606,7 +1612,7 @@ const OneMove = () => {
         <div className="absolute top-4 right-4 z-50">
           <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
             <span className="text-white text-lg font-bold">💎</span>
-            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
           </div>
         </div>
         
@@ -1668,7 +1674,7 @@ const OneMove = () => {
     const gridSize = currentPuzzle.size;
     const tileSize = gridSize === 3 ? 'w-16 h-16' : gridSize === 4 ? 'w-14 h-14' : 'w-10 h-10';
     const tileColor = TILE_COLORS[currentPuzzle.colorIndex];
-    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
@@ -1854,7 +1860,7 @@ const OneMove = () => {
 
   // Word Scramble Puzzle
   if (screen === 'puzzle_word' && currentPuzzle) {
-    const totalGems = triviaScore + puzzleScore - gemsSpent;
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
@@ -2096,3 +2102,4 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<OneMove />);
   </script>
 </body>
+</html>
