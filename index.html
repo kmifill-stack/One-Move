@@ -485,6 +485,7 @@ const OneMove = () => {
   const [usedWords, setUsedWords] = useState([]);
   const [usedTrivia, setUsedTrivia] = useState([]);
   const [showInstructionPopup, setShowInstructionPopup] = useState(null);
+  const [username, setUsername] = useState('Player');
 
   // Load/save progress
   useEffect(() => {
@@ -554,13 +555,26 @@ const OneMove = () => {
 
   const getUserLevel = () => {
     const count = currentPuzzleIndex;
-    if (count >= 450) return "ONE MOVE Master";
-    if (count >= 375) return "The Persistent";
-    if (count >= 300) return "Puzzle Architect";
-    if (count >= 225) return "Mind Bender";
-    if (count >= 150) return "Logic Master";
-    if (count >= 75) return "Pattern Seeker";
+    if (count >= 1500) return "ONE MOVE Master";
+    if (count >= 1000) return "The Persistent";
+    if (count >= 700) return "Puzzle Architect";
+    if (count >= 400) return "Mind Bender";
+    if (count >= 250) return "Logic Master";
+    if (count >= 76) return "Pattern Seeker";
     return "Beginner";
+  };
+
+  const getLevelInfo = (levelName) => {
+    const levels = {
+      "Beginner": { icon: "" },
+      "Pattern Seeker": { icon: "📜" },
+      "Logic Master": { icon: "🥉" },
+      "Mind Bender": { icon: "🥈" },
+      "Puzzle Architect": { icon: "🥇" },
+      "The Persistent": { icon: "💚" },
+      "ONE MOVE Master": { icon: "💎" }
+    };
+    return levels[levelName] || levels["Beginner"];
   };
 
   const generateTileFlipPuzzle = (trivia) => {
@@ -1171,24 +1185,48 @@ const OneMove = () => {
           </div>
         )}
         
-        <button 
-          onClick={() => setScreen('home')}
-          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
-        >
-          <Home className="w-6 h-6 text-white" />
-        </button>
-        
-        <div className="absolute top-4 right-4 z-50">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGemBreakdown(true);
-            }}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-          >
-            <span className="text-white text-lg font-bold">💎</span>
-            <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
-          </button>
+        {/* NEW TOP BAR - 4 ICONS */}
+        <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
+          {/* Left side: Home + Username */}
+          <div className="flex items-center gap-3">
+            {/* Home Button */}
+            <button 
+              onClick={() => setScreen('home')}
+              className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+            >
+              <Home className="w-6 h-6 text-white" />
+            </button>
+            
+            {/* Username */}
+            <div className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2">
+              <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              </svg>
+              <span className="text-white font-medium text-sm">{username}</span>
+            </div>
+          </div>
+          
+          {/* Right side: Trophy + Gems */}
+          <div className="flex items-center gap-3">
+            {/* Trophy Icon */}
+            {getLevelInfo(getUserLevel()).icon && (
+              <div className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-amber-600/50">
+                <span className="text-5xl">{getLevelInfo(getUserLevel()).icon}</span>
+              </div>
+            )}
+            
+            {/* Gems Counter */}
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowGemBreakdown(true);
+              }}
+              className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
+            >
+              <span className="text-white text-lg font-bold">💎</span>
+              <span className="text-white text-xl font-bold">{triviaScore + puzzleScore - gemsSpent}</span>
+            </button>
+          </div>
         </div>
         
         {renderGemBreakdown()}
