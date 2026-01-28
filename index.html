@@ -1649,6 +1649,8 @@ const OneMove = () => {
   if (screen === 'trivia' && currentTriviaQuestion) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+        {renderLevelUpPopup()}
+        
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -1725,6 +1727,8 @@ const OneMove = () => {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+        {renderLevelUpPopup()}
+        
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
@@ -1911,6 +1915,8 @@ const OneMove = () => {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+        {renderLevelUpPopup()}
+        
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
