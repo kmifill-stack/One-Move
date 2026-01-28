@@ -1142,7 +1142,6 @@ const OneMove = () => {
   const [username, setUsername] = useState('Player');
   const [showCorrectWord, setShowCorrectWord] = useState(false);
   const [showTileFailure, setShowTileFailure] = useState(false);
-  const [showMathResult, setShowMathResult] = useState(null);
   const [bonusGems, setBonusGems] = useState(0);
   const [lastAwardedLevel, setLastAwardedLevel] = useState('');
   const [showUsernameEdit, setShowUsernameEdit] = useState(false);
@@ -2354,21 +2353,18 @@ const OneMove = () => {
               </div>
             </button>
 
-            {/* Quick Math Card */}
-            <button
-              onClick={() => setShowInstructionPopup('quick_math')}
-              className="bg-gradient-to-br from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 rounded-xl p-6 text-left transition-all duration-300 shadow-lg transform hover:scale-105"
-            >
+            {/* Coming Soon Cards */}
+            <div className="bg-slate-800/50 border-2 border-slate-700 border-dashed rounded-xl p-6 text-left opacity-50">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
-                  <span className="text-3xl font-bold text-white">+−</span>
+                <div className="w-16 h-16 bg-slate-700 rounded-lg flex items-center justify-center">
+                  <span className="text-2xl">🔢</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">QUICK MATH</h3>
-                  <p className="text-green-200 text-sm">Solve math problems</p>
+                  <h3 className="text-xl font-semibold text-slate-400">QUICK MATH</h3>
+                  <p className="text-slate-500 text-sm">Coming soon...</p>
                 </div>
               </div>
-            </button>
+            </div>
 
             <div className="bg-slate-800/50 border-2 border-slate-700 border-dashed rounded-xl p-6 text-left opacity-50">
               <div className="flex items-center gap-4">
@@ -2523,49 +2519,6 @@ const OneMove = () => {
               <button
                 onClick={() => setShowInstructionPopup(null)}
                 className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-              >
-                Got It!
-              </button>
-            </div>
-          </div>
-        )}
-        
-        {/* Quick Math Instructions */}
-        {showInstructionPopup === 'quick_math' && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-green-500 max-h-[90vh] overflow-y-auto">
-              <h2 className="text-3xl font-light text-white text-center mb-6">🔢 QUICK MATH</h2>
-              
-              <div className="space-y-4 text-slate-300 text-sm">
-                <div className="bg-green-900/30 rounded-lg p-4 border border-green-500/50">
-                  <p className="font-semibold text-green-300 mb-2">How to Play:</p>
-                  <ol className="space-y-2 ml-4 list-decimal">
-                    <li>Read the math problem</li>
-                    <li>Choose the correct answer from 4 options</li>
-                    <li>Tap your answer</li>
-                    <li>Get instant feedback!</li>
-                  </ol>
-                </div>
-                
-                <div className="bg-slate-700/50 rounded-lg p-4">
-                  <p className="font-semibold text-white mb-2">Difficulty Levels:</p>
-                  <ul className="space-y-1 ml-4 list-disc">
-                    <li><span className="text-green-400">Easy:</span> Addition & subtraction (single digit)</li>
-                    <li><span className="text-yellow-400">Medium:</span> Multiplication & division tables</li>
-                    <li><span className="text-red-400">Hard:</span> Mixed operations, larger numbers</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
-                  <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
-                  <p>Solve on first try = <span className="text-white font-bold">+100 gems</span></p>
-                  <p className="text-xs text-slate-400 mt-1">You get 3 attempts per problem</p>
-                </div>
-              </div>
-              
-              <button
-                onClick={() => setShowInstructionPopup(null)}
-                className="w-full mt-6 px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
               >
                 Got It!
               </button>
@@ -3033,63 +2986,43 @@ const OneMove = () => {
     const handleMathAnswer = (selected) => {
       if (selected === currentPuzzle.answer) {
         // CORRECT!
-        setShowMathResult('correct');
-        
         if (puzzleFirstAttempt) {
           setPuzzleScore(puzzleScore + 100);
         }
+        
+        // Check level up
+        setTimeout(() => checkLevelUp(), 100);
         
         // Advance to next trivia
         setCurrentPuzzleIndex(currentPuzzleIndex + 1);
         saveProgress();
         
-        // Check level up
-        setTimeout(() => checkLevelUp(), 100);
-        
-        // Auto-select random category for next trivia
         setTimeout(() => {
-          setShowMathResult(null);
-          if (currentPuzzleIndex + 1 >= 500) {
-            setScreen('complete');
-          } else {
-            const categories = Object.values(CATEGORIES);
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            handleCategorySelect(randomCategory);
-          }
+          // Auto-select random category
+          const categories = Object.values(CATEGORIES);
+          const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+          handleCategorySelect(randomCategory);
         }, 1500);
       } else {
         // WRONG!
-        setShowMathResult('wrong');
         const newFailCount = failCount + 1;
         setFailCount(newFailCount);
         setPuzzleFirstAttempt(false);
         
-        setTimeout(() => {
-          setShowMathResult(null);
-        }, 1000);
+        // Check level up
+        setTimeout(() => checkLevelUp(), 100);
         
         if (newFailCount >= 3) {
           // Failed 3 times - advance anyway
           setCurrentPuzzleIndex(currentPuzzleIndex + 1);
           saveProgress();
           
-          // Check level up
-          setTimeout(() => checkLevelUp(), 100);
-          
-          // Auto-select random category for next trivia
           setTimeout(() => {
-            if (currentPuzzleIndex + 1 >= 500) {
-              setScreen('complete');
-            } else {
-              const categories = Object.values(CATEGORIES);
-              const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-              handleCategorySelect(randomCategory);
-            }
+            // Auto-select random category
+            const categories = Object.values(CATEGORIES);
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            handleCategorySelect(randomCategory);
             setFailCount(0);
-          }, 2000);
-        }
-      }
-    };
           }, 2000);
         }
       }
@@ -3115,25 +3048,10 @@ const OneMove = () => {
           <div className="text-center mb-4">
             <p className="text-white text-lg font-light">Quick Math</p>
             <p className="text-slate-400 text-sm mt-1">Solve the problem!</p>
-            {failCount > 0 && !showMathResult && (
+            {failCount > 0 && (
               <p className="text-red-400 text-sm mt-1">❌ Wrong! Try again ({failCount}/3)</p>
             )}
           </div>
-          
-          {/* Correct/Wrong Feedback */}
-          {showMathResult && (
-            <div className="text-center mb-6 animate-pulse">
-              {showMathResult === 'correct' ? (
-                <p className="text-green-400 text-6xl font-bold">
-                  CORRECT! ✓
-                </p>
-              ) : (
-                <p className="text-red-400 text-5xl font-bold">
-                  WRONG! ✗
-                </p>
-              )}
-            </div>
-          )}
           
           {/* Math Question */}
           <div className="bg-slate-700/50 rounded-xl p-8 text-center border-2 border-slate-600">
