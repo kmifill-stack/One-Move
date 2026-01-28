@@ -490,6 +490,8 @@ const OneMove = () => {
   const [showTileFailure, setShowTileFailure] = useState(false);
   const [bonusGems, setBonusGems] = useState(0);
   const [lastAwardedLevel, setLastAwardedLevel] = useState('');
+  const [showUsernameEdit, setShowUsernameEdit] = useState(false);
+  const [tempUsername, setTempUsername] = useState('');
 
   // Load/save progress
   useEffect(() => {
@@ -552,6 +554,9 @@ const OneMove = () => {
         setBonusGems(savedBonus);
         setLastAwardedLevel(savedLevel);
       }
+      
+      // Load username
+      setUsername(data.username || 'Player');
     }
   }, []);
 
@@ -576,6 +581,7 @@ const OneMove = () => {
       usedTrivia,
       bonusGems,
       lastAwardedLevel,
+      username,
       ...data
     }));
   };
@@ -1302,12 +1308,15 @@ const OneMove = () => {
             </button>
             
             {/* Username */}
-            <div className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2">
+            <button 
+              onClick={() => setShowUsernameEdit(true)}
+              className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2 hover:bg-slate-700/80 transition-all duration-300"
+            >
               <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
               </svg>
               <span className="text-white font-medium text-sm">{username}</span>
-            </div>
+            </button>
           </div>
           
           {/* Right side: Trophy + Gems */}
@@ -1334,6 +1343,47 @@ const OneMove = () => {
         </div>
         
         {renderGemBreakdown()}
+        
+        {/* Username Edit Popup */}
+        {showUsernameEdit && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowUsernameEdit(false)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-blue-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">✏️ EDIT USERNAME</h2>
+              
+              <input
+                type="text"
+                value={tempUsername}
+                onChange={(e) => setTempUsername(e.target.value)}
+                placeholder={username}
+                maxLength={20}
+                className="w-full px-4 py-3 bg-slate-900 text-white rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none text-center text-lg mb-6"
+                autoFocus
+              />
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowUsernameEdit(false)}
+                  className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (tempUsername.trim()) {
+                      setUsername(tempUsername.trim());
+                      saveProgress({ username: tempUsername.trim() });
+                    }
+                    setShowUsernameEdit(false);
+                    setTempUsername('');
+                  }}
+                  className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="text-center space-y-8 max-w-md">
           <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
@@ -1649,8 +1699,6 @@ const OneMove = () => {
   if (screen === 'trivia' && currentTriviaQuestion) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
-        {renderLevelUpPopup()}
-        
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -1727,8 +1775,6 @@ const OneMove = () => {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-        {renderLevelUpPopup()}
-        
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
@@ -1915,8 +1961,6 @@ const OneMove = () => {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
-        {renderLevelUpPopup()}
-        
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
