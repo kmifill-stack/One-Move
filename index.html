@@ -503,8 +503,55 @@ const OneMove = () => {
       setPuzzlesSkipped(data.puzzlesSkipped || 0);
       setUsedWords(data.usedWords || []);
       setUsedTrivia(data.usedTrivia || []);
-      setBonusGems(data.bonusGems || 0);
-      setLastAwardedLevel(data.lastAwardedLevel || '');
+      
+      // ONE-TIME MIGRATION: Award past level bonuses
+      const currentIndex = data.currentIndex || 0;
+      const savedBonus = data.bonusGems || 0;
+      const savedLevel = data.lastAwardedLevel || '';
+      
+      // If bonusGems is 0 but player is past level 76, calculate retroactive bonuses
+      if (savedBonus === 0 && savedLevel === '' && currentIndex >= 76) {
+        let retroactiveBonus = 0;
+        let achievedLevel = 'Beginner';
+        
+        if (currentIndex >= 1500) {
+          retroactiveBonus = 75 + 250 + 400 + 700 + 1000 + 1500; // 3925 total
+          achievedLevel = 'ONE MOVE Master';
+        } else if (currentIndex >= 1000) {
+          retroactiveBonus = 75 + 250 + 400 + 700 + 1000; // 2425 total
+          achievedLevel = 'The Persistent';
+        } else if (currentIndex >= 700) {
+          retroactiveBonus = 75 + 250 + 400 + 700; // 1425 total
+          achievedLevel = 'Puzzle Architect';
+        } else if (currentIndex >= 400) {
+          retroactiveBonus = 75 + 250 + 400; // 725 total
+          achievedLevel = 'Mind Bender';
+        } else if (currentIndex >= 250) {
+          retroactiveBonus = 75 + 250; // 325 total
+          achievedLevel = 'Logic Master';
+        } else if (currentIndex >= 76) {
+          retroactiveBonus = 75;
+          achievedLevel = 'Pattern Seeker';
+        }
+        
+        if (retroactiveBonus > 0) {
+          console.log(`🎁 MIGRATION: Awarding ${retroactiveBonus} retroactive bonus gems for ${achievedLevel} level`);
+          setBonusGems(retroactiveBonus);
+          setLastAwardedLevel(achievedLevel);
+          // Save immediately
+          setTimeout(() => {
+            localStorage.setItem('oneMoveSave_v4', JSON.stringify({
+              ...data,
+              bonusGems: retroactiveBonus,
+              lastAwardedLevel: achievedLevel
+            }));
+          }, 100);
+        }
+      } else {
+        // Normal load
+        setBonusGems(savedBonus);
+        setLastAwardedLevel(savedLevel);
+      }
     }
   }, []);
 
