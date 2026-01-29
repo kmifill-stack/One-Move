@@ -2100,12 +2100,6 @@ const OneMove = () => {
   const [explorationComplete, setExplorationComplete] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [memoryResult, setMemoryResult] = useState(null);
-  const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false);
-  const [dailyChallengeFailed, setDailyChallengeFailed] = useState(false);
-  const [dailyChallengeStreak, setDailyChallengeStreak] = useState(0);
-  const [isDailyChallenge, setIsDailyChallenge] = useState(false);
-  const [showDailyChallengeResult, setShowDailyChallengeResult] = useState(false);
-  const [dailyChallengeAttempted, setDailyChallengeAttempted] = useState(false);
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
@@ -2192,15 +2186,6 @@ const OneMove = () => {
       // Load username
       setUsername(data.username || 'Player');
     }
-    
-    // Load Daily Challenge status
-    const dcData = getDailyChallengeData();
-    if (dcData) {
-      setDailyChallengeCompleted(dcData.completed);
-      setDailyChallengeFailed(dcData.failed);
-      setDailyChallengeStreak(dcData.streak || 0);
-      setDailyChallengeAttempted(dcData.attempted || false);
-    }
   }, []);
 
   // Splash screen timer
@@ -2227,157 +2212,6 @@ const OneMove = () => {
       username,
       ...data
     }));
-  };
-
-  // Daily Challenge Functions
-  const getTodayDateString = () => {
-    const today = new Date();
-    return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-  };
-
-  const getDailyChallengeData = () => {
-    const stored = localStorage.getItem('dailyChallenge');
-    if (!stored) return null;
-    const data = JSON.parse(stored);
-    if (data.date !== getTodayDateString()) {
-      // New day - reset
-      return null;
-    }
-    return data;
-  };
-
-  const saveDailyChallengeData = (completed, failed, streak) => {
-    localStorage.setItem('dailyChallenge', JSON.stringify({
-      date: getTodayDateString(),
-      completed,
-      failed,
-      streak,
-      attempted: true
-    }));
-  };
-
-  const generateDailyChallenge = () => {
-    // Use today's date as seed for consistency
-    const dateStr = getTodayDateString();
-    const seed = dateStr.split('-').reduce((acc, val) => acc + parseInt(val), 0);
-    
-    // Get day of month (1-31)
-    const dayOfMonth = new Date().getDate();
-    
-    // Determine puzzle type based on monthly frequency
-    // Tile Flip: 4-5 times (days 5, 12, 19, 26, and maybe 31)
-    // Word Scramble: 9 times 
-    // Memory Match: 8 times
-    // Quick Math: 8 times
-    
-    let puzzleType;
-    
-    if ([5, 12, 19, 26, 31].includes(dayOfMonth) && dayOfMonth <= 31) {
-      // Tile Flip days (roughly once per week)
-      puzzleType = PUZZLE_TYPES.TILE_FLIP;
-    } else {
-      // Rotate through other 3 types for remaining days
-      const remainder = (dayOfMonth + seed) % 3;
-      if (remainder === 0) {
-        puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-      } else if (remainder === 1) {
-        puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-      } else {
-        puzzleType = PUZZLE_TYPES.QUICK_MATH;
-      }
-    }
-    
-    // Generate HARD version of selected puzzle
-    if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-      // Hard Tile Flip: 7x7 grid with complex pattern
-      const hardWords = SCRAMBLE_BANK.filter(w => w.word.length >= 12);
-      const selectedWord = hardWords[seed % hardWords.length];
-      const trivia = {q: selectedWord.word, a: selectedWord.word, cat: 'Daily Challenge'};
-      
-      const puzzle = generateTileFlipPuzzle(trivia, 7); // Force 7x7 grid
-      return {...puzzle, type: PUZZLE_TYPES.TILE_FLIP, trivia};
-      
-    } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
-      // Hard Scramble: 12+ letter words only
-      const hardWords = SCRAMBLE_BANK.filter(w => w.word.length >= 12);
-      const selectedWord = hardWords[seed % hardWords.length];
-      
-      return {
-        type: PUZZLE_TYPES.WORD_SCRAMBLE,
-        word: selectedWord.word,
-        scrambled: selectedWord.word.split('').sort(() => 0.5 - Math.random()).join(''),
-        category: selectedWord.cat
-      };
-      
-    } else if (puzzleType === PUZZLE_TYPES.MEMORY_MATCH) {
-      // Hard Memory: 16 cards (8 pairs)
-      const puzzle = generateMemoryMatch();
-      // Force 8 pairs
-      const emojiSets = [
-        ['🍎', '🍌', '🍇', '🍊', '🍓', '🍑', '🍉', '🥝'],
-        ['⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🥏'],
-      ];
-      const selectedSet = emojiSets[seed % emojiSets.length];
-      const cardPairs = [...selectedSet, ...selectedSet];
-      for (let i = cardPairs.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [cardPairs[i], cardPairs[j]] = [cardPairs[j], cardPairs[i]];
-      }
-      const cards = cardPairs.map((emoji, index) => ({
-        id: index,
-        emoji: emoji,
-        isFlipped: false,
-        isMatched: false,
-      }));
-      return {type: PUZZLE_TYPES.MEMORY_MATCH, cards, pairs: 8};
-      
-    } else {
-      // Hard Quick Math: Complex calculations
-      const operations = [
-        {q: 'What is 375 × 8?', a: '3000', choices: ['2800', '3000', '3200', '3400']},
-        {q: 'What is 1728 ÷ 12?', a: '144', choices: ['124', '134', '144', '154']},
-        {q: 'What is 25% of 840?', a: '210', choices: ['180', '210', '240', '270']},
-        {q: 'What is 17 × 13?', a: '221', choices: ['201', '211', '221', '231']},
-      ];
-      const selected = operations[seed % operations.length];
-      return {type: PUZZLE_TYPES.QUICK_MATH, ...selected};
-    }
-  };
-
-  const startDailyChallenge = () => {
-    const challenge = generateDailyChallenge();
-    setIsDailyChallenge(true);
-    setDailyChallengeAttempted(true);
-    setCurrentPuzzle(challenge);
-    
-    if (challenge.type === PUZZLE_TYPES.TILE_FLIP) {
-      setCurrentTriviaQuestion(challenge.trivia);
-      setGrid(challenge.grid);
-      setHintLevel(0);
-      setHighlightedArea(null);
-      setScreen('puzzle_tile');
-    } else if (challenge.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
-      setScrambledWord(challenge.scrambled);
-      setUserWord('');
-      setHintLevel(0);
-      setScreen('puzzle_word');
-    } else if (challenge.type === PUZZLE_TYPES.MEMORY_MATCH) {
-      setMemoryCards(challenge.cards);
-      setFlippedCards([]);
-      setMatchedPairs([]);
-      setSeenCards([]);
-      setExplorationComplete(false);
-      setWrongAttempts(0);
-      setHintLevel(0);
-      setScreen('puzzle_memory');
-    } else {
-      setMathAnswer('');
-      setHintLevel(0);
-      setScreen('puzzle_math');
-    }
-    
-    setPuzzleFirstAttempt(true);
-    setFailCount(0);
   };
 
   const playSound = (type) => {
@@ -3476,48 +3310,6 @@ const OneMove = () => {
             <p className="text-slate-300 text-sm mt-3">Puzzles Completed: {currentPuzzleIndex}</p>
           </div>
           
-          {/* Daily Challenge Banner */}
-          {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
-            <button
-              onClick={startDailyChallenge}
-              className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105"
-            >
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">🏆</span>
-                <div className="text-left">
-                  <p className="text-xl font-bold">DAILY CHALLENGE</p>
-                  <p className="text-sm text-red-100">Win 500 Gems!</p>
-                </div>
-              </div>
-            </button>
-          )}
-          
-          {/* Daily Challenge Completed */}
-          {dailyChallengeCompleted && (
-            <div className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">✅</span>
-                <div className="text-left">
-                  <p className="text-xl font-bold text-white">DAILY CHALLENGE COMPLETE!</p>
-                  <p className="text-sm text-green-100">Come back tomorrow</p>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Daily Challenge Failed */}
-          {dailyChallengeFailed && !dailyChallengeCompleted && (
-            <div className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">💪</span>
-                <div className="text-left">
-                  <p className="text-xl font-bold text-white">Try Again Tomorrow!</p>
-                  <p className="text-sm text-orange-100">Resets at midnight</p>
-                </div>
-              </div>
-            </div>
-          )}
-          
           <div className="space-y-3">
             <button
               onClick={handlePlay}
@@ -4557,7 +4349,7 @@ const OneMove = () => {
               const categories = Object.values(CATEGORIES);
               const randomCategory = categories[Math.floor(Math.random() * categories.length)];
               handleCategorySelect(randomCategory);
-            }, 5000);
+            }, 3000);
           }
         } else {
           // NO MATCH - flip back after delay
@@ -4584,7 +4376,7 @@ const OneMove = () => {
                   const categories = Object.values(CATEGORIES);
                   const randomCategory = categories[Math.floor(Math.random() * categories.length)];
                   handleCategorySelect(randomCategory);
-                }, 5000);
+                }, 3000);
               }
             }
           }, 1000);
