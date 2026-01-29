@@ -1367,6 +1367,7 @@ const OneMove = () => {
   const [seenCards, setSeenCards] = useState([]);
   const [explorationComplete, setExplorationComplete] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [memoryResult, setMemoryResult] = useState(null);
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
@@ -3588,11 +3589,20 @@ const OneMove = () => {
           
           // Check if all matched
           if (newMatched.length === currentPuzzle.pairs) {
-            // PUZZLE COMPLETE!
+            // PUZZLE COMPLETE! Determine tier based on wrong attempts
+            let resultTier;
             if (wrongAttempts === 0) {
-              // Perfect score - only if no wrong attempts during matching phase
+              resultTier = 'perfect'; // YOU ARE A PRO! +100 gems
               setPuzzleScore(puzzleScore + 100);
+            } else if (wrongAttempts <= 2) {
+              resultTier = 'excellent'; // ALMOST PERFECT!
+            } else if (wrongAttempts <= 4) {
+              resultTier = 'good'; // NICE WORK!
+            } else {
+              resultTier = 'almost'; // ALMOST! Keep trying
             }
+            
+            setMemoryResult(resultTier);
             
             // Advance to next trivia
             setCurrentPuzzleIndex(currentPuzzleIndex + 1);
@@ -3601,11 +3611,13 @@ const OneMove = () => {
             // Check level up
             setTimeout(() => checkLevelUp(), 100);
             
+            // Slower transition - 3 seconds to see result
             setTimeout(() => {
+              setMemoryResult(null);
               const categories = Object.values(CATEGORIES);
               const randomCategory = categories[Math.floor(Math.random() * categories.length)];
               handleCategorySelect(randomCategory);
-            }, 1500);
+            }, 3000);
           }
         } else {
           // NO MATCH - flip back after delay
@@ -3618,17 +3630,21 @@ const OneMove = () => {
               setWrongAttempts(newWrongAttempts);
               
               if (newWrongAttempts >= 6) {
-                // Failed 6 attempts - advance anyway
+                // Failed 6 attempts - show encouraging message
+                setMemoryResult('failed');
+                
                 setCurrentPuzzleIndex(currentPuzzleIndex + 1);
                 saveProgress();
                 
                 setTimeout(() => checkLevelUp(), 100);
                 
+                // 3 second pause to see the "Almost!" message
                 setTimeout(() => {
+                  setMemoryResult(null);
                   const categories = Object.values(CATEGORIES);
                   const randomCategory = categories[Math.floor(Math.random() * categories.length)];
                   handleCategorySelect(randomCategory);
-                }, 1500);
+                }, 3000);
               }
             }
           }, 1000);
@@ -3653,6 +3669,47 @@ const OneMove = () => {
         </div>
         
         <div className="space-y-6 max-w-md w-full mx-auto">
+          {/* Success/Result Messages */}
+          {memoryResult && (
+            <div className="text-center mb-6 animate-pulse">
+              {memoryResult === 'perfect' && (
+                <div>
+                  <p className="text-yellow-400 text-6xl font-bold mb-2">🏆</p>
+                  <p className="text-yellow-400 text-5xl font-bold">YOU ARE A PRO!</p>
+                  <p className="text-green-400 text-lg mt-2">+100 gems earned!</p>
+                </div>
+              )}
+              {memoryResult === 'excellent' && (
+                <div>
+                  <p className="text-blue-400 text-6xl font-bold mb-2">⭐</p>
+                  <p className="text-blue-400 text-5xl font-bold">ALMOST PERFECT!</p>
+                  <p className="text-slate-300 text-base mt-2">So close to perfection!</p>
+                </div>
+              )}
+              {memoryResult === 'good' && (
+                <div>
+                  <p className="text-green-400 text-6xl font-bold mb-2">👍</p>
+                  <p className="text-green-400 text-5xl font-bold">NICE WORK!</p>
+                  <p className="text-slate-300 text-base mt-2">You're getting better!</p>
+                </div>
+              )}
+              {memoryResult === 'almost' && (
+                <div>
+                  <p className="text-purple-400 text-6xl font-bold mb-2">💪</p>
+                  <p className="text-purple-400 text-5xl font-bold">ALMOST!</p>
+                  <p className="text-slate-300 text-base mt-2">Keep practicing - you'll master this!</p>
+                </div>
+              )}
+              {memoryResult === 'failed' && (
+                <div>
+                  <p className="text-amber-400 text-6xl font-bold mb-2">💪</p>
+                  <p className="text-amber-400 text-5xl font-bold">ALMOST!</p>
+                  <p className="text-slate-300 text-base mt-2">Keep practicing - you'll nail it next time!</p>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="text-center mb-4">
             <p className="text-white text-lg font-light">Memory Match</p>
             
