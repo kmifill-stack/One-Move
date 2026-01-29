@@ -1364,6 +1364,9 @@ const OneMove = () => {
   const [memoryCards, setMemoryCards] = useState([]);
   const [flippedCards, setFlippedCards] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState([]);
+  const [seenCards, setSeenCards] = useState([]);
+  const [explorationComplete, setExplorationComplete] = useState(false);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
@@ -1852,6 +1855,9 @@ const OneMove = () => {
           const puzzle = generateMemoryMatch();
           setCurrentPuzzle(puzzle);
           setMemoryCards(puzzle.cards);
+          setSeenCards([]);
+          setExplorationComplete(false);
+          setWrongAttempts(0);
           setFlippedCards([]);
           setMatchedPairs([]);
           setHintLevel(0);
@@ -1907,6 +1913,9 @@ const OneMove = () => {
           const puzzle = generateMemoryMatch();
           setCurrentPuzzle(puzzle);
           setMemoryCards(puzzle.cards);
+          setSeenCards([]);
+          setExplorationComplete(false);
+          setWrongAttempts(0);
           setFlippedCards([]);
           setMatchedPairs([]);
           setHintLevel(0);
@@ -2890,33 +2899,32 @@ const OneMove = () => {
                   <p className="font-semibold text-pink-300 mb-2">How to Play:</p>
                   <ol className="space-y-2 ml-4 list-decimal">
                     <li>Cards are face down showing "?"</li>
-                    <li>Click a card to flip it</li>
-                    <li>Click another card to find its match</li>
-                    <li>Match all pairs to win!</li>
+                    <li>Flip cards to explore - no penalties!</li>
+                    <li>Once you've seen all emojis, matching begins</li>
+                    <li>Match all pairs before 6 wrong attempts!</li>
                   </ol>
                 </div>
                 
                 <div className="bg-slate-700/50 rounded-lg p-4">
-                  <p className="font-semibold text-white mb-2">Difficulty Levels:</p>
+                  <p className="font-semibold text-white mb-2">Two Phases:</p>
                   <ul className="space-y-1 ml-4 list-disc">
-                    <li><span className="text-green-400">Easy:</span> 6 cards (3 pairs)</li>
-                    <li><span className="text-yellow-400">Medium:</span> 12 cards (6 pairs)</li>
-                    <li><span className="text-red-400">Hard:</span> 16 cards (8 pairs)</li>
+                    <li><span className="text-blue-400">Exploration:</span> See all cards penalty-free</li>
+                    <li><span className="text-green-400">Matching:</span> 6 attempts to match all pairs</li>
                   </ul>
                 </div>
                 
                 <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
                   <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
-                  <p>Match all pairs on first try = <span className="text-white font-bold">+100 gems</span></p>
-                  <p className="text-xs text-slate-400 mt-1">You get 3 attempts</p>
+                  <p>Match all pairs with zero wrong attempts = <span className="text-white font-bold">+100 gems</span></p>
+                  <p className="text-xs text-slate-400 mt-1">Perfect memory = perfect score!</p>
                 </div>
                 
                 <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/50">
                   <p className="font-semibold text-blue-300 mb-2">💡 Pro Tips:</p>
                   <ul className="space-y-1 ml-4 list-disc text-xs">
-                    <li>Pay attention to emoji positions</li>
-                    <li>Build a mental map as you flip cards</li>
-                    <li>Start from one side to stay organized</li>
+                    <li>Take your time during exploration</li>
+                    <li>Build a mental map of positions</li>
+                    <li>Start matching from corners or edges</li>
                   </ul>
                 </div>
               </div>
@@ -3546,6 +3554,17 @@ const OneMove = () => {
       const card = memoryCards.find(c => c.id === cardId);
       if (card.isMatched || flippedCards.includes(cardId)) return;
       
+      // Track which unique emojis have been seen
+      if (!seenCards.includes(card.emoji)) {
+        const newSeen = [...seenCards, card.emoji];
+        setSeenCards(newSeen);
+        
+        // Check if exploration is complete (all unique emojis seen)
+        if (newSeen.length === currentPuzzle.pairs) {
+          setExplorationComplete(true);
+        }
+      }
+      
       // Flip card
       const newFlipped = [...flippedCards, cardId];
       setFlippedCards(newFlipped);
@@ -3570,7 +3589,8 @@ const OneMove = () => {
           // Check if all matched
           if (newMatched.length === currentPuzzle.pairs) {
             // PUZZLE COMPLETE!
-            if (puzzleFirstAttempt) {
+            if (wrongAttempts === 0) {
+              // Perfect score - only if no wrong attempts during matching phase
               setPuzzleScore(puzzleScore + 100);
             }
             
@@ -3591,23 +3611,25 @@ const OneMove = () => {
           // NO MATCH - flip back after delay
           setTimeout(() => {
             setFlippedCards([]);
-            const newFailCount = failCount + 1;
-            setFailCount(newFailCount);
-            setPuzzleFirstAttempt(false);
             
-            if (newFailCount >= 3) {
-              // Failed 3 times - advance anyway
-              setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-              saveProgress();
+            // Only count as wrong attempt if exploration is complete
+            if (explorationComplete) {
+              const newWrongAttempts = wrongAttempts + 1;
+              setWrongAttempts(newWrongAttempts);
               
-              setTimeout(() => checkLevelUp(), 100);
-              
-              setTimeout(() => {
-                const categories = Object.values(CATEGORIES);
-                const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-                handleCategorySelect(randomCategory);
-                setFailCount(0);
-              }, 1500);
+              if (newWrongAttempts >= 6) {
+                // Failed 6 attempts - advance anyway
+                setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+                saveProgress();
+                
+                setTimeout(() => checkLevelUp(), 100);
+                
+                setTimeout(() => {
+                  const categories = Object.values(CATEGORIES);
+                  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                  handleCategorySelect(randomCategory);
+                }, 1500);
+              }
             }
           }, 1000);
         }
@@ -3633,9 +3655,16 @@ const OneMove = () => {
         <div className="space-y-6 max-w-md w-full mx-auto">
           <div className="text-center mb-4">
             <p className="text-white text-lg font-light">Memory Match</p>
-            <p className="text-slate-400 text-sm mt-1">Match all pairs!</p>
-            {failCount > 0 && (
-              <p className="text-red-400 text-sm mt-1">❌ Wrong match! Try again ({failCount}/3)</p>
+            
+            {!explorationComplete ? (
+              <p className="text-blue-400 text-sm mt-1">👀 Exploring... ({seenCards.length}/{currentPuzzle.pairs} cards seen)</p>
+            ) : (
+              <>
+                <p className="text-green-400 text-sm mt-1">🧠 Matching Phase!</p>
+                {wrongAttempts > 0 && (
+                  <p className="text-amber-400 text-sm mt-1">Attempts: {wrongAttempts}/6</p>
+                )}
+              </>
             )}
           </div>
           
