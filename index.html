@@ -1339,6 +1339,7 @@ const PUZZLE_TYPES = {
   TILE_FLIP: 'tile_flip',
   WORD_SCRAMBLE: 'word_scramble',
   QUICK_MATH: 'quick_math',
+  MEMORY_MATCH: 'memory_match',
 };
 
 const OneMove = () => {
@@ -1360,6 +1361,9 @@ const OneMove = () => {
   const [scrambledWord, setScrambledWord] = useState('');
   const [userWord, setUserWord] = useState('');
   const [mathAnswer, setMathAnswer] = useState('');
+  const [memoryCards, setMemoryCards] = useState([]);
+  const [flippedCards, setFlippedCards] = useState([]);
+  const [matchedPairs, setMatchedPairs] = useState([]);
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
@@ -1711,6 +1715,52 @@ const OneMove = () => {
     };
   };
 
+  const generateMemoryMatch = () => {
+    // Grid size based on difficulty
+    let pairs;
+    if (currentPuzzleIndex < 50) {
+      pairs = 3; // 6 cards (3x2)
+    } else if (currentPuzzleIndex < 150) {
+      pairs = 6; // 12 cards (4x3)
+    } else {
+      pairs = 8; // 16 cards (4x4)
+    }
+    
+    // Emojis for matching
+    const emojiSets = [
+      ['🍎', '🍌', '🍇', '🍊', '🍓', '🍑', '🍉', '🥝'],
+      ['⚽', '🏀', '🏈', '⚾', '🎾', '🏐', '🏉', '🥏'],
+      ['🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼', '🦊'],
+      ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑'],
+      ['❤️', '💙', '💚', '💛', '💜', '🧡', '🖤', '🤍'],
+      ['⭐', '🌟', '✨', '💫', '🌠', '🔥', '💥', '⚡'],
+    ];
+    
+    const selectedSet = emojiSets[Math.floor(Math.random() * emojiSets.length)];
+    const selectedEmojis = selectedSet.slice(0, pairs);
+    
+    // Create pairs and shuffle
+    const cardPairs = [...selectedEmojis, ...selectedEmojis];
+    for (let i = cardPairs.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cardPairs[i], cardPairs[j]] = [cardPairs[j], cardPairs[i]];
+    }
+    
+    // Create card objects with IDs
+    const cards = cardPairs.map((emoji, index) => ({
+      id: index,
+      emoji: emoji,
+      isFlipped: false,
+      isMatched: false,
+    }));
+    
+    return {
+      type: PUZZLE_TYPES.MEMORY_MATCH,
+      cards: cards,
+      pairs: pairs,
+    };
+  };
+
   const handleCategorySelect = (category) => {
     const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
     
@@ -1764,15 +1814,17 @@ const OneMove = () => {
         setShowResult(false);
         setSelectedAnswer(null);
         
-        // Generate puzzle (rotate between 3 types)
+        // Generate puzzle (rotate between 4 types)
         const rand = Math.random();
         let puzzleType;
-        if (rand < 0.33) {
+        if (rand < 0.25) {
           puzzleType = PUZZLE_TYPES.TILE_FLIP;
-        } else if (rand < 0.66) {
+        } else if (rand < 0.50) {
           puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-        } else {
+        } else if (rand < 0.75) {
           puzzleType = PUZZLE_TYPES.QUICK_MATH;
+        } else {
+          puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
         }
         
         if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
@@ -1789,13 +1841,21 @@ const OneMove = () => {
           setUserWord('');
           setHintLevel(0);
           setScreen('puzzle_word');
-        } else {
-          // Quick Math
+        } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
           const puzzle = generateQuickMath();
           setCurrentPuzzle(puzzle);
           setMathAnswer('');
           setHintLevel(0);
           setScreen('puzzle_math');
+        } else {
+          // Memory Match
+          const puzzle = generateMemoryMatch();
+          setCurrentPuzzle(puzzle);
+          setMemoryCards(puzzle.cards);
+          setFlippedCards([]);
+          setMatchedPairs([]);
+          setHintLevel(0);
+          setScreen('puzzle_memory');
         }
         
         setPuzzleFirstAttempt(true);
@@ -1809,15 +1869,17 @@ const OneMove = () => {
         setShowResult(false);
         setSelectedAnswer(null);
         
-        // Auto-advance to puzzle (rotate between 3 types)
+        // Auto-advance to puzzle (rotate between 4 types)
         const rand = Math.random();
         let puzzleType;
-        if (rand < 0.33) {
+        if (rand < 0.25) {
           puzzleType = PUZZLE_TYPES.TILE_FLIP;
-        } else if (rand < 0.66) {
+        } else if (rand < 0.50) {
           puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-        } else {
+        } else if (rand < 0.75) {
           puzzleType = PUZZLE_TYPES.QUICK_MATH;
+        } else {
+          puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
         }
         
         if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
@@ -1834,13 +1896,21 @@ const OneMove = () => {
           setUserWord('');
           setHintLevel(0);
           setScreen('puzzle_word');
-        } else {
-          // Quick Math
+        } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
           const puzzle = generateQuickMath();
           setCurrentPuzzle(puzzle);
           setMathAnswer('');
           setHintLevel(0);
           setScreen('puzzle_math');
+        } else {
+          // Memory Match
+          const puzzle = generateMemoryMatch();
+          setCurrentPuzzle(puzzle);
+          setMemoryCards(puzzle.cards);
+          setFlippedCards([]);
+          setMatchedPairs([]);
+          setHintLevel(0);
+          setScreen('puzzle_memory');
         }
         
         setPuzzleFirstAttempt(true);
@@ -2602,18 +2672,21 @@ const OneMove = () => {
               </div>
             </button>
 
-            {/* Coming Soon - Memory Match */}
-            <div className="bg-slate-800/50 border-2 border-slate-700 border-dashed rounded-xl p-6 text-left opacity-50">
+            {/* Memory Match Card */}
+            <button
+              onClick={() => setShowInstructionPopup('memory_match')}
+              className="bg-gradient-to-br from-pink-600 to-pink-700 hover:from-pink-500 hover:to-pink-600 rounded-xl p-6 text-left transition-all duration-300 shadow-lg transform hover:scale-105"
+            >
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-slate-700 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🧠</span>
+                <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span className="text-3xl">🧠</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-400">MEMORY MATCH</h3>
-                  <p className="text-slate-500 text-sm">Coming soon...</p>
+                  <h3 className="text-xl font-semibold text-white">MEMORY MATCH</h3>
+                  <p className="text-pink-200 text-sm">Match all the pairs</p>
                 </div>
               </div>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -2799,6 +2872,58 @@ const OneMove = () => {
               <button
                 onClick={() => setShowInstructionPopup(null)}
                 className="w-full mt-6 px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Memory Match Instructions */}
+        {showInstructionPopup === 'memory_match' && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-pink-500 max-h-[90vh] overflow-y-auto">
+              <h2 className="text-3xl font-light text-white text-center mb-6">🧠 MEMORY MATCH</h2>
+              
+              <div className="space-y-4 text-slate-300 text-sm">
+                <div className="bg-pink-900/30 rounded-lg p-4 border border-pink-500/50">
+                  <p className="font-semibold text-pink-300 mb-2">How to Play:</p>
+                  <ol className="space-y-2 ml-4 list-decimal">
+                    <li>Cards are face down showing "?"</li>
+                    <li>Click a card to flip it</li>
+                    <li>Click another card to find its match</li>
+                    <li>Match all pairs to win!</li>
+                  </ol>
+                </div>
+                
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="font-semibold text-white mb-2">Difficulty Levels:</p>
+                  <ul className="space-y-1 ml-4 list-disc">
+                    <li><span className="text-green-400">Easy:</span> 6 cards (3 pairs)</li>
+                    <li><span className="text-yellow-400">Medium:</span> 12 cards (6 pairs)</li>
+                    <li><span className="text-red-400">Hard:</span> 16 cards (8 pairs)</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
+                  <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
+                  <p>Match all pairs on first try = <span className="text-white font-bold">+100 gems</span></p>
+                  <p className="text-xs text-slate-400 mt-1">You get 3 attempts</p>
+                </div>
+                
+                <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/50">
+                  <p className="font-semibold text-blue-300 mb-2">💡 Pro Tips:</p>
+                  <ul className="space-y-1 ml-4 list-disc text-xs">
+                    <li>Pay attention to emoji positions</li>
+                    <li>Build a mental map as you flip cards</li>
+                    <li>Start from one side to stay organized</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowInstructionPopup(null)}
+                className="w-full mt-6 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
               >
                 Got It!
               </button>
@@ -3372,6 +3497,175 @@ const OneMove = () => {
                 {choice}
               </button>
             ))}
+          </div>
+          
+          {/* Skip Button */}
+          <button
+            onClick={() => setShowSkipConfirm(true)}
+            className="w-full mt-4 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all duration-300 text-sm"
+          >
+            Skip Puzzle (No Gems)
+          </button>
+        </div>
+        
+        {/* Skip Confirmation */}
+        {showSkipConfirm && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-sm border-2 border-red-500">
+              <h3 className="text-2xl font-light text-white text-center mb-4">Skip Puzzle?</h3>
+              <p className="text-slate-300 text-center mb-6">You won't earn gems for this puzzle.</p>
+              
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowSkipConfirm(false)}
+                  className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSkipPuzzle}
+                  className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
+                >
+                  Skip
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Memory Match Puzzle Screen
+  if (screen === 'puzzle_memory' && currentPuzzle) {
+    const totalGems = triviaScore + puzzleScore + bonusGems - gemsSpent;
+    const gridCols = currentPuzzle.pairs === 3 ? 3 : 4;
+    
+    const handleCardClick = (cardId) => {
+      // Ignore if already flipped or matched
+      const card = memoryCards.find(c => c.id === cardId);
+      if (card.isMatched || flippedCards.includes(cardId)) return;
+      
+      // Flip card
+      const newFlipped = [...flippedCards, cardId];
+      setFlippedCards(newFlipped);
+      
+      // Check if we have 2 cards flipped
+      if (newFlipped.length === 2) {
+        const card1 = memoryCards.find(c => c.id === newFlipped[0]);
+        const card2 = memoryCards.find(c => c.id === newFlipped[1]);
+        
+        if (card1.emoji === card2.emoji) {
+          // MATCH!
+          const newMatched = [...matchedPairs, card1.emoji];
+          setMatchedPairs(newMatched);
+          
+          // Update cards to matched
+          const updatedCards = memoryCards.map(c => 
+            c.id === card1.id || c.id === card2.id ? {...c, isMatched: true} : c
+          );
+          setMemoryCards(updatedCards);
+          setFlippedCards([]);
+          
+          // Check if all matched
+          if (newMatched.length === currentPuzzle.pairs) {
+            // PUZZLE COMPLETE!
+            if (puzzleFirstAttempt) {
+              setPuzzleScore(puzzleScore + 100);
+            }
+            
+            // Advance to next trivia
+            setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+            saveProgress();
+            
+            // Check level up
+            setTimeout(() => checkLevelUp(), 100);
+            
+            setTimeout(() => {
+              const categories = Object.values(CATEGORIES);
+              const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+              handleCategorySelect(randomCategory);
+            }, 1500);
+          }
+        } else {
+          // NO MATCH - flip back after delay
+          setTimeout(() => {
+            setFlippedCards([]);
+            const newFailCount = failCount + 1;
+            setFailCount(newFailCount);
+            setPuzzleFirstAttempt(false);
+            
+            if (newFailCount >= 3) {
+              // Failed 3 times - advance anyway
+              setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+              saveProgress();
+              
+              setTimeout(() => checkLevelUp(), 100);
+              
+              setTimeout(() => {
+                const categories = Object.values(CATEGORIES);
+                const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                handleCategorySelect(randomCategory);
+                setFailCount(0);
+              }, 1500);
+            }
+          }, 1000);
+        }
+      }
+    };
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+        <button 
+          onClick={handleHomeClick}
+          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+        >
+          <Home className="w-6 h-6 text-white" />
+        </button>
+        
+        <div className="absolute top-4 right-4 z-50">
+          <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-3 py-2 rounded-lg text-center shadow-lg flex items-center gap-2">
+            <span className="text-white text-lg font-bold">💎</span>
+            <span className="text-white text-xl font-bold">{totalGems}</span>
+          </div>
+        </div>
+        
+        <div className="space-y-6 max-w-md w-full mx-auto">
+          <div className="text-center mb-4">
+            <p className="text-white text-lg font-light">Memory Match</p>
+            <p className="text-slate-400 text-sm mt-1">Match all pairs!</p>
+            {failCount > 0 && (
+              <p className="text-red-400 text-sm mt-1">❌ Wrong match! Try again ({failCount}/3)</p>
+            )}
+          </div>
+          
+          {/* Memory Grid */}
+          <div className={`grid gap-3 ${gridCols === 3 ? 'grid-cols-3' : 'grid-cols-4'} max-w-sm mx-auto`}>
+            {memoryCards.map((card) => {
+              const isFlipped = flippedCards.includes(card.id) || card.isMatched;
+              return (
+                <button
+                  key={card.id}
+                  onClick={() => handleCardClick(card.id)}
+                  className={`aspect-square rounded-xl text-4xl font-bold transition-all duration-300 transform ${
+                    isFlipped
+                      ? card.isMatched
+                        ? 'bg-gradient-to-br from-green-500 to-green-600 scale-95'
+                        : 'bg-gradient-to-br from-blue-500 to-blue-600'
+                      : 'bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600'
+                  } shadow-lg flex items-center justify-center`}
+                >
+                  {isFlipped ? card.emoji : '?'}
+                </button>
+              );
+            })}
+          </div>
+          
+          {/* Progress */}
+          <div className="text-center">
+            <p className="text-slate-400 text-sm">
+              Matched: {matchedPairs.length} / {currentPuzzle.pairs}
+            </p>
           </div>
           
           {/* Skip Button */}
