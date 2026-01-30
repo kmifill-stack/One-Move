@@ -3823,13 +3823,13 @@ const OneMove = () => {
           {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
             <button
               onClick={startDailyChallenge}
-              className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105"
+              className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105"
             >
               <div className="flex items-center justify-center gap-3">
                 <span className="text-2xl">🏆</span>
                 <div className="text-left">
                   <p className="text-xl font-bold">DAILY CHALLENGE</p>
-                  <p className="text-sm text-red-100">Win 500 Gems!</p>
+                  <p className="text-sm text-amber-100">Win 500 Gems!</p>
                 </div>
               </div>
             </button>
@@ -3890,7 +3890,7 @@ const OneMove = () => {
             
             <button
               onClick={() => setScreen('instructions')}
-              className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-6 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-xs font-light tracking-wide"
             >
               HOW TO PLAY
             </button>
@@ -3900,7 +3900,7 @@ const OneMove = () => {
                 setShowGemsAndRewards(true);
                 setGemsRewardsTab('gems');
               }}
-              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-xs font-light tracking-wide"
             >
               💎 Gems & Rewards
             </button>
