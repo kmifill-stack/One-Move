@@ -3427,23 +3427,33 @@ const OneMove = () => {
               <div className="flex gap-1 mb-0">
                 <button
                   onClick={() => setGemsRewardsTab('gems')}
-                  className={`flex-1 py-3 px-4 rounded-t-xl transition-all font-medium ${
+                  className={`flex-1 py-3 px-3 rounded-t-xl transition-all font-medium text-xs ${
                     gemsRewardsTab === 'gems' 
                       ? 'bg-slate-700 text-white shadow-lg border-t-2 border-x-2 border-blue-400 transform translate-y-1' 
                       : 'bg-slate-800/50 text-slate-500 hover:text-slate-400 hover:bg-slate-800/70'
                   }`}
                 >
-                  💎 About Gems
+                  💎 Gems
                 </button>
                 <button
                   onClick={() => setGemsRewardsTab('rewards')}
-                  className={`flex-1 py-3 px-4 rounded-t-xl transition-all font-medium ${
+                  className={`flex-1 py-3 px-3 rounded-t-xl transition-all font-medium text-xs ${
                     gemsRewardsTab === 'rewards' 
                       ? 'bg-slate-700 text-white shadow-lg border-t-2 border-x-2 border-amber-400 transform translate-y-1' 
                       : 'bg-slate-800/50 text-slate-500 hover:text-slate-400 hover:bg-slate-800/70'
                   }`}
                 >
-                  🏆 Promotions & Bonuses
+                  🏆 Promotions
+                </button>
+                <button
+                  onClick={() => setGemsRewardsTab('superstars')}
+                  className={`flex-1 py-3 px-3 rounded-t-xl transition-all font-medium text-xs ${
+                    gemsRewardsTab === 'superstars' 
+                      ? 'bg-slate-700 text-white shadow-lg border-t-2 border-x-2 border-purple-400 transform translate-y-1' 
+                      : 'bg-slate-800/50 text-slate-500 hover:text-slate-400 hover:bg-slate-800/70'
+                  }`}
+                >
+                  ⭐ Superstars
                 </button>
               </div>
               
@@ -3591,7 +3601,75 @@ const OneMove = () => {
                     </p>
                   </div>
                 </div>
-              )}
+              ) : gemsRewardsTab === 'superstars' ? (
+                <div className="space-y-4 text-slate-300">
+                  <div className="text-center mb-4">
+                    <p className="text-amber-400 font-bold text-lg mb-1">⭐ ONE MOVE SUPERSTARS ⭐</p>
+                    <p className="text-slate-400 text-sm">Weekly Leaderboard • Resets Every Monday</p>
+                  </div>
+                  
+                  {/* Coming Soon Message */}
+                  <div className="bg-purple-900/30 rounded-lg p-8 border border-purple-500/30 text-center">
+                    <div className="text-6xl mb-4">🚀</div>
+                    <p className="text-white font-bold text-xl mb-3">COMING SOON!</p>
+                    <p className="text-slate-300 text-sm mb-4">
+                      Compete with players worldwide! Complete the most puzzles each week to earn your spot on the leaderboard.
+                    </p>
+                    <div className="bg-slate-800/50 rounded-lg p-4 mt-4">
+                      <p className="text-amber-400 font-semibold mb-2">TOP 10 WEEKLY REWARDS:</p>
+                      <div className="space-y-1 text-xs">
+                        <p>🥇 1st Place: 5,000 💎</p>
+                        <p>🥈 2nd Place: 3,000 💎</p>
+                        <p>🥉 3rd Place: 2,000 💎</p>
+                        <p>🏅 4th-10th: 1,000 💎 each</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Preview of how it will look */}
+                  <div className="mt-6">
+                    <p className="text-center text-slate-400 text-xs mb-3">Preview:</p>
+                    <div className="space-y-2">
+                      <div className="bg-gradient-to-r from-amber-600/20 to-amber-700/20 rounded-lg p-3 border border-amber-500/30">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">🥇</span>
+                            <div>
+                              <p className="text-white font-bold text-sm">Player Name</p>
+                              <p className="text-slate-400 text-xs">1,247 puzzles</p>
+                            </div>
+                          </div>
+                          <span className="text-amber-400 font-bold">+5,000 💎</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-600">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">🥈</span>
+                            <div>
+                              <p className="text-white font-bold text-sm">Player Name</p>
+                              <p className="text-slate-400 text-xs">1,089 puzzles</p>
+                            </div>
+                          </div>
+                          <span className="text-slate-400 font-bold">+3,000 💎</span>
+                        </div>
+                      </div>
+                      <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-600">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">🥉</span>
+                            <div>
+                              <p className="text-white font-bold text-sm">Player Name</p>
+                              <p className="text-slate-400 text-xs">967 puzzles</p>
+                            </div>
+                          </div>
+                          <span className="text-slate-400 font-bold">+2,000 💎</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
               </div>
               
               <button
@@ -3902,7 +3980,7 @@ const OneMove = () => {
               }}
               className="w-full px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-xs font-light tracking-wide"
             >
-              💎 Gems & Rewards
+              💎 Rewards & Superstars
             </button>
           </div>
         </div>
