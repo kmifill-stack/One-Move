@@ -3563,13 +3563,40 @@ const OneMove = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Milestone Bonuses Section */}
+                  <div className="mt-6 bg-purple-900/30 rounded-lg p-4 border border-purple-500/30">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-2xl">💎</span>
+                      <p className="text-purple-300 font-bold text-sm">MILESTONE BONUSES</p>
+                    </div>
+                    <p className="text-slate-300 text-sm text-center">
+                      +1000 gems at 2000 puzzles, then every 500 puzzles!
+                    </p>
+                  </div>
+                  
+                  {/* Tips Section */}
+                  <div className="mt-4 bg-slate-900/50 rounded-lg p-4 space-y-2 text-xs text-slate-400">
+                    <p className="flex items-start gap-2">
+                      <span>🏠</span>
+                      <span>Check your current level on the home screen</span>
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <span>🏆</span>
+                      <span>Trophy icon shows your achievement</span>
+                    </p>
+                    <p className="flex items-start gap-2">
+                      <span>💎</span>
+                      <span>Bonus gems appear in your gem breakdown</span>
+                    </p>
+                  </div>
                 </div>
               )}
               </div>
               
               <button
                 onClick={() => setShowGemsAndRewards(false)}
-                className="w-full mt-4 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+                className="w-full mt-4 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300"
               >
                 Got It!
               </button>
@@ -3873,7 +3900,7 @@ const OneMove = () => {
                 setShowGemsAndRewards(true);
                 setGemsRewardsTab('gems');
               }}
-              className="w-full px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               💎 Gems & Rewards
             </button>
