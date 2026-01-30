@@ -3934,14 +3934,14 @@ const OneMove = () => {
         // Save completion
         saveDailyChallengeData(true, false, newStreak);
         setDailyChallengeCompleted(true);
-        // DON'T set isDailyChallenge false yet
+        setIsDailyChallenge(false);
         
         saveProgress({ puzzleScore: newPuzzleScore });
         
-        // Show success screen using screen state
+        // Show success screen
         setTimeout(() => {
+          setShowDailyChallengeResult(true);
           setDailyChallengeReward(500);
-          setScreen('daily_challenge_result');
         }, 1500);
         
         return;
@@ -3982,11 +3982,11 @@ const OneMove = () => {
           // Daily Challenge FAILED
           saveDailyChallengeData(false, true, dailyChallengeStreak);
           setDailyChallengeFailed(true);
-          // DON'T set isDailyChallenge false yet
+          setIsDailyChallenge(false);
           
           setTimeout(() => {
+            setShowDailyChallengeResult(true);
             setDailyChallengeReward(0);
-            setScreen('daily_challenge_result');
           }, 1500);
           
           return;
@@ -4046,15 +4046,15 @@ const OneMove = () => {
         // Save completion
         saveDailyChallengeData(true, false, newStreak);
         setDailyChallengeCompleted(true);
-        // DON'T set isDailyChallenge false yet
+        setIsDailyChallenge(false);
         
         saveProgress({ puzzleScore: newPuzzleScore });
         
         // Show success screen
         setTimeout(() => {
           setShowCorrectWord(false);
+          setShowDailyChallengeResult(true);
           setDailyChallengeReward(500);
-          setScreen('daily_challenge_result');
         }, 2000);
         
         return;
@@ -4090,12 +4090,12 @@ const OneMove = () => {
         // Daily Challenge FAILED - wrong answer
         saveDailyChallengeData(false, true, dailyChallengeStreak);
         setDailyChallengeFailed(true);
-        // DON'T set isDailyChallenge false yet
+        setIsDailyChallenge(false);
         
         setTimeout(() => {
           setUserWord('');
+          setShowDailyChallengeResult(true);
           setDailyChallengeReward(0);
-          setScreen('daily_challenge_result');
         }, 2000);
         
         return;
@@ -6033,7 +6033,7 @@ const OneMove = () => {
                 // Save completion
                 saveDailyChallengeData(true, false, newStreak);
                 setDailyChallengeCompleted(true);
-                // DON'T set isDailyChallenge false yet
+                setIsDailyChallenge(false);
                 
                 saveProgress({ puzzleScore: newPuzzleScore });
                 
@@ -6042,8 +6042,8 @@ const OneMove = () => {
                 // Show success screen
                 setTimeout(() => {
                   setMemoryResult(null);
+                  setShowDailyChallengeResult(true);
                   setDailyChallengeReward(500);
-                  setScreen('daily_challenge_result');
                 }, 5000);
                 
                 return;
@@ -6091,14 +6091,14 @@ const OneMove = () => {
                   // Daily Challenge FAILED
                   saveDailyChallengeData(false, true, dailyChallengeStreak);
                   setDailyChallengeFailed(true);
-                  // DON'T set isDailyChallenge false yet
+                  setIsDailyChallenge(false);
                   
                   setMemoryResult('failed');
                   
                   setTimeout(() => {
                     setMemoryResult(null);
+                    setShowDailyChallengeResult(true);
                     setDailyChallengeReward(0);
-                    setScreen('daily_challenge_result');
                   }, 5000);
                   
                   return;
