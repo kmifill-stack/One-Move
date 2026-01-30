@@ -4527,16 +4527,14 @@ const OneMove = () => {
           // Save completion
           saveDailyChallengeData(true, false, newStreak);
           setDailyChallengeCompleted(true);
-          setIsDailyChallenge(false);
+          // DON'T set isDailyChallenge false yet - wait until result dismissed
           
           saveProgress({ dailyChallengeGems: 500 });
           
-          // Show success screen
-          setTimeout(() => {
-            setShowMathResult(null);
-            setShowDailyChallengeResult(true);
-            setDailyChallengeReward(500);
-          }, 1500);
+          // Show success screen immediately
+          setShowMathResult(null);
+          setShowDailyChallengeResult(true);
+          setDailyChallengeReward(500);
           
           return;
         }
@@ -4568,13 +4566,12 @@ const OneMove = () => {
           // Daily Challenge FAILED - one attempt only!
           saveDailyChallengeData(false, true, dailyChallengeStreak);
           setDailyChallengeFailed(true);
-          setIsDailyChallenge(false);
+          // DON'T set isDailyChallenge false yet
           
-          setTimeout(() => {
-            setShowMathResult(null);
-            setShowDailyChallengeResult(true);
-            setDailyChallengeReward(0);
-          }, 1500);
+          // Show failure screen immediately
+          setShowMathResult(null);
+          setShowDailyChallengeResult(true);
+          setDailyChallengeReward(0);
           
           return;
         }
@@ -5068,6 +5065,7 @@ const OneMove = () => {
               <button
                 onClick={() => {
                   setShowDailyChallengeResult(false);
+                  setIsDailyChallenge(false); // NOW set it false
                   setCurrentPuzzle(null);
                   setShowMathResult(null);
                   setScreen('home');
@@ -5086,6 +5084,7 @@ const OneMove = () => {
               <button
                 onClick={() => {
                   setShowDailyChallengeResult(false);
+                  setIsDailyChallenge(false); // NOW set it false
                   setCurrentPuzzle(null);
                   setShowMathResult(null);
                   setScreen('home');
