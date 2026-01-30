@@ -2334,10 +2334,10 @@ const OneMove = () => {
     } else {
       // Hard Quick Math: Complex calculations
       const operations = [
-        {q: 'What is 375 × 8?', a: '3000', choices: ['2800', '3000', '3200', '3400']},
-        {q: 'What is 1728 ÷ 12?', a: '144', choices: ['124', '134', '144', '154']},
-        {q: 'What is 25% of 840?', a: '210', choices: ['180', '210', '240', '270']},
-        {q: 'What is 17 × 13?', a: '221', choices: ['201', '211', '221', '231']},
+        {question: 'What is 375 × 8?', answer: '3000', choices: ['2800', '3000', '3200', '3400']},
+        {question: 'What is 1728 ÷ 12?', answer: '144', choices: ['124', '134', '144', '154']},
+        {question: 'What is 25% of 840?', answer: '210', choices: ['180', '210', '240', '270']},
+        {question: 'What is 17 × 13?', answer: '221', choices: ['201', '211', '221', '231']},
       ];
       const selected = operations[seed % operations.length];
       return {type: PUZZLE_TYPES.QUICK_MATH, ...selected};
@@ -4482,13 +4482,10 @@ const OneMove = () => {
       } else {
         // WRONG!
         setShowMathResult('wrong');
-        const newFailCount = failCount + 1;
-        setFailCount(newFailCount);
-        setPuzzleFirstAttempt(false);
         
-        // Check if Daily Challenge
+        // Check if Daily Challenge FIRST before incrementing fail count
         if (isDailyChallenge) {
-          // Daily Challenge FAILED
+          // Daily Challenge FAILED - one attempt only!
           saveDailyChallengeData(false, true, dailyChallengeStreak);
           setDailyChallengeFailed(true);
           setIsDailyChallenge(false);
@@ -4501,6 +4498,11 @@ const OneMove = () => {
           
           return;
         }
+        
+        // Regular game - continue with fail count
+        const newFailCount = failCount + 1;
+        setFailCount(newFailCount);
+        setPuzzleFirstAttempt(false);
         
         setTimeout(() => {
           setShowMathResult(null);
@@ -4542,10 +4544,17 @@ const OneMove = () => {
         </div>
         
         <div className="space-y-6 max-w-md w-full">
+          {isDailyChallenge && (
+            <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-lg p-3 text-center mb-4">
+              <p className="text-white font-bold text-lg">🏆 DAILY CHALLENGE</p>
+              <p className="text-amber-100 text-sm">One attempt only • Win 500 Gems!</p>
+            </div>
+          )}
+          
           <div className="text-center mb-4">
             <p className="text-white text-lg font-light">Quick Math</p>
             <p className="text-slate-400 text-sm mt-1">Solve the problem!</p>
-            {failCount > 0 && !showMathResult && (
+            {failCount > 0 && !showMathResult && !isDailyChallenge && (
               <p className="text-red-400 text-sm mt-1">❌ Wrong! Try again ({failCount}/3)</p>
             )}
           </div>
@@ -4583,13 +4592,15 @@ const OneMove = () => {
             ))}
           </div>
           
-          {/* Skip Button */}
-          <button
-            onClick={() => setShowSkipConfirm(true)}
-            className="w-full mt-4 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all duration-300 text-sm"
-          >
-            Skip Puzzle (No Gems)
-          </button>
+          {/* Skip Button - Hidden during Daily Challenge */}
+          {!isDailyChallenge && (
+            <button
+              onClick={() => setShowSkipConfirm(true)}
+              className="w-full mt-4 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all duration-300 text-sm"
+            >
+              Skip Puzzle (No Gems)
+            </button>
+          )}
         </div>
         
         {/* Skip Confirmation */}
