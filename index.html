@@ -3160,6 +3160,15 @@ const OneMove = () => {
     handleCategorySelect(randomCategory);
   };
 
+  // DEBUG FUNCTION - TEMPORARY
+  const resetDailyChallenge = () => {
+    localStorage.removeItem('dailyChallenge');
+    setDailyChallengeCompleted(false);
+    setDailyChallengeFailed(false);
+    setDailyChallengeAttempted(false);
+    alert('Daily Challenge reset! You can try again now.');
+  };
+
   const handleHomeClick = () => {
     setScreen('home');
   };
@@ -3583,29 +3592,47 @@ const OneMove = () => {
             </button>
           )}
           
-          {/* Daily Challenge Completed */}
-          {dailyChallengeCompleted && (
-            <div className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">✅</span>
-                <div className="text-left">
-                  <p className="text-xl font-bold text-white">DAILY CHALLENGE COMPLETE!</p>
-                  <p className="text-sm text-green-100">Come back tomorrow</p>
+          {/* Daily Challenge Failed */}
+          {dailyChallengeFailed && !dailyChallengeCompleted && (
+            <div className="w-full mb-3">
+              <div className="px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg shadow-lg">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl">💪</span>
+                  <div className="text-left">
+                    <p className="text-xl font-bold text-white">Try Again Tomorrow!</p>
+                    <p className="text-sm text-orange-100">Resets at midnight</p>
+                  </div>
                 </div>
               </div>
+              {/* DEBUG RESET BUTTON - TEMPORARY */}
+              <button
+                onClick={resetDailyChallenge}
+                className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
+              >
+                🔧 Reset Daily Challenge (Testing Only)
+              </button>
             </div>
           )}
           
-          {/* Daily Challenge Failed */}
-          {dailyChallengeFailed && !dailyChallengeCompleted && (
-            <div className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl">💪</span>
-                <div className="text-left">
-                  <p className="text-xl font-bold text-white">Try Again Tomorrow!</p>
-                  <p className="text-sm text-orange-100">Resets at midnight</p>
+          {/* Daily Challenge Completed - Also add reset button */}
+          {dailyChallengeCompleted && (
+            <div className="w-full mb-3">
+              <div className="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl">✅</span>
+                  <div className="text-left">
+                    <p className="text-xl font-bold text-white">DAILY CHALLENGE COMPLETE!</p>
+                    <p className="text-sm text-green-100">Come back tomorrow</p>
+                  </div>
                 </div>
               </div>
+              {/* DEBUG RESET BUTTON - TEMPORARY */}
+              <button
+                onClick={resetDailyChallenge}
+                className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
+              >
+                🔧 Reset Daily Challenge (Testing Only)
+              </button>
             </div>
           )}
           
