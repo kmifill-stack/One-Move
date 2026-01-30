@@ -4531,10 +4531,10 @@ const OneMove = () => {
           
           saveProgress({ dailyChallengeGems: 500 });
           
-          // Show success screen immediately
+          // Use screen state to force result display
           setShowMathResult(null);
-          setShowDailyChallengeResult(true);
           setDailyChallengeReward(500);
+          setScreen('daily_challenge_result');
           
           return;
         }
@@ -4568,10 +4568,10 @@ const OneMove = () => {
           setDailyChallengeFailed(true);
           // DON'T set isDailyChallenge false yet
           
-          // Show failure screen immediately
+          // Use screen state to force result display
           setShowMathResult(null);
-          setShowDailyChallengeResult(true);
           setDailyChallengeReward(0);
+          setScreen('daily_challenge_result');
           
           return;
         }
@@ -5046,7 +5046,7 @@ const OneMove = () => {
   }
 
   // Daily Challenge Result Screen
-  if (showDailyChallengeResult) {
+  if (screen === 'daily_challenge_result') {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
         <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-4 border-amber-500 text-center">
@@ -5064,7 +5064,6 @@ const OneMove = () => {
               )}
               <button
                 onClick={() => {
-                  setShowDailyChallengeResult(false);
                   setIsDailyChallenge(false); // NOW set it false
                   setCurrentPuzzle(null);
                   setShowMathResult(null);
@@ -5083,7 +5082,6 @@ const OneMove = () => {
               <p className="text-slate-300 mb-6">Come back tomorrow for a new Daily Challenge!</p>
               <button
                 onClick={() => {
-                  setShowDailyChallengeResult(false);
                   setIsDailyChallenge(false); // NOW set it false
                   setCurrentPuzzle(null);
                   setShowMathResult(null);
