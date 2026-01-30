@@ -5839,30 +5839,31 @@ const OneMove = () => {
           return;
         }
         
-        // Regular game - ADVANCE TO NEXT PUZZLE after wrong answer
+        // Regular game - continue with fail count
         const newFailCount = failCount + 1;
         setFailCount(newFailCount);
         setPuzzleFirstAttempt(false);
         
+        setTimeout(() => {
+          setShowMathResult(null);
+        }, 1000);
+        
         // Check level up
         setTimeout(() => checkLevelUp(), 100);
         
-        // Advance to next trivia (ONE ATTEMPT ONLY for Quick Math)
-        setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-        saveProgress();
-        
-        setTimeout(() => {
-          setShowMathResult(null);
-          // Auto-select random category
-          const categories = Object.values(CATEGORIES);
-          const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-          handleCategorySelect(randomCategory);
+        if (newFailCount >= 3) {
+          // Failed 3 times - advance anyway
+          setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+          saveProgress();
           
-          // Reset fail count after advancing
-          if (newFailCount >= 3) {
+          setTimeout(() => {
+            // Auto-select random category
+            const categories = Object.values(CATEGORIES);
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            handleCategorySelect(randomCategory);
             setFailCount(0);
-          }
-        }, 1500);
+          }, 2000);
+        }
       }
     };
     
