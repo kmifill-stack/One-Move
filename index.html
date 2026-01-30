@@ -2109,6 +2109,8 @@ const OneMove = () => {
   const [dailyChallengeGems, setDailyChallengeGems] = useState(0); // Track DC gems separately
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
+  const [showGemsAndRewards, setShowGemsAndRewards] = useState(false); // NEW combined popup
+  const [gemsRewardsTab, setGemsRewardsTab] = useState('gems'); // 'gems' or 'rewards'
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
   const [gemsSpent, setGemsSpent] = useState(0);
   const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
@@ -3415,6 +3417,156 @@ const OneMove = () => {
           </div>
         )}
         
+        {/* NEW: Combined Gems & Rewards Popup with Tabs */}
+        {showGemsAndRewards && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemsAndRewards(false)}>
+            <div className="bg-slate-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-slate-600" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-4">💎 GEMS & REWARDS</h2>
+              
+              {/* Tabs */}
+              <div className="flex gap-2 mb-6">
+                <button
+                  onClick={() => setGemsRewardsTab('gems')}
+                  className={`flex-1 py-2 px-4 rounded-lg transition-all ${gemsRewardsTab === 'gems' ? 'bg-slate-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  💎 About Gems
+                </button>
+                <button
+                  onClick={() => setGemsRewardsTab('rewards')}
+                  className={`flex-1 py-2 px-4 rounded-lg transition-all ${gemsRewardsTab === 'rewards' ? 'bg-slate-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  🏆 Promotions & Bonuses
+                </button>
+              </div>
+              
+              {/* Tab Content */}
+              {gemsRewardsTab === 'gems' ? (
+                <div className="space-y-4 text-slate-300 text-sm">
+                  <div>
+                    <p className="text-amber-400 font-semibold mb-2">EARN GEMS:</p>
+                    <div className="space-y-1 ml-3">
+                      <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
+                      <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-red-400 font-semibold mb-2">SPEND GEMS (HINTS):</p>
+                    <div className="space-y-1 ml-3 text-xs">
+                      <p>💡 Hint 1: <span className="text-white font-bold">-50</span></p>
+                      <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
+                      <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
+                      <p>💡 Hint 4: <span className="text-white font-bold">-200</span></p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
+                    <div className="ml-3 text-xs">
+                      <p>⏭️ Skip (Free, no gems earned)</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-700/50 rounded-lg p-3 text-xs">
+                    <p className="text-center">Your gem total shows in the top right. Tap it anytime for your full breakdown!</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3 text-slate-300">
+                  <p className="text-center text-sm text-slate-400 mb-4">Complete puzzles to level up and earn bonus gems!</p>
+                  
+                  <div className="space-y-2">
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">📜</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Pattern Seeker</p>
+                            <p className="text-slate-400 text-xs">76 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-400 font-bold text-sm">+75 💎</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🥉</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Logic Master</p>
+                            <p className="text-slate-400 text-xs">250 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-400 font-bold text-sm">+250 💎</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🥈</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Mind Bender</p>
+                            <p className="text-slate-400 text-xs">400 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-400 font-bold text-sm">+400 💎</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🥇</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Puzzle Architect</p>
+                            <p className="text-slate-400 text-xs">700 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-400 font-bold text-sm">+700 💎</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">💪</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">The Persistent</p>
+                            <p className="text-slate-400 text-xs">1000 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-400 font-bold text-sm">+1000 💎</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🏆</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">ONE MOVE Master</p>
+                            <p className="text-slate-400 text-xs">1500 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-400 font-bold text-sm">+1500 💎</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <button
+                onClick={() => setShowGemsAndRewards(false)}
+                className="w-full mt-6 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        )}
+        
         {/* NEW TOP BAR - 4 ICONS */}
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
           {/* Left side: Home + Username */}
@@ -3707,17 +3859,13 @@ const OneMove = () => {
             </button>
             
             <button
-              onClick={() => setShowAboutGems(true)}
-              className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              onClick={() => {
+                setShowGemsAndRewards(true);
+                setGemsRewardsTab('gems');
+              }}
+              className="w-full px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
-              💎 About Gems
-            </button>
-            
-            <button
-              onClick={() => setShowLevelInfo(true)}
-              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-            >
-              🏆 Getting Promoted & Bonuses
+              💎 Gems & Rewards
             </button>
           </div>
         </div>
