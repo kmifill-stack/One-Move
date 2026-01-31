@@ -4155,13 +4155,13 @@ const OneMove = () => {
       }
       
       // Skip success screen, go straight to next trivia
-      setProcessing(true); // Lock immediately
+      setProcessing(true);
       
       setTimeout(() => {
         const newIndex = currentPuzzleIndex + 1;
         setCurrentPuzzleIndex(newIndex);
-        setCurrentPuzzle(null); // CRITICAL: Clear puzzle state
-        setGrid([]); // Clear grid state
+        setCurrentPuzzle(null);
+        setGrid([]);
         saveProgress({ currentIndex: newIndex });
         
         // Check for level up after state updates
@@ -4203,15 +4203,15 @@ const OneMove = () => {
       const newFailCount = failCount + 1;
       setFailCount(newFailCount);
       setShowTileFailure(true);
-      setProcessing(true); // Lock immediately
+      setProcessing(true);
       
       // Auto-advance after 3.5 seconds
       setTimeout(() => {
         setShowTileFailure(false);
         const newIndex = currentPuzzleIndex + 1;
         setCurrentPuzzleIndex(newIndex);
-        setCurrentPuzzle(null); // CRITICAL: Clear puzzle state
-        setGrid([]); // Clear grid state
+        setCurrentPuzzle(null);
+        setGrid([]);
         saveProgress({ currentIndex: newIndex });
         
         setTimeout(() => checkLevelUp(), 100);
@@ -4600,7 +4600,13 @@ const OneMove = () => {
                     <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
                     <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
                     <p>💡 Hint 4: <span className="text-white font-bold">-200</span></p>
-                    <p className="mt-2 text-blue-300">⏭️ Skip (Free, no gems earned)</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
+                  <div className="ml-3 text-xs">
+                    <p>⏭️ Skip (Free, no gems earned)</p>
                   </div>
                 </div>
                 
@@ -4678,7 +4684,13 @@ const OneMove = () => {
                       <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
                       <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
                       <p>💡 Hint 4: <span className="text-white font-bold">-200</span></p>
-                      <p className="mt-2 text-blue-300">⏭️ Skip (Free, no gems earned)</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
+                    <div className="ml-3 text-xs">
+                      <p>⏭️ Skip (Free, no gems earned)</p>
                     </div>
                   </div>
                   
