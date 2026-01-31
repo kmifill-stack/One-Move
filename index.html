@@ -4027,8 +4027,12 @@ const OneMove = () => {
                 
                 <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
                   <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
-                  <p>Match all pairs with zero wrong attempts = <span className="text-white font-bold">+100 gems</span></p>
-                  <p className="text-xs text-slate-400 mt-1">Perfect memory = perfect score!</p>
+                  <div className="space-y-1 text-sm">
+                    <p>0 wrong attempts = <span className="text-white font-bold">+100 gems</span></p>
+                    <p>1-2 wrong attempts = <span className="text-white font-bold">+50 gems</span></p>
+                    <p>3-4 wrong attempts = <span className="text-white font-bold">+25 gems</span></p>
+                    <p>5-6 wrong attempts = <span className="text-slate-400">No gems</span></p>
+                  </div>
                 </div>
                 
                 <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/50">
@@ -4786,11 +4790,19 @@ const OneMove = () => {
               setPuzzleScore(newPuzzleScore);
               saveProgress({ puzzleScore: newPuzzleScore });
             } else if (wrongAttempts <= 2) {
-              resultTier = 'excellent'; // ALMOST PERFECT!
+              resultTier = 'excellent'; // ALMOST PERFECT! +50 gems
+              // Award 50 gems for excellent score (1-2 wrong)
+              const newPuzzleScore = puzzleScore + 50;
+              setPuzzleScore(newPuzzleScore);
+              saveProgress({ puzzleScore: newPuzzleScore });
             } else if (wrongAttempts <= 4) {
-              resultTier = 'good'; // NICE WORK!
+              resultTier = 'good'; // NICE WORK! +25 gems
+              // Award 25 gems for good score (3-4 wrong)
+              const newPuzzleScore = puzzleScore + 25;
+              setPuzzleScore(newPuzzleScore);
+              saveProgress({ puzzleScore: newPuzzleScore });
             } else {
-              resultTier = 'almost'; // ALMOST! Keep trying
+              resultTier = 'almost'; // KEEP TRYING! (No gems)
             }
             
             setMemoryResult(resultTier);
@@ -4892,21 +4904,21 @@ const OneMove = () => {
                 <div>
                   <p className="text-blue-400 text-6xl font-bold mb-2">⭐</p>
                   <p className="text-blue-400 text-5xl font-bold">ALMOST PERFECT!</p>
-                  <p className="text-slate-300 text-base mt-2">So close to perfection!</p>
+                  <p className="text-green-400 text-lg mt-2">+50 gems earned!</p>
                 </div>
               )}
               {memoryResult === 'good' && (
                 <div>
                   <p className="text-green-400 text-6xl font-bold mb-2">👍</p>
                   <p className="text-green-400 text-5xl font-bold">NICE WORK!</p>
-                  <p className="text-slate-300 text-base mt-2">You're getting better!</p>
+                  <p className="text-green-400 text-lg mt-2">+25 gems earned!</p>
                 </div>
               )}
               {memoryResult === 'almost' && (
                 <div>
                   <p className="text-purple-400 text-6xl font-bold mb-2">💪</p>
-                  <p className="text-purple-400 text-5xl font-bold">ALMOST!</p>
-                  <p className="text-slate-300 text-base mt-2">Keep practicing - you'll master this!</p>
+                  <p className="text-purple-400 text-5xl font-bold">KEEP TRYING!</p>
+                  <p className="text-slate-300 text-base mt-2">No gems this time - try for fewer mistakes!</p>
                 </div>
               )}
               {memoryResult === 'failed' && (
