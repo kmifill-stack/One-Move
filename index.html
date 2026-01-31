@@ -3987,7 +3987,6 @@ const OneMove = () => {
                 <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
                   <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
                   <p>Solve on first try = <span className="text-white font-bold">+100 gems</span></p>
-                  <p className="text-xs text-slate-400 mt-1">You get 3 attempts per problem</p>
                 </div>
               </div>
               
@@ -4560,10 +4559,10 @@ const OneMove = () => {
           handleCategorySelect(randomCategory);
         }, 1500);
       } else {
-        // WRONG!
+        // WRONG! - Auto-advance immediately (one attempt only)
         setShowMathResult('wrong');
         
-        // Check if Daily Challenge FIRST before incrementing fail count
+        // Check if Daily Challenge FIRST
         if (isDailyChallenge) {
           // Daily Challenge FAILED - one attempt only!
           saveDailyChallengeData(false, true, dailyChallengeStreak);
@@ -4579,31 +4578,23 @@ const OneMove = () => {
           return;
         }
         
-        // Regular game - continue with fail count
-        const newFailCount = failCount + 1;
-        setFailCount(newFailCount);
+        // Regular game - wrong answer means auto-advance
         setPuzzleFirstAttempt(false);
+        setFailCount(failCount + 1);
         
+        // Advance to next puzzle after showing wrong feedback
         setTimeout(() => {
           setShowMathResult(null);
-        }, 1000);
-        
-        // Check level up
-        setTimeout(() => checkLevelUp(), 100);
-        
-        if (newFailCount >= 3) {
-          // Failed 3 times - advance anyway
           setCurrentPuzzleIndex(currentPuzzleIndex + 1);
           saveProgress();
           
-          setTimeout(() => {
-            // Auto-select random category
-            const categories = Object.values(CATEGORIES);
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            handleCategorySelect(randomCategory);
-            setFailCount(0);
-          }, 2000);
-        }
+          setTimeout(() => checkLevelUp(), 100);
+          
+          // Auto-select random category
+          const categories = Object.values(CATEGORIES);
+          const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+          handleCategorySelect(randomCategory);
+        }, 1500);
       }
     };
     
@@ -4790,7 +4781,10 @@ const OneMove = () => {
                 return;
               }
               
-              setPuzzleScore(puzzleScore + 100);
+              // Award 100 gems for perfect score
+              const newPuzzleScore = puzzleScore + 100;
+              setPuzzleScore(newPuzzleScore);
+              saveProgress({ puzzleScore: newPuzzleScore });
             } else if (wrongAttempts <= 2) {
               resultTier = 'excellent'; // ALMOST PERFECT!
             } else if (wrongAttempts <= 4) {
