@@ -1053,6 +1053,16 @@ const TRIVIA_BANK = [
   {q: "What is the driest place on Earth?", a: "Atacama Desert", cat: "Geography"},
   {q: "What year did the Renaissance begin?", a: "14th century", cat: "History"},
   {q: "Who painted 'American Gothic'?", a: "Grant Wood", cat: "Art"},
+  {q: "What is the capital of Iceland?", a: "Reykjavik", cat: "Geography"},
+  {q: "Who wrote 'The Metamorphosis'?", a: "Franz Kafka", cat: "Literature"},
+  {q: "What is the largest bone in the human body?", a: "Femur", cat: "Science"},
+  {q: "In what year was the first iPhone released?", a: "2007", cat: "Technology"},
+  {q: "What is the smallest prime number?", a: "Two", cat: "Math"},
+  {q: "Who painted 'The Starry Night'?", a: "Vincent van Gogh", cat: "Art"},
+  {q: "What is the capital of Morocco?", a: "Rabat", cat: "Geography"},
+  {q: "Who invented the World Wide Web?", a: "Tim Berners-Lee", cat: "Technology"},
+  {q: "What is the longest river in Europe?", a: "Volga River", cat: "Geography"},
+  {q: "Who wrote 'The Lord of the Rings'?", a: "J.R.R. Tolkien", cat: "Literature"}
 ];
 
 // NEW: Separate 1500-word SCRAMBLE BANK with categories
@@ -5839,31 +5849,30 @@ const OneMove = () => {
           return;
         }
         
-        // Regular game - continue with fail count
+        // Regular game - advance after wrong answer
         const newFailCount = failCount + 1;
         setFailCount(newFailCount);
         setPuzzleFirstAttempt(false);
         
-        setTimeout(() => {
-          setShowMathResult(null);
-        }, 1000);
-        
         // Check level up
         setTimeout(() => checkLevelUp(), 100);
         
-        if (newFailCount >= 3) {
-          // Failed 3 times - advance anyway
-          setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-          saveProgress();
+        // Always advance to next puzzle after wrong Quick Math answer
+        setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+        saveProgress();
+        
+        setTimeout(() => {
+          setShowMathResult(null);
+          // Auto-select random category
+          const categories = Object.values(CATEGORIES);
+          const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+          handleCategorySelect(randomCategory);
           
-          setTimeout(() => {
-            // Auto-select random category
-            const categories = Object.values(CATEGORIES);
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            handleCategorySelect(randomCategory);
+          // Reset fail count after 3 fails
+          if (newFailCount >= 3) {
             setFailCount(0);
-          }, 2000);
-        }
+          }
+        }, 1500);
       }
     };
     
