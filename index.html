@@ -5999,6 +5999,9 @@ const OneMove = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     const handleMathAnswer = (selected) => {
+      // LOCK IMMEDIATELY
+      setProcessing(true);
+      
       if (selected === currentPuzzle.answer) {
         // CORRECT!
         setShowMathResult('correct');
@@ -6286,9 +6289,12 @@ const OneMove = () => {
             
             setMemoryResult(resultTier);
             
-            // Advance to next trivia
-            setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-            saveProgress();
+            // LOCK and advance to next trivia
+            setProcessing(true);
+            const newIndex = currentPuzzleIndex + 1;
+            setCurrentPuzzleIndex(newIndex);
+            setCurrentPuzzle(null);
+            saveProgress({ currentIndex: newIndex });
             
             // Check level up
             setTimeout(() => checkLevelUp(), 100);
@@ -6299,6 +6305,7 @@ const OneMove = () => {
               const categories = Object.values(CATEGORIES);
               const randomCategory = categories[Math.floor(Math.random() * categories.length)];
               handleCategorySelect(randomCategory);
+              setProcessing(false);
             }, 5000);
           }
         } else {
@@ -6333,8 +6340,10 @@ const OneMove = () => {
                 // Failed 6 attempts - show encouraging message
                 setMemoryResult('failed');
                 
-                setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-                saveProgress();
+                const newIndex = currentPuzzleIndex + 1;
+                setCurrentPuzzleIndex(newIndex);
+                setCurrentPuzzle(null);
+                saveProgress({ currentIndex: newIndex });
                 
                 setTimeout(() => checkLevelUp(), 100);
                 
