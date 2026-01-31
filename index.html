@@ -1261,7 +1261,6 @@ const SCRAMBLE_CATEGORIES = {
   {q: "What is the largest species of shark?", a: "Whale Shark", cat: "Animals"},
   {q: "Who wrote 'Things Fall Apart'?", a: "Chinua Achebe", cat: "Literature"},
   {q: "What is the capital of Lebanon?", a: "Beirut", cat: "Geography"},
-  {q: "What is the largest moon of Saturn?", a: "Titan", cat: "Science"},
   FOOD: 'Food',
   OBJECT: 'Object',
   SPORT: 'Sport',
@@ -4627,7 +4626,7 @@ const OneMove = () => {
         
         {/* NEW: Combined Gems & Rewards Popup with Tabs */}
         {showGemsAndRewards && (
-          <div className="fixed inset-0 bg-black flex items-center justify-center z-50 p-6" onClick={() => setShowGemsAndRewards(false)}>
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemsAndRewards(false)}>
             <div className="bg-slate-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-slate-600" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-3xl font-light text-white text-center mb-4">💎 GEMS & REWARDS</h2>
               
@@ -5853,7 +5852,7 @@ const OneMove = () => {
           )}
           
           <div className="text-center space-y-3">
-            <p className="text-amber-400 text-2xl font-bold mb-3">{currentPuzzle.category || 'General'}</p>
+            <p className="text-amber-400 text-2xl font-bold mb-3">{currentPuzzle.category}</p>
             <p className="text-white text-lg font-light">Word Scramble Challenge</p>
             <p className="text-slate-400 text-sm">Unscramble the letters!</p>
             {!puzzleFirstAttempt && (
