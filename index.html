@@ -2076,7 +2076,6 @@ const PUZZLE_TYPES = {
 
 const OneMove = () => {
   const [screen, setScreen] = useState('splash');
-  const [activeTab, setActiveTab] = useState('play'); // 'play', 'superstars', 'stats'
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [triviaScore, setTriviaScore] = useState(0);
   const [puzzleScore, setPuzzleScore] = useState(0);
@@ -3246,12 +3245,12 @@ const OneMove = () => {
     
     return (
       <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-400" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
           <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
           
           <div className="space-y-6 text-slate-300">
             <div>
-              <p className="text-amber-300 font-semibold mb-3">EARNED:</p>
+              <p className="text-amber-400 font-semibold mb-3">EARNED:</p>
               <div className="space-y-2 ml-3">
                 <p className="flex justify-between">
                   <span>💎 Trivia:</span>
@@ -3302,17 +3301,17 @@ const OneMove = () => {
               </div>
             )}
             
-            <div className="border-t-2 border-amber-400 pt-4">
+            <div className="border-t-2 border-amber-500 pt-4">
               <p className="flex justify-between text-xl">
                 <span className="text-white font-bold">💎 TOTAL:</span>
-                <span className="text-amber-300 font-bold">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent}</span>
+                <span className="text-amber-400 font-bold">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent}</span>
               </p>
             </div>
           </div>
           
           <button
             onClick={() => setShowGemBreakdown(false)}
-            className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+            className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
           >
             Close
           </button>
@@ -3334,7 +3333,7 @@ const OneMove = () => {
   if (screen === 'splash') {
     return (
       <div 
-        className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center cursor-pointer"
+        className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center cursor-pointer"
         onClick={() => setScreen('home')}
       >
         <div className="text-center space-y-8">
@@ -3374,15 +3373,15 @@ const OneMove = () => {
   // Home Screen
   if (screen === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
         {showAboutGems && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowAboutGems(false)}>
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-400" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-3xl font-light text-white text-center mb-6">💎 ABOUT GEMS</h2>
               
               <div className="space-y-6 text-slate-300 text-sm">
                 <div>
-                  <p className="text-amber-300 font-semibold mb-2">EARN GEMS:</p>
+                  <p className="text-amber-400 font-semibold mb-2">EARN GEMS:</p>
                   <div className="space-y-1 ml-3">
                     <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
                     <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
@@ -3413,7 +3412,7 @@ const OneMove = () => {
               
               <button
                 onClick={() => setShowAboutGems(false)}
-                className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
               >
                 Got It!
               </button>
@@ -3531,7 +3530,7 @@ const OneMove = () => {
                           <p className="text-slate-400 text-xs">76 puzzles</p>
                         </div>
                       </div>
-                      <p className="text-amber-300 font-bold">+75 💎</p>
+                      <p className="text-amber-400 font-bold">+75 💎</p>
                     </div>
                   </div>
                   
@@ -3544,7 +3543,7 @@ const OneMove = () => {
                           <p className="text-slate-400 text-xs">250 puzzles</p>
                         </div>
                       </div>
-                      <p className="text-amber-300 font-bold">+250 💎</p>
+                      <p className="text-amber-400 font-bold">+250 💎</p>
                     </div>
                   </div>
                   
@@ -3557,7 +3556,7 @@ const OneMove = () => {
                           <p className="text-slate-400 text-xs">400 puzzles</p>
                         </div>
                       </div>
-                      <p className="text-amber-300 font-bold">+400 💎</p>
+                      <p className="text-amber-400 font-bold">+400 💎</p>
                     </div>
                   </div>
                   
@@ -3570,7 +3569,7 @@ const OneMove = () => {
                           <p className="text-slate-400 text-xs">700 puzzles</p>
                         </div>
                       </div>
-                      <p className="text-amber-300 font-bold">+700 💎</p>
+                      <p className="text-amber-400 font-bold">+700 💎</p>
                     </div>
                   </div>
                   
@@ -3583,7 +3582,7 @@ const OneMove = () => {
                           <p className="text-slate-400 text-xs">1000 puzzles</p>
                         </div>
                       </div>
-                      <p className="text-amber-300 font-bold">+1000 💎</p>
+                      <p className="text-amber-400 font-bold">+1000 💎</p>
                     </div>
                   </div>
                   
@@ -3596,7 +3595,7 @@ const OneMove = () => {
                           <p className="text-slate-400 text-xs">1500 puzzles</p>
                         </div>
                       </div>
-                      <p className="text-amber-300 font-bold">+1500 💎</p>
+                      <p className="text-amber-400 font-bold">+1500 💎</p>
                     </div>
                   </div>
                 </div>
@@ -3625,246 +3624,107 @@ const OneMove = () => {
           </div>
         )}
         
-        {/* FOLDER-STYLE TABS */}
-        <div className="flex justify-center gap-1 mb-6 max-w-md mx-auto">
-          <button
-            onClick={() => setActiveTab('play')}
-            className={`flex-1 px-4 py-3 font-semibold transition-all duration-300 relative ${
-              activeTab === 'play'
-                ? 'bg-slate-800/90 text-white border-t-4 border-purple-500 rounded-t-xl shadow-lg'
-                : 'bg-slate-900/40 text-slate-400 hover:text-slate-200 rounded-t-lg'
-            }`}
-          >
-            <span className="text-sm">▶️ PLAY</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('superstars')}
-            className={`flex-1 px-4 py-3 font-semibold transition-all duration-300 relative ${
-              activeTab === 'superstars'
-                ? 'bg-slate-800/90 text-white border-t-4 border-amber-400 rounded-t-xl shadow-lg'
-                : 'bg-slate-900/40 text-slate-400 hover:text-slate-200 rounded-t-lg'
-            }`}
-          >
-            <span className="text-sm">⭐ STARS</span>
-          </button>
-          
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`flex-1 px-4 py-3 font-semibold transition-all duration-300 relative ${
-              activeTab === 'stats'
-                ? 'bg-slate-800/90 text-white border-t-4 border-blue-500 rounded-t-xl shadow-lg'
-                : 'bg-slate-900/40 text-slate-400 hover:text-slate-200 rounded-t-lg'
-            }`}
-          >
-            <span className="text-sm">📊 STATS</span>
-          </button>
-        </div>
-        
         <div className="text-center space-y-8 max-w-md">
-          {/* PLAY TAB */}
-          {activeTab === 'play' && (
-            <>
-              <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
-                ONE MOVE
-              </h1>
-              
-              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-                <p className="text-amber-300 text-2xl font-semibold mb-2">{getUserLevel()}</p>
-                <p className="text-slate-300 text-base">Answer trivia • Solve puzzles • Earn gems • Get promoted</p>
-                <p className="text-slate-300 text-sm mt-3">Puzzles Completed: {currentPuzzleIndex}</p>
-              </div>
-              
-              {/* Daily Challenge Banner */}
-              {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
-                <button
-                  onClick={startDailyChallenge}
-                  className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105"
-                >
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-2xl">🏆</span>
-                    <div className="text-left">
-                      <p className="text-xl font-bold">DAILY CHALLENGE</p>
-                      <p className="text-sm text-red-100">Win 500 Gems!</p>
-                    </div>
-                  </div>
-                </button>
-              )}
-              
-              {/* Daily Challenge Failed */}
-              {dailyChallengeFailed && !dailyChallengeCompleted && (
-                <div className="w-full mb-3">
-                  <div className="px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg shadow-lg">
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="text-2xl">💪</span>
-                      <div className="text-left">
-                        <p className="text-xl font-bold text-white">Try Again Tomorrow!</p>
-                        <p className="text-sm text-orange-100">Resets at midnight</p>
-                      </div>
-                    </div>
-                  </div>
-                  {/* DEBUG RESET BUTTON - TEMPORARY */}
-                  <button
-                    onClick={resetDailyChallenge}
-                    className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
-                  >
-                    🔧 Reset Daily Challenge (Testing Only)
-                  </button>
+          <h1 className="text-6xl font-extralight text-white tracking-wider mb-8">
+            ONE MOVE
+          </h1>
+          
+          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <p className="text-amber-400 text-2xl font-semibold mb-2">{getUserLevel()}</p>
+            <p className="text-slate-300 text-base">Answer trivia • Solve puzzles • Earn gems • Get promoted</p>
+            <p className="text-slate-300 text-sm mt-3">Puzzles Completed: {currentPuzzleIndex}</p>
+          </div>
+          
+          {/* Daily Challenge Banner */}
+          {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
+            <button
+              onClick={startDailyChallenge}
+              className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105"
+            >
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-2xl">🏆</span>
+                <div className="text-left">
+                  <p className="text-xl font-bold">DAILY CHALLENGE</p>
+                  <p className="text-sm text-red-100">Win 500 Gems!</p>
                 </div>
-              )}
-              
-              {/* Daily Challenge Completed - Also add reset button */}
-              {dailyChallengeCompleted && (
-                <div className="w-full mb-3">
-                  <div className="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg">
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="text-2xl">✅</span>
-                      <div className="text-left">
-                        <p className="text-xl font-bold text-white">DAILY CHALLENGE COMPLETE!</p>
-                        <p className="text-sm text-green-100">Come back tomorrow</p>
-                      </div>
-                    </div>
-                  </div>
-                  {/* DEBUG RESET BUTTON - TEMPORARY */}
-                  <button
-                    onClick={resetDailyChallenge}
-                    className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
-                  >
-                    🔧 Reset Daily Challenge (Testing Only)
-                  </button>
-                </div>
-              )}
-              
-              <div className="space-y-3">
-                <button
-                  onClick={handlePlay}
-                  className="w-full px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-xl font-light tracking-wide shadow-lg"
-                >
-                  <Play className="w-6 h-6" />
-                  <span>PLAY</span>
-                </button>
-                
-                <button
-                  onClick={() => setScreen('instructions')}
-                  className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-                >
-                  HOW TO PLAY
-                </button>
-                
-                <button
-                  onClick={() => setShowAboutGems(true)}
-                  className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-                >
-                  💎 About Gems
-                </button>
-                
-                <button
-                  onClick={() => setShowLevelInfo(true)}
-                  className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-                >
-                  🏆 Getting Promoted & Bonuses
-                </button>
               </div>
-            </>
+            </button>
           )}
           
-          {/* SUPERSTARS TAB */}
-          {activeTab === 'superstars' && (
-            <>
-              <h1 className="text-5xl font-extralight text-white tracking-wider mb-8">
-                ⭐ SUPERSTARS
-              </h1>
-              
-              <div className="bg-slate-800/50 rounded-xl p-6 border border-amber-400">
-                <p className="text-amber-300 text-2xl font-semibold mb-4">Top Performers</p>
-                <p className="text-slate-400 text-sm mb-6">Coming soon! See who's crushing it.</p>
-                
-                <div className="space-y-3">
-                  {/* Sample leaderboard entries */}
-                  <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-lg p-4 flex items-center gap-4">
-                    <span className="text-3xl">🥇</span>
-                    <div className="flex-1 text-left">
-                      <p className="text-white font-bold text-lg">Pattern Master</p>
-                      <p className="text-amber-100 text-sm">500 puzzles • 12,500 gems</p>
-                    </div>
+          {/* Daily Challenge Failed */}
+          {dailyChallengeFailed && !dailyChallengeCompleted && (
+            <div className="w-full mb-3">
+              <div className="px-8 py-4 bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg shadow-lg">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl">💪</span>
+                  <div className="text-left">
+                    <p className="text-xl font-bold text-white">Try Again Tomorrow!</p>
+                    <p className="text-sm text-orange-100">Resets at midnight</p>
                   </div>
-                  
-                  <div className="bg-gradient-to-r from-slate-600 to-slate-700 rounded-lg p-4 flex items-center gap-4">
-                    <span className="text-3xl">🥈</span>
-                    <div className="flex-1 text-left">
-                      <p className="text-white font-bold text-lg">Logic Expert</p>
-                      <p className="text-slate-200 text-sm">450 puzzles • 11,200 gems</p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-r from-orange-600 to-orange-700 rounded-lg p-4 flex items-center gap-4">
-                    <span className="text-3xl">🥉</span>
-                    <div className="flex-1 text-left">
-                      <p className="text-white font-bold text-lg">Puzzle Solver</p>
-                      <p className="text-orange-100 text-sm">400 puzzles • 9,800 gems</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-6 p-4 bg-slate-700/50 rounded-lg border border-slate-600">
-                  <p className="text-white font-semibold text-center">YOU: {username}</p>
-                  <p className="text-slate-300 text-sm text-center mt-1">{currentPuzzleIndex} puzzles • {triviaScore + puzzleScore} gems</p>
                 </div>
               </div>
-            </>
+              {/* DEBUG RESET BUTTON - TEMPORARY */}
+              <button
+                onClick={resetDailyChallenge}
+                className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
+              >
+                🔧 Reset Daily Challenge (Testing Only)
+              </button>
+            </div>
           )}
           
-          {/* STATS TAB */}
-          {activeTab === 'stats' && (
-            <>
-              <h1 className="text-5xl font-extralight text-white tracking-wider mb-8">
-                📊 YOUR STATS
-              </h1>
-              
-              <div className="bg-slate-800/50 rounded-xl p-6 border border-blue-500 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-900/30 rounded-lg p-4">
-                    <p className="text-blue-300 text-3xl font-bold">{currentPuzzleIndex}</p>
-                    <p className="text-slate-400 text-sm">Puzzles Completed</p>
-                  </div>
-                  
-                  <div className="bg-purple-900/30 rounded-lg p-4">
-                    <p className="text-purple-300 text-3xl font-bold">{triviaScore + puzzleScore}</p>
-                    <p className="text-slate-400 text-sm">Total Gems</p>
-                  </div>
-                  
-                  <div className="bg-green-900/30 rounded-lg p-4">
-                    <p className="text-green-300 text-3xl font-bold">{triviaScore}</p>
-                    <p className="text-slate-400 text-sm">Trivia Gems</p>
-                  </div>
-                  
-                  <div className="bg-amber-900/30 rounded-lg p-4">
-                    <p className="text-amber-300 text-3xl font-bold">{puzzleScore}</p>
-                    <p className="text-slate-400 text-sm">Puzzle Gems</p>
+          {/* Daily Challenge Completed - Also add reset button */}
+          {dailyChallengeCompleted && (
+            <div className="w-full mb-3">
+              <div className="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 rounded-lg shadow-lg">
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-2xl">✅</span>
+                  <div className="text-left">
+                    <p className="text-xl font-bold text-white">DAILY CHALLENGE COMPLETE!</p>
+                    <p className="text-sm text-green-100">Come back tomorrow</p>
                   </div>
                 </div>
-                
-                <div className="bg-slate-700/50 rounded-lg p-4">
-                  <p className="text-white font-semibold mb-2">Current Level</p>
-                  <p className="text-amber-300 text-2xl font-bold">{getUserLevel()}</p>
-                </div>
-                
-                {puzzlesSkipped > 0 && (
-                  <div className="bg-red-900/30 rounded-lg p-4">
-                    <p className="text-red-300 text-2xl font-bold">{puzzlesSkipped}</p>
-                    <p className="text-slate-400 text-sm">Puzzles Skipped</p>
-                  </div>
-                )}
-                
-                {dailyChallengeStreak > 0 && (
-                  <div className="bg-orange-900/30 rounded-lg p-4">
-                    <p className="text-orange-300 text-2xl font-bold">🔥 {dailyChallengeStreak}</p>
-                    <p className="text-slate-400 text-sm">Day Streak</p>
-                  </div>
-                )}
               </div>
-            </>
-          )}>
+              {/* DEBUG RESET BUTTON - TEMPORARY */}
+              <button
+                onClick={resetDailyChallenge}
+                className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
+              >
+                🔧 Reset Daily Challenge (Testing Only)
+              </button>
+            </div>
+          )}
+          
+          <div className="space-y-3">
+            <button
+              onClick={handlePlay}
+              className="w-full px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-xl font-light tracking-wide shadow-lg"
+            >
+              <Play className="w-6 h-6" />
+              <span>PLAY</span>
+            </button>
+            
+            <button
+              onClick={() => setScreen('instructions')}
+              className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+            >
+              HOW TO PLAY
+            </button>
+            
+            <button
+              onClick={() => setShowAboutGems(true)}
+              className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+            >
+              💎 About Gems
+            </button>
+            
+            <button
+              onClick={() => setShowLevelInfo(true)}
+              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+            >
+              🏆 Getting Promoted & Bonuses
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -3873,7 +3733,7 @@ const OneMove = () => {
   // Instructions Screen
   if (screen === 'instructions') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-6">
         <button 
           onClick={() => setScreen('home')}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4129,7 +3989,7 @@ const OneMove = () => {
                   </ul>
                 </div>
                 
-                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-400/50">
+                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
                   <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
                   <p>Solve on first try = <span className="text-white font-bold">+100 gems</span></p>
                 </div>
@@ -4170,7 +4030,7 @@ const OneMove = () => {
                   </ul>
                 </div>
                 
-                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-400/50">
+                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
                   <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
                   <div className="space-y-1 text-sm">
                     <p>0 wrong attempts = <span className="text-white font-bold">+100 gems</span></p>
@@ -4206,7 +4066,7 @@ const OneMove = () => {
   // Category Selection
   if (screen === 'category_select') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4248,7 +4108,7 @@ const OneMove = () => {
   // Trivia Screen
   if (screen === 'trivia' && currentTriviaQuestion) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4266,7 +4126,7 @@ const OneMove = () => {
         <div className="max-w-2xl w-full space-y-8 mt-16">
           <div className="text-center">
             <div className="mb-4">
-              <span className="text-amber-300 text-2xl font-bold uppercase">{selectedCategory}</span>
+              <span className="text-amber-400 text-2xl font-bold uppercase">{selectedCategory}</span>
             </div>
             <h2 className="text-3xl font-light text-white mb-8">
               {currentTriviaQuestion.q}
@@ -4324,7 +4184,7 @@ const OneMove = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
@@ -4365,8 +4225,8 @@ const OneMove = () => {
           
           {hintLevel >= 2 && (
             <div className="text-center">
-              <div className="inline-block bg-amber-500/20 border-2 border-amber-400 rounded-lg px-4 py-2">
-                <p className="text-amber-300 text-base font-bold">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
+              <div className="inline-block bg-amber-500/20 border-2 border-amber-500 rounded-lg px-4 py-2">
+                <p className="text-amber-400 text-base font-bold">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
               </div>
             </div>
           )}
@@ -4423,7 +4283,7 @@ const OneMove = () => {
               className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                 totalGems < 50 || hintLevel >= 1
                   ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  : 'bg-amber-600 hover:bg-amber-700 text-white'
               }`}
             >
               💡 Hint 1: Highlight Area (-50 gems) {hintLevel >= 1 ? '✓' : ''}
@@ -4436,7 +4296,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 100 || hintLevel >= 2
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
                 }`}
               >
                 💡 Hint 2: Show Pattern (-100 gems) {hintLevel >= 2 ? '✓' : ''}
@@ -4450,7 +4310,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 150 || hintLevel >= 3
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
                 }`}
               >
                 💡 Hint 3: Exact Tile (-150 gems) {hintLevel >= 3 ? '✓' : ''}
@@ -4464,7 +4324,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 200 || hintLevel >= 4
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
                 }`}
               >
                 💡 Hint 4: Tap Here (-200 gems) {hintLevel >= 4 ? '✓' : ''}
@@ -4512,7 +4372,7 @@ const OneMove = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4538,7 +4398,7 @@ const OneMove = () => {
           )}
           
           <div className="text-center space-y-3">
-            <p className="text-amber-300 text-2xl font-bold mb-3">{currentPuzzle.category}</p>
+            <p className="text-amber-400 text-2xl font-bold mb-3">{currentPuzzle.category}</p>
             <p className="text-white text-lg font-light">Word Scramble Challenge</p>
             <p className="text-slate-400 text-sm">Unscramble the letters!</p>
             {!puzzleFirstAttempt && (
@@ -4576,7 +4436,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 50 || hintLevel >= 1
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                    : 'bg-amber-600 hover:bg-amber-700 text-white'
                 }`}
               >
                 💡 Hint 1: First Letter (-50 gems) {hintLevel >= 1 ? '✓' : ''}
@@ -4589,7 +4449,7 @@ const OneMove = () => {
                   className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                     totalGems < 100 || hintLevel >= 2
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                      : 'bg-amber-600 hover:bg-amber-700 text-white'
                   }`}
                 >
                   💡 Hint 2: First 3 Letters (-100 gems) {hintLevel >= 2 ? '✓' : ''}
@@ -4603,7 +4463,7 @@ const OneMove = () => {
                   className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                     totalGems < 150 || hintLevel >= 3
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                      : 'bg-amber-600 hover:bg-amber-700 text-white'
                   }`}
                 >
                   💡 Hint 3: All But Last 2 (-150 gems) {hintLevel >= 3 ? '✓' : ''}
@@ -4617,7 +4477,7 @@ const OneMove = () => {
                   className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                     totalGems < 200 || hintLevel >= 4
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                      : 'bg-amber-600 hover:bg-amber-700 text-white'
                   }`}
                 >
                   💡 Hint 4: Full Answer (-200 gems) {hintLevel >= 4 ? '✓' : ''}
@@ -4756,7 +4616,7 @@ const OneMove = () => {
     };
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -5027,7 +4887,7 @@ const OneMove = () => {
     };
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -5076,8 +4936,8 @@ const OneMove = () => {
               )}
               {memoryResult === 'failed' && (
                 <div>
-                  <p className="text-amber-300 text-6xl font-bold mb-2">💪</p>
-                  <p className="text-amber-300 text-5xl font-bold">ALMOST!</p>
+                  <p className="text-amber-400 text-6xl font-bold mb-2">💪</p>
+                  <p className="text-amber-400 text-5xl font-bold">ALMOST!</p>
                   <p className="text-slate-300 text-base mt-2">Keep practicing - you'll nail it next time!</p>
                 </div>
               )}
@@ -5093,7 +4953,7 @@ const OneMove = () => {
               <>
                 <p className="text-green-400 text-sm mt-1">🧠 Matching Phase!</p>
                 {wrongAttempts > 0 && (
-                  <p className="text-amber-300 text-sm mt-1">Attempts: {wrongAttempts}/6</p>
+                  <p className="text-amber-400 text-sm mt-1">Attempts: {wrongAttempts}/6</p>
                 )}
               </>
             )}
@@ -5168,7 +5028,7 @@ const OneMove = () => {
   // Success Screen
   if (screen === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -5211,13 +5071,13 @@ const OneMove = () => {
   if (showDailyChallengeResult) {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
-        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-4 border-amber-400 text-center">
+        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-4 border-amber-500 text-center">
           {dailyChallengeReward > 0 ? (
             <>
               <div className="text-6xl mb-4">🏆</div>
-              <h2 className="text-4xl font-bold text-amber-300 mb-2">CHALLENGE COMPLETE!</h2>
+              <h2 className="text-4xl font-bold text-amber-400 mb-2">CHALLENGE COMPLETE!</h2>
               <p className="text-white text-xl mb-6">You earned</p>
-              <div className="text-6xl font-bold text-amber-300 mb-2">+500 💎</div>
+              <div className="text-6xl font-bold text-amber-400 mb-2">+500 💎</div>
               <p className="text-slate-300 text-sm mb-6">Daily Challenge Bonus</p>
               {dailyChallengeStreak > 1 && (
                 <div className="bg-slate-700/50 rounded-lg p-3 mb-6">
@@ -5231,7 +5091,7 @@ const OneMove = () => {
                   setShowMathResult(null);
                   setScreen('home');
                 }}
-                className="w-full px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-bold"
+                className="w-full px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-bold"
               >
                 Awesome!
               </button>
