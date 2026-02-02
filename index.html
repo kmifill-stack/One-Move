@@ -2311,6 +2311,8 @@ const OneMove = () => {
   const [dailyChallengeGems, setDailyChallengeGems] = useState(0); // Track DC gems separately
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
+  const [showGemsAndRewards, setShowGemsAndRewards] = useState(false); // Combined popup
+  const [gemsRewardsTab, setGemsRewardsTab] = useState('gems'); // 'gems', 'rewards', or 'superstars'
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
   const [gemsSpent, setGemsSpent] = useState(0);
   const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
@@ -3622,6 +3624,227 @@ const OneMove = () => {
           </div>
         )}
         
+        {/* NEW: Combined Gems & Rewards Popup with 3 Tabs */}
+        {showGemsAndRewards && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemsAndRewards(false)}>
+            <div className="bg-slate-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-4">💎 GEMS & REWARDS</h2>
+              
+              {/* Tabs */}
+              <div className="flex gap-2 mb-6">
+                <button
+                  onClick={() => setGemsRewardsTab('gems')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${gemsRewardsTab === 'gems' ? 'bg-purple-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  💎 Gems
+                </button>
+                <button
+                  onClick={() => setGemsRewardsTab('rewards')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${gemsRewardsTab === 'rewards' ? 'bg-purple-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  🏆 Rewards
+                </button>
+                <button
+                  onClick={() => setGemsRewardsTab('superstars')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${gemsRewardsTab === 'superstars' ? 'bg-purple-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  ⭐ Stars
+                </button>
+              </div>
+              
+              {/* GEMS TAB CONTENT */}
+              {gemsRewardsTab === 'gems' && (
+                <div className="space-y-4 text-slate-300 text-sm">
+                  <div>
+                    <p className="text-amber-300 font-semibold mb-2">EARN GEMS:</p>
+                    <div className="space-y-1 ml-3">
+                      <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
+                      <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
+                      <p>✓ Daily Challenge complete: <span className="text-white font-bold">+500</span></p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-red-400 font-semibold mb-2">SPEND GEMS (HINTS):</p>
+                    <div className="space-y-1 ml-3 text-xs">
+                      <p>💡 Hint 1: <span className="text-white font-bold">-50</span></p>
+                      <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
+                      <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
+                      <p>💡 Hint 4: <span className="text-white font-bold">-200</span></p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
+                    <div className="ml-3 text-xs">
+                      <p>⏭️ Skip (Free, no gems earned)</p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-slate-700/50 rounded-lg p-3 text-xs">
+                    <p className="text-center">Your gem total shows in the top right. Tap it anytime for your full breakdown!</p>
+                  </div>
+                </div>
+              )}
+              
+              {/* REWARDS TAB CONTENT - ALL 7 LEVELS */}
+              {gemsRewardsTab === 'rewards' && (
+                <div className="space-y-3 text-slate-300">
+                  <p className="text-center text-sm text-slate-400 mb-4">Complete puzzles to level up and earn bonus gems!</p>
+                  
+                  <div className="space-y-2">
+                    {/* Level 1 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">📜</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Pattern Seeker</p>
+                            <p className="text-slate-400 text-xs">0-75 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+75 💎</p>
+                      </div>
+                    </div>
+                    
+                    {/* Level 2 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🥉</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Logic Master</p>
+                            <p className="text-slate-400 text-xs">76-250 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+250 💎</p>
+                      </div>
+                    </div>
+                    
+                    {/* Level 3 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🥈</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Puzzle Solver</p>
+                            <p className="text-slate-400 text-xs">251-350 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+350 💎</p>
+                      </div>
+                    </div>
+                    
+                    {/* Level 4 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🥇</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Mind Champion</p>
+                            <p className="text-slate-400 text-xs">351-450 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+450 💎</p>
+                      </div>
+                    </div>
+                    
+                    {/* Level 5 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">💎</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Brain Virtuoso</p>
+                            <p className="text-slate-400 text-xs">451-475 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+475 💎</p>
+                      </div>
+                    </div>
+                    
+                    {/* Level 6 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">🏆</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Pattern Legend</p>
+                            <p className="text-slate-400 text-xs">476-499 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+499 💎</p>
+                      </div>
+                    </div>
+                    
+                    {/* Level 7 */}
+                    <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">👑</span>
+                          <div>
+                            <p className="text-white font-semibold text-sm">Puzzle Virtuoso</p>
+                            <p className="text-slate-400 text-xs">500 puzzles</p>
+                          </div>
+                        </div>
+                        <p className="text-amber-300 font-bold text-sm">+500 💎</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Bonus Info */}
+                  <div className="bg-purple-900/30 rounded-lg p-4 border border-purple-600 mt-4">
+                    <p className="text-purple-300 font-bold text-sm mb-2">✨ TOTAL BONUS GEMS</p>
+                    <p className="text-white text-2xl font-bold">2,599 💎</p>
+                    <p className="text-slate-400 text-xs mt-2">Complete all 500 puzzles to earn maximum rewards!</p>
+                  </div>
+                  
+                  {/* Tips Section */}
+                  <div className="bg-blue-900/30 rounded-lg p-3 mt-4">
+                    <p className="text-blue-300 font-semibold text-xs mb-2">💡 TIPS:</p>
+                    <ul className="text-slate-400 text-xs space-y-1 ml-3">
+                      <li>• Check your current level on home screen</li>
+                      <li>• Trophy icon shows your achievement</li>
+                      <li>• Bonus gems appear in gem breakdown</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+              
+              {/* SUPERSTARS TAB CONTENT */}
+              {gemsRewardsTab === 'superstars' && (
+                <div className="text-center py-8">
+                  <div className="text-6xl mb-4">⭐</div>
+                  <h3 className="text-2xl font-bold text-white mb-3">SUPERSTARS</h3>
+                  <p className="text-slate-400 mb-6">Leaderboard coming soon!</p>
+                  
+                  <div className="bg-slate-700/50 rounded-lg p-6 max-w-md mx-auto">
+                    <p className="text-slate-300 text-sm mb-4">See how you rank against other players worldwide.</p>
+                    <div className="space-y-2 text-xs text-slate-400">
+                      <p>📊 Track top performers</p>
+                      <p>🏆 Compare your progress</p>
+                      <p>🎯 Compete for the #1 spot</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-purple-900/30 rounded-lg border border-purple-600 max-w-md mx-auto">
+                    <p className="text-white font-semibold">YOU: {username}</p>
+                    <p className="text-slate-300 text-sm mt-1">{currentPuzzleIndex} puzzles completed</p>
+                    <p className="text-amber-300 text-sm">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent} gems earned</p>
+                  </div>
+                </div>
+              )}
+              
+              <button
+                onClick={() => setShowGemsAndRewards(false)}
+                className="w-full mt-6 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
         {/* NEW TOP BAR - 4 ICONS */}
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
           {/* Left side: Home + Username */}
@@ -3914,17 +4137,13 @@ const OneMove = () => {
             </button>
             
             <button
-              onClick={() => setShowAboutGems(true)}
+              onClick={() => {
+                setShowGemsAndRewards(true);
+                setGemsRewardsTab('gems');
+              }}
               className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
-              💎 About Gems
-            </button>
-            
-            <button
-              onClick={() => setShowLevelInfo(true)}
-              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-            >
-              🏆 Getting Promoted & Bonuses
+              💎 Gems & Rewards
             </button>
           </div>
         </div>
@@ -5370,4 +5589,4 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<OneMove />);
   </script>
 </body>
-</html>
+</html
