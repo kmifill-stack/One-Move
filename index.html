@@ -3447,7 +3447,7 @@ const OneMove = () => {
     
     return (
       <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemBreakdown(false)}>
-        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
           <h2 className="text-3xl font-light text-white text-center mb-6">💎 YOUR GEMS</h2>
           
           <div className="space-y-6 text-slate-300">
@@ -3513,7 +3513,7 @@ const OneMove = () => {
           
           <button
             onClick={() => setShowGemBreakdown(false)}
-            className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+            className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
           >
             Close
           </button>
@@ -3535,7 +3535,7 @@ const OneMove = () => {
   if (screen === 'splash') {
     return (
       <div 
-        className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center cursor-pointer"
+        className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center cursor-pointer"
         onClick={() => setScreen('home')}
       >
         <div className="text-center space-y-8">
@@ -3575,10 +3575,10 @@ const OneMove = () => {
   // Home Screen
   if (screen === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
         {showAboutGems && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowAboutGems(false)}>
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-3xl font-light text-white text-center mb-6">💎 ABOUT GEMS</h2>
               
               <div className="space-y-6 text-slate-300 text-sm">
@@ -3614,7 +3614,7 @@ const OneMove = () => {
               
               <button
                 onClick={() => setShowAboutGems(false)}
-                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
               >
                 Got It!
               </button>
@@ -3915,7 +3915,7 @@ const OneMove = () => {
             
             <button
               onClick={() => setShowAboutGems(true)}
-              className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               💎 About Gems
             </button>
@@ -3935,7 +3935,7 @@ const OneMove = () => {
   // Instructions Screen
   if (screen === 'instructions') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 p-6">
         <button 
           onClick={() => setScreen('home')}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4268,7 +4268,7 @@ const OneMove = () => {
   // Category Selection
   if (screen === 'category_select') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4310,7 +4310,7 @@ const OneMove = () => {
   // Trivia Screen
   if (screen === 'trivia' && currentTriviaQuestion) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4386,7 +4386,7 @@ const OneMove = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
@@ -4427,7 +4427,7 @@ const OneMove = () => {
           
           {hintLevel >= 2 && (
             <div className="text-center">
-              <div className="inline-block bg-amber-500/20 border-2 border-amber-500 rounded-lg px-4 py-2">
+              <div className="inline-block bg-amber-500/20 border-2 border-purple-500 rounded-lg px-4 py-2">
                 <p className="text-amber-400 text-base font-bold">Pattern: {getPatternName(currentPuzzle.pattern)}</p>
               </div>
             </div>
@@ -4485,7 +4485,7 @@ const OneMove = () => {
               className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                 totalGems < 50 || hintLevel >= 1
                   ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                  : 'bg-amber-600 hover:bg-amber-700 text-white'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
               }`}
             >
               💡 Hint 1: Highlight Area (-50 gems) {hintLevel >= 1 ? '✓' : ''}
@@ -4498,7 +4498,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 100 || hintLevel >= 2
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
                 }`}
               >
                 💡 Hint 2: Show Pattern (-100 gems) {hintLevel >= 2 ? '✓' : ''}
@@ -4512,7 +4512,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 150 || hintLevel >= 3
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
                 }`}
               >
                 💡 Hint 3: Exact Tile (-150 gems) {hintLevel >= 3 ? '✓' : ''}
@@ -4526,7 +4526,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 200 || hintLevel >= 4
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
                 }`}
               >
                 💡 Hint 4: Tap Here (-200 gems) {hintLevel >= 4 ? '✓' : ''}
@@ -4574,7 +4574,7 @@ const OneMove = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4638,7 +4638,7 @@ const OneMove = () => {
                 className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                   totalGems < 50 || hintLevel >= 1
                     ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                    : 'bg-amber-600 hover:bg-amber-700 text-white'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
                 }`}
               >
                 💡 Hint 1: First Letter (-50 gems) {hintLevel >= 1 ? '✓' : ''}
@@ -4651,7 +4651,7 @@ const OneMove = () => {
                   className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                     totalGems < 100 || hintLevel >= 2
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                      : 'bg-amber-600 hover:bg-amber-700 text-white'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
                   }`}
                 >
                   💡 Hint 2: First 3 Letters (-100 gems) {hintLevel >= 2 ? '✓' : ''}
@@ -4665,7 +4665,7 @@ const OneMove = () => {
                   className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                     totalGems < 150 || hintLevel >= 3
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                      : 'bg-amber-600 hover:bg-amber-700 text-white'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
                   }`}
                 >
                   💡 Hint 3: All But Last 2 (-150 gems) {hintLevel >= 3 ? '✓' : ''}
@@ -4679,7 +4679,7 @@ const OneMove = () => {
                   className={`w-full px-4 py-2 rounded-lg text-sm transition-all duration-300 ${
                     totalGems < 200 || hintLevel >= 4
                       ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-                      : 'bg-amber-600 hover:bg-amber-700 text-white'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
                   }`}
                 >
                   💡 Hint 4: Full Answer (-200 gems) {hintLevel >= 4 ? '✓' : ''}
@@ -4818,7 +4818,7 @@ const OneMove = () => {
     };
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4835,7 +4835,7 @@ const OneMove = () => {
         
         <div className="space-y-6 max-w-md w-full">
           {isDailyChallenge && (
-            <div className="bg-gradient-to-r from-amber-600 to-amber-700 rounded-lg p-2 text-center mb-2">
+            <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-2 text-center mb-2">
               <p className="text-white font-bold text-sm">🏆 DAILY CHALLENGE</p>
               <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
             </div>
@@ -5089,7 +5089,7 @@ const OneMove = () => {
     };
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -5230,7 +5230,7 @@ const OneMove = () => {
   // Success Screen
   if (screen === 'success') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         <button 
           onClick={handleHomeClick}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -5273,7 +5273,7 @@ const OneMove = () => {
   if (showDailyChallengeResult) {
     return (
       <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
-        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-4 border-amber-500 text-center">
+        <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-4 border-purple-500 text-center">
           {dailyChallengeReward > 0 ? (
             <>
               <div className="text-6xl mb-4">🏆</div>
@@ -5293,7 +5293,7 @@ const OneMove = () => {
                   setShowMathResult(null);
                   setScreen('home');
                 }}
-                className="w-full px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-bold"
+                className="w-full px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-bold"
               >
                 Awesome!
               </button>
