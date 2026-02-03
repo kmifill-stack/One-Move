@@ -2409,6 +2409,43 @@ const OneMove = () => {
       setDailyChallengeStreak(dcData.streak || 0);
       setDailyChallengeAttempted(dcData.attempted || false);
     }
+    
+    // Load and update play streak
+    const streakData = localStorage.getItem('playStreak');
+    if (streakData) {
+      const data = JSON.parse(streakData);
+      const today = getTodayDateString();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = `${yesterday.getFullYear()}-${yesterday.getMonth() + 1}-${yesterday.getDate()}`;
+      
+      if (data.lastPlayed === today) {
+        // Already played today
+        setPlayStreak(data.streak);
+      } else if (data.lastPlayed === yesterdayStr) {
+        // Played yesterday, continue streak
+        const newStreak = data.streak + 1;
+        setPlayStreak(newStreak);
+        localStorage.setItem('playStreak', JSON.stringify({
+          lastPlayed: today,
+          streak: newStreak
+        }));
+      } else {
+        // Streak broken, reset
+        setPlayStreak(1);
+        localStorage.setItem('playStreak', JSON.stringify({
+          lastPlayed: today,
+          streak: 1
+        }));
+      }
+    } else {
+      // First time playing
+      setPlayStreak(1);
+      localStorage.setItem('playStreak', JSON.stringify({
+        lastPlayed: getTodayDateString(),
+        streak: 1
+      }));
+    }
   }, []);
 
   // Splash screen timer
@@ -2474,15 +2511,15 @@ const OneMove = () => {
     const dayOfMonth = new Date().getDate();
     
     // Determine puzzle type based on monthly frequency
-    // Tile Flip: 4-5 times (days 5, 12, 19, 26, and maybe 31)
-    // Word Scramble: 9 times 
+    // Tile Flip: 6 times per month (days 5, 10, 15, 20, 25, 30)
+    // Word Scramble: 8 times 
     // Memory Match: 8 times
     // Quick Math: 8 times
     
     let puzzleType;
     
-    if ([5, 12, 19, 26, 31].includes(dayOfMonth) && dayOfMonth <= 31) {
-      // Tile Flip days (roughly once per week)
+    if ([5, 10, 15, 20, 25, 30].includes(dayOfMonth)) {
+      // Tile Flip days (6 times per month)
       puzzleType = PUZZLE_TYPES.TILE_FLIP;
     } else {
       // Rotate through other 3 types for remaining days
@@ -4952,7 +4989,8 @@ const OneMove = () => {
         // Check if this is Daily Challenge
         if (isDailyChallenge) {
           // Daily Challenge SUCCESS - award 500 gems separately!
-          setDailyChallengeGems(500);
+          const newDCGems = dailyChallengeGems + 500;
+          setDailyChallengeGems(newDCGems);
           
           // Update streak
           const dcData = getDailyChallengeData();
@@ -4964,7 +5002,7 @@ const OneMove = () => {
           setDailyChallengeCompleted(true);
           setIsDailyChallenge(false);
           
-          saveProgress({ dailyChallengeGems: 500 });
+          saveProgress({ dailyChallengeGems: newDCGems });
           
           // Show success screen
           setTimeout(() => {
