@@ -2309,6 +2309,7 @@ const OneMove = () => {
   const [showDailyChallengeResult, setShowDailyChallengeResult] = useState(false);
   const [dailyChallengeAttempted, setDailyChallengeAttempted] = useState(false);
   const [dailyChallengeGems, setDailyChallengeGems] = useState(0); // Track DC gems separately
+  const [playStreak, setPlayStreak] = useState(0); // Track consecutive days played
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemsAndRewards, setShowGemsAndRewards] = useState(false); // Combined popup
@@ -3500,6 +3501,18 @@ const OneMove = () => {
                   <p className="flex justify-between">
                     <span>💡 Hints used:</span>
                     <span className="text-white font-bold">-{gemsSpent}</span>
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {playStreak > 0 && (
+              <div>
+                <p className="text-purple-400 font-semibold mb-3">STREAK:</p>
+                <div className="ml-3">
+                  <p className="flex justify-between">
+                    <span>🔥 Days Played:</span>
+                    <span className="text-white font-bold">{playStreak} {playStreak === 1 ? 'Day' : 'Days'}</span>
                   </p>
                 </div>
               </div>
