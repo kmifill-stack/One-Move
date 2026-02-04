@@ -4143,10 +4143,10 @@ const OneMove = () => {
             ONE MOVE
           </h1>
           
-          <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
-            <p className="text-amber-400 text-2xl font-semibold mb-2">{getUserLevel()}</p>
-            <p className="text-slate-300 text-base">Answer trivia • Solve puzzles • Earn gems • Get promoted</p>
-            <p className="text-slate-300 text-sm mt-3">Puzzles Completed: {currentPuzzleIndex}</p>
+          <div className="bg-slate-800/50 rounded-xl px-4 py-3 border border-slate-700">
+            <p className="text-slate-300 text-base">
+              <span className="text-amber-400 font-semibold">{getUserLevel()}</span> • {currentPuzzleIndex} Puzzles
+            </p>
           </div>
           
           {/* Daily Challenge Banner */}
@@ -4177,13 +4177,6 @@ const OneMove = () => {
                   </div>
                 </div>
               </div>
-              {/* DEBUG RESET BUTTON - TEMPORARY */}
-              <button
-                onClick={resetDailyChallenge}
-                className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
-              >
-                🔧 Reset Daily Challenge (Testing Only)
-              </button>
             </div>
           )}
           
@@ -4199,13 +4192,6 @@ const OneMove = () => {
                   </div>
                 </div>
               </div>
-              {/* DEBUG RESET BUTTON - TEMPORARY */}
-              <button
-                onClick={resetDailyChallenge}
-                className="w-full mt-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs"
-              >
-                🔧 Reset Daily Challenge (Testing Only)
-              </button>
             </div>
           )}
           
@@ -4220,7 +4206,7 @@ const OneMove = () => {
             
             <button
               onClick={() => setScreen('instructions')}
-              className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               HOW TO PLAY
             </button>
@@ -4230,7 +4216,7 @@ const OneMove = () => {
                 setShowGemsAndRewards(true);
                 setGemsRewardsTab('gems');
               }}
-              className="w-full px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               💎 Gems & Rewards
             </button>
