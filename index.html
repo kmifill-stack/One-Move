@@ -2310,7 +2310,6 @@ const OneMove = () => {
   const [dailyChallengeAttempted, setDailyChallengeAttempted] = useState(false);
   const [dailyChallengeGems, setDailyChallengeGems] = useState(0); // Track DC gems separately
   const [dailyChallengeReward, setDailyChallengeReward] = useState(0); // Track reward for result screen
-  const [dailyChallengeReplays, setDailyChallengeReplays] = useState(0); // Track replays today
   const [playStreak, setPlayStreak] = useState(0); // Track consecutive days played
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
@@ -2410,7 +2409,6 @@ const OneMove = () => {
       setDailyChallengeFailed(dcData.failed);
       setDailyChallengeStreak(dcData.streak || 0);
       setDailyChallengeAttempted(dcData.attempted || false);
-      setDailyChallengeReplays(dcData.replays || 0);
     }
     
     // Load and update play streak
@@ -2495,13 +2493,12 @@ const OneMove = () => {
     return data;
   };
 
-  const saveDailyChallengeData = (completed, failed, streak, replays) => {
+  const saveDailyChallengeData = (completed, failed, streak) => {
     localStorage.setItem('dailyChallenge', JSON.stringify({
       date: getTodayDateString(),
       completed,
       failed,
       streak,
-      replays: replays || 0,
       attempted: true
     }));
   };
@@ -3177,7 +3174,7 @@ const OneMove = () => {
         setDailyChallengeStreak(newStreak);
         
         // Save completion
-        saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
+        saveDailyChallengeData(true, false, newStreak);
         setDailyChallengeCompleted(true);
         setIsDailyChallenge(false);
         
@@ -3229,7 +3226,7 @@ const OneMove = () => {
         
         if (newFailCount >= 3) {
           // Daily Challenge FAILED
-          saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
+          saveDailyChallengeData(false, true, dailyChallengeStreak);
           setDailyChallengeFailed(true);
           setIsDailyChallenge(false);
           
@@ -3293,7 +3290,7 @@ const OneMove = () => {
         setDailyChallengeStreak(newStreak);
         
         // Save completion
-        saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
+        saveDailyChallengeData(true, false, newStreak);
         setDailyChallengeCompleted(true);
         setIsDailyChallenge(false);
         
@@ -3337,7 +3334,7 @@ const OneMove = () => {
       // Check if Daily Challenge
       if (isDailyChallenge) {
         // Daily Challenge FAILED - wrong answer
-        saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
+        saveDailyChallengeData(false, true, dailyChallengeStreak);
         setDailyChallengeFailed(true);
         setIsDailyChallenge(false);
         
@@ -3471,17 +3468,14 @@ const OneMove = () => {
     const skipCost = 200;
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
-    // Check if player has enough gems
     if (totalGems < skipCost) {
       alert('Not enough gems! You need 200 gems to skip.');
       setShowSkipConfirm(false);
       return;
     }
     
-    // Deduct gems
     const newGemsSpent = gemsSpent + skipCost;
     setGemsSpent(newGemsSpent);
-    
     const newSkipped = puzzlesSkipped + 1;
     setPuzzlesSkipped(newSkipped);
     setShowSkipConfirm(false);
@@ -3493,7 +3487,6 @@ const OneMove = () => {
     if (newIndex >= 500) {
       setScreen('complete');
     } else {
-      // Auto-select random category
       const categories = Object.values(CATEGORIES);
       const randomCategory = categories[Math.floor(Math.random() * categories.length)];
       handleCategorySelect(randomCategory);
@@ -3666,38 +3659,10 @@ const OneMove = () => {
                   setShowMathResult(null);
                   setScreen('home');
                 }}
-                className="w-full px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-bold mb-3"
+                className="w-full px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-bold"
               >
                 Awesome!
               </button>
-              {dailyChallengeReplays < 3 && (
-                <button
-                  onClick={() => {
-                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                    if (totalGems < 300) {
-                      alert('Not enough gems! You need 300 gems to replay.');
-                      return;
-                    }
-                    // Deduct 300 gems
-                    const newGemsSpent = gemsSpent + 300;
-                    setGemsSpent(newGemsSpent);
-                    const newReplays = dailyChallengeReplays + 1;
-                    setDailyChallengeReplays(newReplays);
-                    saveProgress({ gemsSpent: newGemsSpent });
-                    
-                    // Reset Daily Challenge state for replay
-                    setShowDailyChallengeResult(false);
-                    setDailyChallengeCompleted(false);
-                    setIsDailyChallenge(false);
-                    
-                    // Start new Daily Challenge
-                    startDailyChallenge();
-                  }}
-                  className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
-                >
-                  🔄 Replay Challenge (-300 💎) {3 - dailyChallengeReplays} left
-                </button>
-              )}
             </>
           ) : (
             <>
@@ -3712,39 +3677,9 @@ const OneMove = () => {
                   setShowMathResult(null);
                   setScreen('home');
                 }}
-                className="w-full px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-300 text-lg font-bold mb-3"
+                className="w-full px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-300 text-lg font-bold"
               >
                 Try Again Tomorrow
-              </button>
-              {dailyChallengeReplays < 3 && (
-                <button
-                  onClick={() => {
-                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                    if (totalGems < 300) {
-                      alert('Not enough gems! You need 300 gems to replay.');
-                      return;
-                    }
-                    // Deduct 300 gems
-                    const newGemsSpent = gemsSpent + 300;
-                    setGemsSpent(newGemsSpent);
-                    const newReplays = dailyChallengeReplays + 1;
-                    setDailyChallengeReplays(newReplays);
-                    saveProgress({ gemsSpent: newGemsSpent });
-                    
-                    // Reset Daily Challenge state for replay
-                    setShowDailyChallengeResult(false);
-                    setDailyChallengeFailed(false);
-                    setIsDailyChallenge(false);
-                    
-                    // Start new Daily Challenge
-                    startDailyChallenge();
-                  }}
-                  className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
-                >
-                  🔄 Replay Challenge (-300 💎) {3 - dailyChallengeReplays} left
-                </button>
-              )}
-                🔄 Replay Challenge (-300 💎)
               </button>
             </>
           )}
@@ -4906,7 +4841,7 @@ const OneMove = () => {
               onClick={() => setShowSkipConfirm(true)}
               className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300"
             >
-              ⏭️ Skip Puzzle (-200 💎)
+              ⏭️ Skip Puzzle (Free, 0 gems)
             </button>
           </div>
         </div>
@@ -4915,8 +4850,7 @@ const OneMove = () => {
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
             <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
-              <p className="text-slate-300 text-center mb-2">Costs 200 gems</p>
-              <p className="text-slate-400 text-center text-sm mb-6">You won't earn any gems for this puzzle.</p>
+              <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
               
               <div className="flex gap-4">
                 <button
@@ -5061,7 +4995,7 @@ const OneMove = () => {
               onClick={() => setShowSkipConfirm(true)}
               className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300"
             >
-              ⏭️ Skip Puzzle (-200 💎)
+              ⏭️ Skip Puzzle (Free, 0 gems)
             </button>
           </div>
         </div>
@@ -5070,8 +5004,7 @@ const OneMove = () => {
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSkipConfirm(false)}>
             <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-red-500" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-2xl font-light text-white text-center mb-4">Skip This Puzzle?</h2>
-              <p className="text-slate-300 text-center mb-2">Costs 200 gems</p>
-              <p className="text-slate-400 text-center text-sm mb-6">You won't earn any gems for this puzzle.</p>
+              <p className="text-slate-300 text-center mb-6">You won't earn any gems for this puzzle.</p>
               
               <div className="flex gap-4">
                 <button
@@ -5115,7 +5048,7 @@ const OneMove = () => {
           setDailyChallengeStreak(newStreak);
           
           // Save completion
-          saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
+          saveDailyChallengeData(true, false, newStreak);
           setDailyChallengeCompleted(true);
           setIsDailyChallenge(false);
           
@@ -5156,7 +5089,7 @@ const OneMove = () => {
         // Check if Daily Challenge FIRST
         if (isDailyChallenge) {
           // Daily Challenge FAILED - one attempt only!
-          saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
+          saveDailyChallengeData(false, true, dailyChallengeStreak);
           setDailyChallengeFailed(true);
           setIsDailyChallenge(false);
           
@@ -5260,7 +5193,7 @@ const OneMove = () => {
               onClick={() => setShowSkipConfirm(true)}
               className="w-full mt-4 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all duration-300 text-sm"
             >
-              Skip Puzzle (No Gems)
+              Skip Puzzle (-200 💎)
             </button>
           )}
         </div>
@@ -5354,7 +5287,7 @@ const OneMove = () => {
                 setDailyChallengeStreak(newStreak);
                 
                 // Save completion
-                saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
+                saveDailyChallengeData(true, false, newStreak);
                 setDailyChallengeCompleted(true);
                 setIsDailyChallenge(false);
                 
@@ -5423,7 +5356,7 @@ const OneMove = () => {
                 // Check if Daily Challenge
                 if (isDailyChallenge) {
                   // Daily Challenge FAILED
-                  saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
+                  saveDailyChallengeData(false, true, dailyChallengeStreak);
                   setDailyChallengeFailed(true);
                   setIsDailyChallenge(false);
                   
@@ -5567,7 +5500,7 @@ const OneMove = () => {
             onClick={() => setShowSkipConfirm(true)}
             className="w-full mt-4 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all duration-300 text-sm"
           >
-            Skip Puzzle (No Gems)
+            Skip Puzzle (-200 💎)
           </button>
         </div>
         
