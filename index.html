@@ -3164,8 +3164,8 @@ const OneMove = () => {
       // Check if this is Daily Challenge
       if (isDailyChallenge) {
         // Daily Challenge SUCCESS - award 500 gems!
-        const newPuzzleScore = puzzleScore + 500;
-        setPuzzleScore(newPuzzleScore);
+        const newDCGems = dailyChallengeGems + 500;
+        setDailyChallengeGems(newDCGems);
         
         // Update streak
         const dcData = getDailyChallengeData();
@@ -3177,7 +3177,7 @@ const OneMove = () => {
         setDailyChallengeCompleted(true);
         setIsDailyChallenge(false);
         
-        saveProgress({ puzzleScore: newPuzzleScore });
+        saveProgress({ dailyChallengeGems: newDCGems });
         
         // Show success screen
         setTimeout(() => {
@@ -3280,8 +3280,8 @@ const OneMove = () => {
       // Check if this is Daily Challenge
       if (isDailyChallenge) {
         // Daily Challenge SUCCESS - award 500 gems!
-        const newPuzzleScore = puzzleScore + 500;
-        setPuzzleScore(newPuzzleScore);
+        const newDCGems = dailyChallengeGems + 500;
+        setDailyChallengeGems(newDCGems);
         
         // Update streak
         const dcData = getDailyChallengeData();
@@ -3293,7 +3293,7 @@ const OneMove = () => {
         setDailyChallengeCompleted(true);
         setIsDailyChallenge(false);
         
-        saveProgress({ puzzleScore: newPuzzleScore });
+        saveProgress({ dailyChallengeGems: newDCGems });
         
         // Show success screen
         setTimeout(() => {
@@ -3922,7 +3922,7 @@ const OneMove = () => {
               className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
             >
               <span className="text-white text-lg font-bold">💎</span>
-              <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + bonusGems - gemsSpent}</span>
+              <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent}</span>
             </button>
           </div>
         </div>
@@ -5228,8 +5228,8 @@ const OneMove = () => {
               // Check if this is Daily Challenge
               if (isDailyChallenge) {
                 // Daily Challenge SUCCESS - award 500 gems!
-                const newPuzzleScore = puzzleScore + 500;
-                setPuzzleScore(newPuzzleScore);
+                const newDCGems = dailyChallengeGems + 500;
+                setDailyChallengeGems(newDCGems);
                 
                 // Update streak
                 const dcData = getDailyChallengeData();
@@ -5241,7 +5241,7 @@ const OneMove = () => {
                 setDailyChallengeCompleted(true);
                 setIsDailyChallenge(false);
                 
-                saveProgress({ puzzleScore: newPuzzleScore });
+                saveProgress({ dailyChallengeGems: newDCGems });
                 
                 setMemoryResult(resultTier);
                 
