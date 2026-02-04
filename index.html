@@ -2310,6 +2310,7 @@ const OneMove = () => {
   const [dailyChallengeAttempted, setDailyChallengeAttempted] = useState(false);
   const [dailyChallengeGems, setDailyChallengeGems] = useState(0); // Track DC gems separately
   const [dailyChallengeReward, setDailyChallengeReward] = useState(0); // Track reward for result screen
+  const [dailyChallengeReplays, setDailyChallengeReplays] = useState(0); // Track replays today
   const [playStreak, setPlayStreak] = useState(0); // Track consecutive days played
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
@@ -2409,6 +2410,7 @@ const OneMove = () => {
       setDailyChallengeFailed(dcData.failed);
       setDailyChallengeStreak(dcData.streak || 0);
       setDailyChallengeAttempted(dcData.attempted || false);
+      setDailyChallengeReplays(dcData.replays || 0);
     }
     
     // Load and update play streak
@@ -2493,12 +2495,13 @@ const OneMove = () => {
     return data;
   };
 
-  const saveDailyChallengeData = (completed, failed, streak) => {
+  const saveDailyChallengeData = (completed, failed, streak, replays) => {
     localStorage.setItem('dailyChallenge', JSON.stringify({
       date: getTodayDateString(),
       completed,
       failed,
       streak,
+      replays: replays || 0,
       attempted: true
     }));
   };
@@ -3174,7 +3177,7 @@ const OneMove = () => {
         setDailyChallengeStreak(newStreak);
         
         // Save completion
-        saveDailyChallengeData(true, false, newStreak);
+        saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
         setDailyChallengeCompleted(true);
         setIsDailyChallenge(false);
         
@@ -3226,7 +3229,7 @@ const OneMove = () => {
         
         if (newFailCount >= 3) {
           // Daily Challenge FAILED
-          saveDailyChallengeData(false, true, dailyChallengeStreak);
+          saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
           setDailyChallengeFailed(true);
           setIsDailyChallenge(false);
           
@@ -3290,7 +3293,7 @@ const OneMove = () => {
         setDailyChallengeStreak(newStreak);
         
         // Save completion
-        saveDailyChallengeData(true, false, newStreak);
+        saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
         setDailyChallengeCompleted(true);
         setIsDailyChallenge(false);
         
@@ -3334,7 +3337,7 @@ const OneMove = () => {
       // Check if Daily Challenge
       if (isDailyChallenge) {
         // Daily Challenge FAILED - wrong answer
-        saveDailyChallengeData(false, true, dailyChallengeStreak);
+        saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
         setDailyChallengeFailed(true);
         setIsDailyChallenge(false);
         
@@ -3667,30 +3670,34 @@ const OneMove = () => {
               >
                 Awesome!
               </button>
-              <button
-                onClick={() => {
-                  const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                  if (totalGems < 300) {
-                    alert('Not enough gems! You need 300 gems to replay.');
-                    return;
-                  }
-                  // Deduct 300 gems
-                  const newGemsSpent = gemsSpent + 300;
-                  setGemsSpent(newGemsSpent);
-                  saveProgress({ gemsSpent: newGemsSpent });
-                  
-                  // Reset Daily Challenge state for replay
-                  setShowDailyChallengeResult(false);
-                  setDailyChallengeCompleted(false);
-                  setIsDailyChallenge(false);
-                  
-                  // Start new Daily Challenge
-                  startDailyChallenge();
-                }}
-                className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
-              >
-                🔄 Replay Challenge (-300 💎)
-              </button>
+              {dailyChallengeReplays < 3 && (
+                <button
+                  onClick={() => {
+                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                    if (totalGems < 300) {
+                      alert('Not enough gems! You need 300 gems to replay.');
+                      return;
+                    }
+                    // Deduct 300 gems
+                    const newGemsSpent = gemsSpent + 300;
+                    setGemsSpent(newGemsSpent);
+                    const newReplays = dailyChallengeReplays + 1;
+                    setDailyChallengeReplays(newReplays);
+                    saveProgress({ gemsSpent: newGemsSpent });
+                    
+                    // Reset Daily Challenge state for replay
+                    setShowDailyChallengeResult(false);
+                    setDailyChallengeCompleted(false);
+                    setIsDailyChallenge(false);
+                    
+                    // Start new Daily Challenge
+                    startDailyChallenge();
+                  }}
+                  className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
+                >
+                  🔄 Replay Challenge (-300 💎) {3 - dailyChallengeReplays} left
+                </button>
+              )}
             </>
           ) : (
             <>
@@ -3709,28 +3716,34 @@ const OneMove = () => {
               >
                 Try Again Tomorrow
               </button>
-              <button
-                onClick={() => {
-                  const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                  if (totalGems < 300) {
-                    alert('Not enough gems! You need 300 gems to replay.');
-                    return;
-                  }
-                  // Deduct 300 gems
-                  const newGemsSpent = gemsSpent + 300;
-                  setGemsSpent(newGemsSpent);
-                  saveProgress({ gemsSpent: newGemsSpent });
-                  
-                  // Reset Daily Challenge state for replay
-                  setShowDailyChallengeResult(false);
-                  setDailyChallengeFailed(false);
-                  setIsDailyChallenge(false);
-                  
-                  // Start new Daily Challenge
-                  startDailyChallenge();
-                }}
-                className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
-              >
+              {dailyChallengeReplays < 3 && (
+                <button
+                  onClick={() => {
+                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                    if (totalGems < 300) {
+                      alert('Not enough gems! You need 300 gems to replay.');
+                      return;
+                    }
+                    // Deduct 300 gems
+                    const newGemsSpent = gemsSpent + 300;
+                    setGemsSpent(newGemsSpent);
+                    const newReplays = dailyChallengeReplays + 1;
+                    setDailyChallengeReplays(newReplays);
+                    saveProgress({ gemsSpent: newGemsSpent });
+                    
+                    // Reset Daily Challenge state for replay
+                    setShowDailyChallengeResult(false);
+                    setDailyChallengeFailed(false);
+                    setIsDailyChallenge(false);
+                    
+                    // Start new Daily Challenge
+                    startDailyChallenge();
+                  }}
+                  className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
+                >
+                  🔄 Replay Challenge (-300 💎) {3 - dailyChallengeReplays} left
+                </button>
+              )}
                 🔄 Replay Challenge (-300 💎)
               </button>
             </>
@@ -5102,7 +5115,7 @@ const OneMove = () => {
           setDailyChallengeStreak(newStreak);
           
           // Save completion
-          saveDailyChallengeData(true, false, newStreak);
+          saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
           setDailyChallengeCompleted(true);
           setIsDailyChallenge(false);
           
@@ -5143,7 +5156,7 @@ const OneMove = () => {
         // Check if Daily Challenge FIRST
         if (isDailyChallenge) {
           // Daily Challenge FAILED - one attempt only!
-          saveDailyChallengeData(false, true, dailyChallengeStreak);
+          saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
           setDailyChallengeFailed(true);
           setIsDailyChallenge(false);
           
@@ -5341,7 +5354,7 @@ const OneMove = () => {
                 setDailyChallengeStreak(newStreak);
                 
                 // Save completion
-                saveDailyChallengeData(true, false, newStreak);
+                saveDailyChallengeData(true, false, newStreak, dailyChallengeReplays);
                 setDailyChallengeCompleted(true);
                 setIsDailyChallenge(false);
                 
@@ -5410,7 +5423,7 @@ const OneMove = () => {
                 // Check if Daily Challenge
                 if (isDailyChallenge) {
                   // Daily Challenge FAILED
-                  saveDailyChallengeData(false, true, dailyChallengeStreak);
+                  saveDailyChallengeData(false, true, dailyChallengeStreak, dailyChallengeReplays);
                   setDailyChallengeFailed(true);
                   setIsDailyChallenge(false);
                   
