@@ -3829,7 +3829,7 @@ const handleDailyChallengeReplay = () => {
               <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">💎 GEMS & REWARDS</h2>
               
               {/* Tabs */}
-              <div className="flex gap-2 mb-6">
+              <div className="flex gap-2 mb-6 flex-shrink-0">
                 <button
                   onClick={() => setGemsRewardsTab('gems')}
                   className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${gemsRewardsTab === 'gems' ? 'bg-purple-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
@@ -3848,7 +3848,6 @@ const handleDailyChallengeReplay = () => {
                 >
                   ⭐ Stars
                 </button>
-              </div>
               </div>
               
               <div className="border-b border-slate-700 mb-4"></div>
@@ -4025,7 +4024,7 @@ const handleDailyChallengeReplay = () => {
               </div>
               <button
                 onClick={() => setShowGemsAndRewards(false)}
-                className="w-full mt-6 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+                className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
               >
                 Close
               </button>
