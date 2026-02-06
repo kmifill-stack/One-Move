@@ -2310,6 +2310,8 @@ const OneMove = () => {
   const [dailyChallengeAttempted, setDailyChallengeAttempted] = useState(false);
   const [dailyChallengeGems, setDailyChallengeGems] = useState(0); // Track DC gems separately
   const [dailyChallengeReward, setDailyChallengeReward] = useState(0); // Track reward for result screen
+  const [dailyChallengeGemsAwarded, setDailyChallengeGemsAwarded] = useState(false);
+  const [dailyChallengeReplayed, setDailyChallengeReplayed] = useState(false);
   const [playStreak, setPlayStreak] = useState(0); // Track consecutive days played
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
@@ -2409,6 +2411,8 @@ const OneMove = () => {
       setDailyChallengeFailed(dcData.failed);
       setDailyChallengeStreak(dcData.streak || 0);
       setDailyChallengeAttempted(dcData.attempted || false);
+      setDailyChallengeGemsAwarded(dcData.gemsAwarded || false);
+      setDailyChallengeReplayed(dcData.replayed || false);
     }
     
     // Load and update play streak
@@ -2493,16 +2497,17 @@ const OneMove = () => {
     return data;
   };
 
-  const saveDailyChallengeData = (completed, failed, streak) => {
-    localStorage.setItem('dailyChallenge', JSON.stringify({
-      date: getTodayDateString(),
-      completed,
-      failed,
-      streak,
-      attempted: true
-    }));
-  };
-
+  const saveDailyChallengeData = (completed, failed, streak, gemsAwarded, replayed) => {
+  localStorage.setItem('dailyChallenge', JSON.stringify({
+    date: getTodayDateString(),
+    completed,
+    failed,
+    streak,
+    gemsAwarded: gemsAwarded || false,
+    replayed: replayed || false,
+    attempted: true
+  }));
+};
   const generateDailyChallenge = () => {
     // Use today's date as seed for consistency
     const dateStr = getTodayDateString();
@@ -3146,7 +3151,57 @@ const OneMove = () => {
     }
   };
 
-  const handleTileTap = async (row, col) => {
+  
+const handleDailyChallengeSuccess = () => {
+  // Award 500 gems ONLY if not already awarded today
+  if (!dailyChallengeGemsAwarded) {
+    const newDCGems = dailyChallengeGems + 500;
+    setDailyChallengeGems(newDCGems);
+    setDailyChallengeGemsAwarded(true);
+    saveProgress({ dailyChallengeGems: newDCGems });
+  }
+  
+  // Update streak
+  const dcData = getDailyChallengeData();
+  const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
+  setDailyChallengeStreak(newStreak);
+  
+  // Save completion with gems awarded flag
+  saveDailyChallengeData(true, false, newStreak, true, dailyChallengeReplayed);
+  setDailyChallengeCompleted(true);
+  setIsDailyChallenge(false);
+  
+  // Show result screen
+  setTimeout(() => {
+    setShowDailyChallengeResult(true);
+    setDailyChallengeReward(dailyChallengeGemsAwarded ? 0 : 500);
+  }, 1500);
+};
+
+const handleDailyChallengeReplay = () => {
+  // Check if already replayed today
+  if (dailyChallengeReplayed) {
+    alert('You can only replay once per day!');
+    return;
+  }
+  
+  const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+  if (totalGems < 300) {
+    alert('Not enough gems! You need 300 gems to replay.');
+    return;
+  }
+  
+  // Deduct 300 gems
+  const newGemsSpent = gemsSpent + 300;
+  setGemsSpent(newGemsSpent);
+  setDailyChallengeReplayed(true);
+  saveProgress({ gemsSpent: newGemsSpent });
+  
+  // Reset and start new challenge
+  setShowDailyChallengeResult(false);
+  setDailyChallengeCompleted(false);
+  startDailyChallenge();
+};const handleTileTap = async (row, col) => {
     if (processing) return;
     setProcessing(true);
     
@@ -3279,33 +3334,10 @@ const OneMove = () => {
       setShowCorrectWord(true); // Show green word
       
       // Check if this is Daily Challenge
-      if (isDailyChallenge) {
-        // Daily Challenge SUCCESS - award 500 gems!
-        const newDCGems = dailyChallengeGems + 500;
-        setDailyChallengeGems(newDCGems);
-        
-        // Update streak
-        const dcData = getDailyChallengeData();
-        const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
-        setDailyChallengeStreak(newStreak);
-        
-        // Save completion
-        saveDailyChallengeData(true, false, newStreak);
-        setDailyChallengeCompleted(true);
-        setIsDailyChallenge(false);
-        
-        saveProgress({ dailyChallengeGems: newDCGems });
-        
-        // Show success screen
-        setTimeout(() => {
-          setShowCorrectWord(false);
-          setShowDailyChallengeResult(true);
-          setDailyChallengeReward(500);
-        }, 2000);
-        
-        return;
-      }
-      
+     if (isDailyChallenge) {
+  handleDailyChallengeSuccess();
+  return;
+}      
       if (puzzleFirstAttempt) {
         const newPuzzleScore = puzzleScore + 100;
         setPuzzleScore(newPuzzleScore);
@@ -5091,33 +5123,10 @@ const OneMove = () => {
         setShowMathResult('correct');
         
         // Check if this is Daily Challenge
-        if (isDailyChallenge) {
-          // Daily Challenge SUCCESS - award 500 gems separately!
-          const newDCGems = dailyChallengeGems + 500;
-          setDailyChallengeGems(newDCGems);
-          
-          // Update streak
-          const dcData = getDailyChallengeData();
-          const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
-          setDailyChallengeStreak(newStreak);
-          
-          // Save completion
-          saveDailyChallengeData(true, false, newStreak);
-          setDailyChallengeCompleted(true);
-          setIsDailyChallenge(false);
-          
-          saveProgress({ dailyChallengeGems: newDCGems });
-          
-          // Show success screen
-          setTimeout(() => {
-            setShowMathResult(null);
-            setShowDailyChallengeResult(true);
-            setDailyChallengeReward(500);
-          }, 1500);
-          
-          return;
-        }
-        
+        if (isDailyChallenge)  {
+ 			 handleDailyChallengeSuccess();
+  			return;
+		}        
         if (puzzleFirstAttempt) {
           setPuzzleScore(puzzleScore + 100);
         }
@@ -5330,35 +5339,10 @@ const OneMove = () => {
               resultTier = 'perfect'; // YOU ARE A PRO! +100 gems
               
               // Check if this is Daily Challenge
-              if (isDailyChallenge) {
-                // Daily Challenge SUCCESS - award 500 gems!
-                const newDCGems = dailyChallengeGems + 500;
-                setDailyChallengeGems(newDCGems);
-                
-                // Update streak
-                const dcData = getDailyChallengeData();
-                const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
-                setDailyChallengeStreak(newStreak);
-                
-                // Save completion
-                saveDailyChallengeData(true, false, newStreak);
-                setDailyChallengeCompleted(true);
-                setIsDailyChallenge(false);
-                
-                saveProgress({ dailyChallengeGems: newDCGems });
-                
-                setMemoryResult(resultTier);
-                
-                // Show success screen
-                setTimeout(() => {
-                  setMemoryResult(null);
-                  setShowDailyChallengeResult(true);
-                  setDailyChallengeReward(500);
-                }, 5000);
-                
-                return;
-              }
-              
+             if (isDailyChallenge) {
+  					handleDailyChallengeSuccess();
+  					return;
+		}              
               // Award 100 gems for perfect score
               const newPuzzleScore = puzzleScore + 100;
               setPuzzleScore(newPuzzleScore);
