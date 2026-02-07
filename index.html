@@ -2641,17 +2641,18 @@ const OneMove = () => {
     setIsDailyChallenge(true);
     setDailyChallengeAttempted(true);
     setCurrentPuzzle(challenge);
-    setCurrentTriviaQuestion(challenge.trivia);
     
-    // Initialize puzzle state but don't show puzzle yet - show trivia first
     if (challenge.type === PUZZLE_TYPES.TILE_FLIP) {
+      setCurrentTriviaQuestion(challenge.trivia);
       setGrid(challenge.grid);
       setHintLevel(0);
       setHighlightedArea(null);
+      setScreen('puzzle_tile');
     } else if (challenge.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
       setScrambledWord(challenge.scrambled);
       setUserWord('');
       setHintLevel(0);
+      setScreen('puzzle_word');
     } else if (challenge.type === PUZZLE_TYPES.MEMORY_MATCH) {
       setMemoryCards(challenge.cards);
       setFlippedCards([]);
@@ -2660,14 +2661,15 @@ const OneMove = () => {
       setExplorationComplete(false);
       setWrongAttempts(0);
       setHintLevel(0);
+      setScreen('puzzle_memory');
     } else {
       setMathAnswer('');
       setHintLevel(0);
+      setScreen('puzzle_math');
     }
     
     setPuzzleFirstAttempt(true);
     setFailCount(0);
-    setScreen('trivia'); // Start with trivia, not puzzle
   };
 
   const playSound = (type) => {
@@ -3006,64 +3008,51 @@ const OneMove = () => {
         setShowResult(false);
         setSelectedAnswer(null);
         
-        // If Daily Challenge, use pre-generated puzzle
-        if (isDailyChallenge && currentPuzzle) {
-          if (currentPuzzle.type === PUZZLE_TYPES.TILE_FLIP) {
-            setScreen('puzzle_tile');
-          } else if (currentPuzzle.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
-            setScreen('puzzle_word');
-          } else if (currentPuzzle.type === PUZZLE_TYPES.MEMORY_MATCH) {
-            setScreen('puzzle_memory');
-          } else {
-            setScreen('puzzle_math');
-          }
+        // Generate puzzle (rotate between 4 types)
+        const rand = Math.random();
+        let puzzleType;
+        if (rand < 0.25) {
+          puzzleType = PUZZLE_TYPES.TILE_FLIP;
+        } else if (rand < 0.50) {
+          puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
+        } else if (rand < 0.75) {
+          puzzleType = PUZZLE_TYPES.QUICK_MATH;
         } else {
-          // Regular mode - generate random puzzle
-          const rand = Math.random();
-          let puzzleType;
-          if (rand < 0.25) {
-            puzzleType = PUZZLE_TYPES.TILE_FLIP;
-          } else if (rand < 0.50) {
-            puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-          } else if (rand < 0.75) {
-            puzzleType = PUZZLE_TYPES.QUICK_MATH;
-          } else {
-            puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-          }
-          
-          if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-            const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
-            setCurrentPuzzle(puzzle);
-            setGrid(puzzle.grid);
-            setHintLevel(0);
-            setHighlightedArea(null);
-            setScreen('puzzle_tile');
-          } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
-            const puzzle = generateWordScramble();
-            setCurrentPuzzle(puzzle);
-            setScrambledWord(puzzle.scrambled);
-            setUserWord('');
-            setHintLevel(0);
-            setScreen('puzzle_word');
-          } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
-            const puzzle = generateQuickMath();
-            setCurrentPuzzle(puzzle);
-            setMathAnswer('');
-            setHintLevel(0);
-            setScreen('puzzle_math');
-          } else {
-            // Memory Match
-            const puzzle = generateMemoryMatch();
-            setCurrentPuzzle(puzzle);
-            setMemoryCards(puzzle.cards);
-            setSeenCards([]);
-            setExplorationComplete(false);
-            setWrongAttempts(0);
-            setFlippedCards([]);
-            setMatchedPairs([]);
-            setHintLevel(0);
-            setScreen('puzzle_memory');
-          }
+          puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
+        }
+        
+        if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+          const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
+          setCurrentPuzzle(puzzle);
+          setGrid(puzzle.grid);
+          setHintLevel(0);
+          setHighlightedArea(null);
+          setScreen('puzzle_tile');
+        } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
+          const puzzle = generateWordScramble();
+          setCurrentPuzzle(puzzle);
+          setScrambledWord(puzzle.scrambled);
+          setUserWord('');
+          setHintLevel(0);
+          setScreen('puzzle_word');
+        } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
+          const puzzle = generateQuickMath();
+          setCurrentPuzzle(puzzle);
+          setMathAnswer('');
+          setHintLevel(0);
+          setScreen('puzzle_math');
+        } else {
+          // Memory Match
+          const puzzle = generateMemoryMatch();
+          setCurrentPuzzle(puzzle);
+          setMemoryCards(puzzle.cards);
+          setSeenCards([]);
+          setExplorationComplete(false);
+          setWrongAttempts(0);
+          setFlippedCards([]);
+          setMatchedPairs([]);
+          setHintLevel(0);
+          setScreen('puzzle_memory');
         }
         
         setPuzzleFirstAttempt(true);
@@ -3077,64 +3066,51 @@ const OneMove = () => {
         setShowResult(false);
         setSelectedAnswer(null);
         
-        // If Daily Challenge, use pre-generated puzzle
-        if (isDailyChallenge && currentPuzzle) {
-          if (currentPuzzle.type === PUZZLE_TYPES.TILE_FLIP) {
-            setScreen('puzzle_tile');
-          } else if (currentPuzzle.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
-            setScreen('puzzle_word');
-          } else if (currentPuzzle.type === PUZZLE_TYPES.MEMORY_MATCH) {
-            setScreen('puzzle_memory');
-          } else {
-            setScreen('puzzle_math');
-          }
+        // Auto-advance to puzzle (rotate between 4 types)
+        const rand = Math.random();
+        let puzzleType;
+        if (rand < 0.25) {
+          puzzleType = PUZZLE_TYPES.TILE_FLIP;
+        } else if (rand < 0.50) {
+          puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
+        } else if (rand < 0.75) {
+          puzzleType = PUZZLE_TYPES.QUICK_MATH;
         } else {
-          // Regular mode - generate random puzzle
-          const rand = Math.random();
-          let puzzleType;
-          if (rand < 0.25) {
-            puzzleType = PUZZLE_TYPES.TILE_FLIP;
-          } else if (rand < 0.50) {
-            puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-          } else if (rand < 0.75) {
-            puzzleType = PUZZLE_TYPES.QUICK_MATH;
-          } else {
-            puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-          }
-          
-          if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-            const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
-            setCurrentPuzzle(puzzle);
-            setGrid(puzzle.grid);
-            setHintLevel(0);
-            setHighlightedArea(null);
-            setScreen('puzzle_tile');
-          } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
-            const puzzle = generateWordScramble();
-            setCurrentPuzzle(puzzle);
-            setScrambledWord(puzzle.scrambled);
-            setUserWord('');
-            setHintLevel(0);
-            setScreen('puzzle_word');
-          } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
-            const puzzle = generateQuickMath();
-            setCurrentPuzzle(puzzle);
-            setMathAnswer('');
-            setHintLevel(0);
-            setScreen('puzzle_math');
-          } else {
-            // Memory Match
-            const puzzle = generateMemoryMatch();
-            setCurrentPuzzle(puzzle);
-            setMemoryCards(puzzle.cards);
-            setSeenCards([]);
-            setExplorationComplete(false);
-            setWrongAttempts(0);
-            setFlippedCards([]);
-            setMatchedPairs([]);
-            setHintLevel(0);
-            setScreen('puzzle_memory');
-          }
+          puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
+        }
+        
+        if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+          const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
+          setCurrentPuzzle(puzzle);
+          setGrid(puzzle.grid);
+          setHintLevel(0);
+          setHighlightedArea(null);
+          setScreen('puzzle_tile');
+        } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
+          const puzzle = generateWordScramble();
+          setCurrentPuzzle(puzzle);
+          setScrambledWord(puzzle.scrambled);
+          setUserWord('');
+          setHintLevel(0);
+          setScreen('puzzle_word');
+        } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
+          const puzzle = generateQuickMath();
+          setCurrentPuzzle(puzzle);
+          setMathAnswer('');
+          setHintLevel(0);
+          setScreen('puzzle_math');
+        } else {
+          // Memory Match
+          const puzzle = generateMemoryMatch();
+          setCurrentPuzzle(puzzle);
+          setMemoryCards(puzzle.cards);
+          setSeenCards([]);
+          setExplorationComplete(false);
+          setWrongAttempts(0);
+          setFlippedCards([]);
+          setMatchedPairs([]);
+          setHintLevel(0);
+          setScreen('puzzle_memory');
         }
         
         setPuzzleFirstAttempt(true);
@@ -3659,7 +3635,7 @@ const handleDailyChallengeReplay = () => {
     return (
       <div 
         className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center cursor-pointer"
-        onClick={() => setScreen('home')}
+        onClick={() => { setShowInstructionPopup(null); setScreen('home'); }}
       >
         <div className="text-center space-y-8">
           <div className="relative inline-block">
@@ -3876,9 +3852,9 @@ const handleDailyChallengeReplay = () => {
                 </button>
               </div>
               
-              <div className="border-b border-slate-700 mb-4"></div>
               {/* Scrollable Content Area */}
               <div className="overflow-y-auto flex-1 px-1">
+              
               {/* GEMS TAB CONTENT */}
               {gemsRewardsTab === 'gems' && (
                 <div className="space-y-4 text-slate-300 text-sm">
@@ -4043,14 +4019,14 @@ const handleDailyChallengeReplay = () => {
                     <p className="text-white font-semibold">YOU: {username}</p>
                     <p className="text-slate-300 text-sm mt-1">{currentPuzzleIndex} puzzles completed</p>
                     <p className="text-amber-300 text-sm">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent} gems earned</p>
+              </div>
                   </div>
                 </div>
               )}
               
-              </div>
               <button
                 onClick={() => setShowGemsAndRewards(false)}
-                className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+                className="w-full mt-6 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
               >
                 Close
               </button>
@@ -4064,7 +4040,7 @@ const handleDailyChallengeReplay = () => {
           <div className="flex items-center gap-3">
             {/* Home Button */}
             <button 
-              onClick={() => setScreen('home')}
+              onClick={() => { setShowInstructionPopup(null); setScreen('home'); }}
               className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
             >
               <Home className="w-6 h-6 text-white" />
