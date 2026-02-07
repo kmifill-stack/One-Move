@@ -3635,7 +3635,7 @@ const handleDailyChallengeReplay = () => {
     return (
       <div 
         className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center cursor-pointer"
-        onClick={() => { setShowInstructionPopup(null); setScreen('home'); }}
+        onClick={() => setScreen('home')}
       >
         <div className="text-center space-y-8">
           <div className="relative inline-block">
@@ -3758,8 +3758,8 @@ const handleDailyChallengeReplay = () => {
                   setShowDailyChallengeResult(false);
                   setDailyChallengeFailed(false);
                   setIsDailyChallenge(false);
-                  setDailyChallengeAttempted(false);
                   
+                  setDailyChallengeAttempted(false);
                   // Start new Daily Challenge
                   startDailyChallenge();
                 }}
@@ -4019,10 +4019,10 @@ const handleDailyChallengeReplay = () => {
                     <p className="text-white font-semibold">YOU: {username}</p>
                     <p className="text-slate-300 text-sm mt-1">{currentPuzzleIndex} puzzles completed</p>
                     <p className="text-amber-300 text-sm">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent} gems earned</p>
-              </div>
                   </div>
                 </div>
               )}
+              </div>
               
               <button
                 onClick={() => setShowGemsAndRewards(false)}
@@ -4040,7 +4040,7 @@ const handleDailyChallengeReplay = () => {
           <div className="flex items-center gap-3">
             {/* Home Button */}
             <button 
-              onClick={() => { setShowInstructionPopup(null); setScreen('home'); }}
+              onClick={() => setScreen('home')}
               className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
             >
               <Home className="w-6 h-6 text-white" />
