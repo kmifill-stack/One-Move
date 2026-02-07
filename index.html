@@ -2641,18 +2641,17 @@ const OneMove = () => {
     setIsDailyChallenge(true);
     setDailyChallengeAttempted(true);
     setCurrentPuzzle(challenge);
+    setCurrentTriviaQuestion(challenge.trivia);
     
+    // Initialize puzzle state but don't show puzzle yet - show trivia first
     if (challenge.type === PUZZLE_TYPES.TILE_FLIP) {
-      setCurrentTriviaQuestion(challenge.trivia);
       setGrid(challenge.grid);
       setHintLevel(0);
       setHighlightedArea(null);
-      setScreen('puzzle_tile');
     } else if (challenge.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
       setScrambledWord(challenge.scrambled);
       setUserWord('');
       setHintLevel(0);
-      setScreen('puzzle_word');
     } else if (challenge.type === PUZZLE_TYPES.MEMORY_MATCH) {
       setMemoryCards(challenge.cards);
       setFlippedCards([]);
@@ -2661,15 +2660,14 @@ const OneMove = () => {
       setExplorationComplete(false);
       setWrongAttempts(0);
       setHintLevel(0);
-      setScreen('puzzle_memory');
     } else {
       setMathAnswer('');
       setHintLevel(0);
-      setScreen('puzzle_math');
     }
     
     setPuzzleFirstAttempt(true);
     setFailCount(0);
+    setScreen('trivia'); // Start with trivia, not puzzle
   };
 
   const playSound = (type) => {
@@ -3008,51 +3006,64 @@ const OneMove = () => {
         setShowResult(false);
         setSelectedAnswer(null);
         
-        // Generate puzzle (rotate between 4 types)
-        const rand = Math.random();
-        let puzzleType;
-        if (rand < 0.25) {
-          puzzleType = PUZZLE_TYPES.TILE_FLIP;
-        } else if (rand < 0.50) {
-          puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-        } else if (rand < 0.75) {
-          puzzleType = PUZZLE_TYPES.QUICK_MATH;
+        // If Daily Challenge, use pre-generated puzzle
+        if (isDailyChallenge && currentPuzzle) {
+          if (currentPuzzle.type === PUZZLE_TYPES.TILE_FLIP) {
+            setScreen('puzzle_tile');
+          } else if (currentPuzzle.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
+            setScreen('puzzle_word');
+          } else if (currentPuzzle.type === PUZZLE_TYPES.MEMORY_MATCH) {
+            setScreen('puzzle_memory');
+          } else {
+            setScreen('puzzle_math');
+          }
         } else {
-          puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-        }
-        
-        if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-          const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
-          setCurrentPuzzle(puzzle);
-          setGrid(puzzle.grid);
-          setHintLevel(0);
-          setHighlightedArea(null);
-          setScreen('puzzle_tile');
-        } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
-          const puzzle = generateWordScramble();
-          setCurrentPuzzle(puzzle);
-          setScrambledWord(puzzle.scrambled);
-          setUserWord('');
-          setHintLevel(0);
-          setScreen('puzzle_word');
-        } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
-          const puzzle = generateQuickMath();
-          setCurrentPuzzle(puzzle);
-          setMathAnswer('');
-          setHintLevel(0);
-          setScreen('puzzle_math');
-        } else {
-          // Memory Match
-          const puzzle = generateMemoryMatch();
-          setCurrentPuzzle(puzzle);
-          setMemoryCards(puzzle.cards);
-          setSeenCards([]);
-          setExplorationComplete(false);
-          setWrongAttempts(0);
-          setFlippedCards([]);
-          setMatchedPairs([]);
-          setHintLevel(0);
-          setScreen('puzzle_memory');
+          // Regular mode - generate random puzzle
+          const rand = Math.random();
+          let puzzleType;
+          if (rand < 0.25) {
+            puzzleType = PUZZLE_TYPES.TILE_FLIP;
+          } else if (rand < 0.50) {
+            puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
+          } else if (rand < 0.75) {
+            puzzleType = PUZZLE_TYPES.QUICK_MATH;
+          } else {
+            puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
+          }
+          
+          if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+            const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
+            setCurrentPuzzle(puzzle);
+            setGrid(puzzle.grid);
+            setHintLevel(0);
+            setHighlightedArea(null);
+            setScreen('puzzle_tile');
+          } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
+            const puzzle = generateWordScramble();
+            setCurrentPuzzle(puzzle);
+            setScrambledWord(puzzle.scrambled);
+            setUserWord('');
+            setHintLevel(0);
+            setScreen('puzzle_word');
+          } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
+            const puzzle = generateQuickMath();
+            setCurrentPuzzle(puzzle);
+            setMathAnswer('');
+            setHintLevel(0);
+            setScreen('puzzle_math');
+          } else {
+            // Memory Match
+            const puzzle = generateMemoryMatch();
+            setCurrentPuzzle(puzzle);
+            setMemoryCards(puzzle.cards);
+            setSeenCards([]);
+            setExplorationComplete(false);
+            setWrongAttempts(0);
+            setFlippedCards([]);
+            setMatchedPairs([]);
+            setHintLevel(0);
+            setScreen('puzzle_memory');
+          }
         }
         
         setPuzzleFirstAttempt(true);
@@ -3066,51 +3077,64 @@ const OneMove = () => {
         setShowResult(false);
         setSelectedAnswer(null);
         
-        // Auto-advance to puzzle (rotate between 4 types)
-        const rand = Math.random();
-        let puzzleType;
-        if (rand < 0.25) {
-          puzzleType = PUZZLE_TYPES.TILE_FLIP;
-        } else if (rand < 0.50) {
-          puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-        } else if (rand < 0.75) {
-          puzzleType = PUZZLE_TYPES.QUICK_MATH;
+        // If Daily Challenge, use pre-generated puzzle
+        if (isDailyChallenge && currentPuzzle) {
+          if (currentPuzzle.type === PUZZLE_TYPES.TILE_FLIP) {
+            setScreen('puzzle_tile');
+          } else if (currentPuzzle.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
+            setScreen('puzzle_word');
+          } else if (currentPuzzle.type === PUZZLE_TYPES.MEMORY_MATCH) {
+            setScreen('puzzle_memory');
+          } else {
+            setScreen('puzzle_math');
+          }
         } else {
-          puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-        }
-        
-        if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
-          const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
-          setCurrentPuzzle(puzzle);
-          setGrid(puzzle.grid);
-          setHintLevel(0);
-          setHighlightedArea(null);
-          setScreen('puzzle_tile');
-        } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
-          const puzzle = generateWordScramble();
-          setCurrentPuzzle(puzzle);
-          setScrambledWord(puzzle.scrambled);
-          setUserWord('');
-          setHintLevel(0);
-          setScreen('puzzle_word');
-        } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
-          const puzzle = generateQuickMath();
-          setCurrentPuzzle(puzzle);
-          setMathAnswer('');
-          setHintLevel(0);
-          setScreen('puzzle_math');
-        } else {
-          // Memory Match
-          const puzzle = generateMemoryMatch();
-          setCurrentPuzzle(puzzle);
-          setMemoryCards(puzzle.cards);
-          setSeenCards([]);
-          setExplorationComplete(false);
-          setWrongAttempts(0);
-          setFlippedCards([]);
-          setMatchedPairs([]);
-          setHintLevel(0);
-          setScreen('puzzle_memory');
+          // Regular mode - generate random puzzle
+          const rand = Math.random();
+          let puzzleType;
+          if (rand < 0.25) {
+            puzzleType = PUZZLE_TYPES.TILE_FLIP;
+          } else if (rand < 0.50) {
+            puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
+          } else if (rand < 0.75) {
+            puzzleType = PUZZLE_TYPES.QUICK_MATH;
+          } else {
+            puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
+          }
+          
+          if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+            const puzzle = generateTileFlipPuzzle(currentTriviaQuestion);
+            setCurrentPuzzle(puzzle);
+            setGrid(puzzle.grid);
+            setHintLevel(0);
+            setHighlightedArea(null);
+            setScreen('puzzle_tile');
+          } else if (puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
+            const puzzle = generateWordScramble();
+            setCurrentPuzzle(puzzle);
+            setScrambledWord(puzzle.scrambled);
+            setUserWord('');
+            setHintLevel(0);
+            setScreen('puzzle_word');
+          } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
+            const puzzle = generateQuickMath();
+            setCurrentPuzzle(puzzle);
+            setMathAnswer('');
+            setHintLevel(0);
+            setScreen('puzzle_math');
+          } else {
+            // Memory Match
+            const puzzle = generateMemoryMatch();
+            setCurrentPuzzle(puzzle);
+            setMemoryCards(puzzle.cards);
+            setSeenCards([]);
+            setExplorationComplete(false);
+            setWrongAttempts(0);
+            setFlippedCards([]);
+            setMatchedPairs([]);
+            setHintLevel(0);
+            setScreen('puzzle_memory');
+          }
         }
         
         setPuzzleFirstAttempt(true);
@@ -3715,6 +3739,7 @@ const handleDailyChallengeReplay = () => {
                   setShowDailyChallengeResult(false);
                   setDailyChallengeCompleted(false);
                   setIsDailyChallenge(false);
+                  setDailyChallengeAttempted(false);
                   
                   // Start new Daily Challenge
                   startDailyChallenge();
@@ -3757,6 +3782,7 @@ const handleDailyChallengeReplay = () => {
                   setShowDailyChallengeResult(false);
                   setDailyChallengeFailed(false);
                   setIsDailyChallenge(false);
+                  setDailyChallengeAttempted(false);
                   
                   // Start new Daily Challenge
                   startDailyChallenge();
