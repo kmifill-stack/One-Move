@@ -3711,25 +3711,10 @@ const handleDailyChallengeReplay = () => {
                   setGemsSpent(newGemsSpent);
                   saveProgress({ gemsSpent: newGemsSpent });
                   
-                  // Reset ALL state for replay
+                  // Reset Daily Challenge state for replay
                   setShowDailyChallengeResult(false);
                   setDailyChallengeCompleted(false);
                   setIsDailyChallenge(false);
-                  setDailyChallengeAttempted(false);
-                  setCurrentPuzzle(null);
-                  setShowMathResult(null);
-                  setGrid(null);
-                  setScrambledWord('');
-                  setUserWord('');
-                  setMemoryCards([]);
-                  setFlippedCards([]);
-                  setMatchedPairs([]);
-                  setSeenCards([]);
-                  setExplorationComplete(false);
-                  setMathAnswer('');
-                  setFailCount(0);
-                  setPuzzleFirstAttempt(true);
-                  setHintLevel(0);
                   
                   // Start new Daily Challenge
                   startDailyChallenge();
@@ -3768,25 +3753,10 @@ const handleDailyChallengeReplay = () => {
                   setGemsSpent(newGemsSpent);
                   saveProgress({ gemsSpent: newGemsSpent });
                   
-                  // Reset ALL state for replay
+                  // Reset Daily Challenge state for replay
                   setShowDailyChallengeResult(false);
                   setDailyChallengeFailed(false);
                   setIsDailyChallenge(false);
-                  setDailyChallengeAttempted(false);
-                  setCurrentPuzzle(null);
-                  setShowMathResult(null);
-                  setGrid(null);
-                  setScrambledWord('');
-                  setUserWord('');
-                  setMemoryCards([]);
-                  setFlippedCards([]);
-                  setMatchedPairs([]);
-                  setSeenCards([]);
-                  setExplorationComplete(false);
-                  setMathAnswer('');
-                  setFailCount(0);
-                  setPuzzleFirstAttempt(true);
-                  setHintLevel(0);
                   
                   // Start new Daily Challenge
                   startDailyChallenge();
@@ -3879,8 +3849,6 @@ const handleDailyChallengeReplay = () => {
                   ⭐ Stars
                 </button>
               </div>
-              
-              {/* Scrollable Content Area */}
               <div className="overflow-y-auto flex-1 px-1">
               
               {/* GEMS TAB CONTENT */}
@@ -4050,9 +4018,9 @@ const handleDailyChallengeReplay = () => {
                   </div>
                 </div>
               )}
-              </div>
               
               <button
+              </div>
                 onClick={() => setShowGemsAndRewards(false)}
                 className="w-full mt-6 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
               >
@@ -4327,23 +4295,6 @@ const handleDailyChallengeReplay = () => {
             <button
               onClick={handlePlay}
               className="w-full px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-xl font-light tracking-wide shadow-lg"
-          
-          {/* TEST BUTTON - Remove before production */}
-          <button
-            onClick={() => {
-              // Reset all Daily Challenge states to allow testing
-              setDailyChallengeCompleted(false);
-              setDailyChallengeFailed(false);
-              setDailyChallengeAttempted(false);
-              setShowDailyChallengeResult(false);
-              setIsDailyChallenge(false);
-              localStorage.removeItem('dailyChallenge');
-              alert('Daily Challenge reset! You can now test it again.');
-            }}
-            className="w-full mb-3 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold rounded-lg transition-all duration-300 shadow-lg border-2 border-yellow-400"
-          >
-            🧪 TEST: Reset Daily Challenge
-          </button>
             >
               <Play className="w-6 h-6" />
               <span>PLAY</span>
@@ -4376,6 +4327,7 @@ const handleDailyChallengeReplay = () => {
     return (
       <div className="h-screen overflow-y-auto bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 p-6">
         <button 
+          <button onClick={() => { setDailyChallengeCompleted(false); setDailyChallengeFailed(false); setDailyChallengeAttempted(false); setShowDailyChallengeResult(false); setIsDailyChallenge(false); localStorage.removeItem('dailyChallenge'); alert('Daily Challenge reset!'); }} className="w-full mb-3 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold rounded-lg transition-all duration-300 shadow-lg border-2 border-yellow-400">🧪 TEST: Reset Daily Challenge</button>
           onClick={() => { setShowInstructionPopup(null); setScreen('home'); }}
           className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
         >
@@ -4457,13 +4409,7 @@ const handleDailyChallengeReplay = () => {
             </button>
           </div>
           
-          {/* Got It Button */}
-          <button
-            onClick={() => setScreen('home')}
-            className="w-full mt-8 mb-6 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl transition-all duration-300 text-lg font-semibold shadow-lg"
-          >
-            Got It!
-          </button>
+          <button onClick={() => setScreen('home')} className="w-full mt-8 mb-6 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl transition-all duration-300 text-lg font-semibold shadow-lg">Got It!</button>
         </div>
 
         {/* Tile Flip Popup */}
