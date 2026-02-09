@@ -3279,7 +3279,7 @@ const handleDailyChallengeReplay = () => {
         const newFailCount = failCount + 1;
         setFailCount(newFailCount);
         
-        if (newFailCount >= 1) {
+        if (newFailCount >= 3) {
           // Daily Challenge FAILED
           saveDailyChallengeData(false, true, dailyChallengeStreak);
           setDailyChallengeFailed(true);
@@ -3825,11 +3825,11 @@ const handleDailyChallengeReplay = () => {
         {/* NEW: Combined Gems & Rewards Popup with 3 Tabs */}
         {showGemsAndRewards && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemsAndRewards(false)}>
-            <div className="bg-slate-800 rounded-2xl pt-20 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">💎 GEMS & REWARDS</h2>
+            <div className="bg-slate-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-4">💎 GEMS & REWARDS</h2>
               
               {/* Tabs */}
-              <div className="flex gap-2 mb-6 flex-shrink-0">
+              <div className="flex gap-2 mb-6">
                 <button
                   onClick={() => setGemsRewardsTab('gems')}
                   className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${gemsRewardsTab === 'gems' ? 'bg-purple-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
@@ -3849,7 +3849,6 @@ const handleDailyChallengeReplay = () => {
                   ⭐ Stars
                 </button>
               </div>
-              <div className="overflow-y-auto flex-1 px-1">
               
               {/* GEMS TAB CONTENT */}
               {gemsRewardsTab === 'gems' && (
@@ -4020,7 +4019,6 @@ const handleDailyChallengeReplay = () => {
               )}
               
               <button
-              </div>
                 onClick={() => setShowGemsAndRewards(false)}
                 className="w-full mt-6 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
               >
@@ -4325,11 +4323,10 @@ const handleDailyChallengeReplay = () => {
   // Instructions Screen
   if (screen === 'instructions') {
     return (
-      <div className="h-screen overflow-y-auto bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 p-6">
         <button 
-          <button onClick={() => { setDailyChallengeCompleted(false); setDailyChallengeFailed(false); setDailyChallengeAttempted(false); setShowDailyChallengeResult(false); setIsDailyChallenge(false); localStorage.removeItem('dailyChallenge'); alert('Daily Challenge reset!'); }} className="w-full mb-3 px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-black font-bold rounded-lg transition-all duration-300 shadow-lg border-2 border-yellow-400">🧪 TEST: Reset Daily Challenge</button>
-          onClick={() => { setShowInstructionPopup(null); setScreen('home'); }}
-          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg z-50"
+          onClick={() => setScreen('home')}
+          className="absolute top-4 left-4 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
         >
           <Home className="w-6 h-6 text-white" />
         </button>
@@ -4408,8 +4405,6 @@ const handleDailyChallengeReplay = () => {
               </div>
             </button>
           </div>
-          
-          <button onClick={() => setScreen('home')} className="w-full mt-8 mb-6 px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl transition-all duration-300 text-lg font-semibold shadow-lg">Got It!</button>
         </div>
 
         {/* Tile Flip Popup */}
