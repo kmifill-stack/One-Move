@@ -2279,16 +2279,28 @@ const PUZZLE_TYPES = {
 
 // Customization Shop Data
 const SHOP_ICONS = [
-  { id: 'default', name: 'Default', emoji: '👤', cost: 0 },
-  { id: 'star', name: 'Star', emoji: '⭐', cost: 100 },
-  { id: 'fire', name: 'Fire', emoji: '🔥', cost: 100 },
-  { id: 'gem', name: 'Gem', emoji: '💎', cost: 150 },
-  { id: 'trophy', name: 'Trophy', emoji: '🏆', cost: 150 },
-  { id: 'rocket', name: 'Rocket', emoji: '🚀', cost: 200 },
-  { id: 'crown', name: 'Crown', emoji: '👑', cost: 250 },
+  { id: 'default', name: 'Avatar', emoji: '👤', cost: 0 },
+  { id: 'brain', name: 'Brain', emoji: '🧠', cost: 100 },
+  { id: 'lightbulb', name: 'Lightbulb', emoji: '💡', cost: 100 },
+  { id: 'network', name: 'Network', emoji: '🔗', cost: 150 },
+  { id: 'knight', name: 'Chess Knight', emoji: '♞', cost: 150 },
+  { id: 'owl', name: 'Owl', emoji: '🦉', cost: 150 },
+  { id: 'puzzle', name: 'Puzzle Piece', emoji: '🧩', cost: 100 },
+  { id: 'rubiks', name: 'Rubik\'s Cube', emoji: '🎲', cost: 200 },
+  { id: 'target', name: 'Target', emoji: '🎯', cost: 200 },
+  { id: 'controller', name: 'Game Pad', emoji: '🎮', cost: 200 },
+  { id: 'pattern', name: 'Pattern', emoji: '✖️', cost: 250 },
   { id: 'lightning', name: 'Lightning', emoji: '⚡', cost: 200 },
-  { id: 'brain', name: 'Brain', emoji: '🧠', cost: 200 },
-  { id: 'robot', name: 'Robot', emoji: '🤖', cost: 300 },
+  { id: 'sparkle', name: 'Sparkle', emoji: '✨', cost: 250 },
+  { id: 'fingerprint', name: 'Fingerprint', emoji: '👆', cost: 300 },
+  { id: 'infinity', name: 'Infinity', emoji: '♾️', cost: 300 },
+  { id: 'star', name: 'Star', emoji: '⭐', cost: 150 },
+  { id: 'fire', name: 'Fire', emoji: '🔥', cost: 200 },
+  { id: 'gem', name: 'Diamond', emoji: '💎', cost: 250 },
+  { id: 'trophy', name: 'Trophy', emoji: '🏆', cost: 250 },
+  { id: 'rocket', name: 'Rocket', emoji: '🚀', cost: 300 },
+  { id: 'crown', name: 'Crown', emoji: '👑', cost: 350 },
+  { id: 'robot', name: 'Robot', emoji: '🤖', cost: 400 },
 ];
 
 const SHOP_THEMES = [
@@ -4075,7 +4087,7 @@ const handleDailyChallengeReplay = () => {
                 
                 {/* ICONS TAB */}
                 {customizeTab === 'icons' && (
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     {SHOP_ICONS.map(icon => {
                       const isUnlocked = unlockedIcons.includes(icon.id);
                       const isSelected = selectedIcon === icon.id;
