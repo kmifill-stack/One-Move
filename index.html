@@ -2365,7 +2365,6 @@ const OneMove = () => {
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemsAndRewards, setShowGemsAndRewards] = useState(false); // Combined popup
-  const [showSuperstars, setShowSuperstars] = useState(false);
   const [gemsRewardsTab, setGemsRewardsTab] = useState('gems'); // 'gems', 'rewards', or 'superstars'
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
   const [gemsSpent, setGemsSpent] = useState(0);
@@ -3885,7 +3884,7 @@ const handleDailyChallengeReplay = () => {
                   onClick={() => setGemsRewardsTab('superstars')}
                   className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${gemsRewardsTab === 'superstars' ? 'bg-purple-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
                 >
-                  ⭐ Stars
+                  🏆 Superstars
                 </button>
               </div>
               
@@ -4038,23 +4037,40 @@ const handleDailyChallengeReplay = () => {
               {/* SUPERSTARS TAB CONTENT */}
               {gemsRewardsTab === 'superstars' && (
                 <div className="text-center py-8">
-                  <div className="text-6xl mb-4">⭐</div>
-                  <h3 className="text-2xl font-bold text-white mb-3">SUPERSTARS</h3>
-                  <p className="text-slate-400 mb-6">Leaderboard coming soon!</p>
+                  <div className="text-6xl mb-4">🏆</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">WEEKLY SUPERSTARS</h3>
+                  <p className="text-amber-300 text-sm mb-6">Leaderboard coming at launch!</p>
                   
-                  <div className="bg-slate-700/50 rounded-lg p-6 max-w-md mx-auto">
-                    <p className="text-slate-300 text-sm mb-4">See how you rank against other players worldwide.</p>
-                    <div className="space-y-2 text-xs text-slate-400">
-                      <p>📊 Track top performers</p>
-                      <p>🏆 Compare your progress</p>
-                      <p>🎯 Compete for the #1 spot</p>
-                    </div>
+                  <div className="bg-amber-900/20 rounded-lg p-6 mb-6 max-w-md mx-auto">
+                    <p className="text-slate-300 text-sm mb-4">
+                      Compete with players worldwide to earn the most gems each week!
+                    </p>
                   </div>
                   
-                  <div className="mt-6 p-4 bg-purple-900/30 rounded-lg border border-purple-600 max-w-md mx-auto">
-                    <p className="text-white font-semibold">YOU: {username}</p>
-                    <p className="text-slate-300 text-sm mt-1">{currentPuzzleIndex} puzzles completed</p>
-                    <p className="text-amber-300 text-sm">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent} gems earned</p>
+                  <div className="space-y-3 text-sm text-slate-300 mb-6 max-w-md mx-auto">
+                    <p className="flex items-center justify-center gap-3">
+                      <span className="text-lg">💎</span>
+                      <span>Compete for most weekly gems</span>
+                    </p>
+                    <p className="flex items-center justify-center gap-3">
+                      <span className="text-lg">🥇</span>
+                      <span>Top 3 get gold, silver, bronze</span>
+                    </p>
+                    <p className="flex items-center justify-center gap-3">
+                      <span className="text-lg">📅</span>
+                      <span>Resets every Monday</span>
+                    </p>
+                    <p className="flex items-center justify-center gap-3">
+                      <span className="text-lg">🏆</span>
+                      <span>See top 50 players worldwide</span>
+                    </p>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-blue-900/30 rounded-lg border-2 border-blue-500 max-w-md mx-auto">
+                    <p className="text-white font-semibold text-lg mb-2">YOUR STATS</p>
+                    <p className="text-slate-300">👤 {username}</p>
+                    <p className="text-slate-300 text-sm">🧩 {currentPuzzleIndex} puzzles completed</p>
+                    <p className="text-amber-300 font-semibold">💎 {triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent} total gems</p>
                   </div>
                 </div>
               )}
@@ -4339,48 +4355,6 @@ const handleDailyChallengeReplay = () => {
         )}
         
 
-        {/* SUPERSTARS LEADERBOARD - COMING SOON */}
-        {showSuperstars && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSuperstars(false)}>
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-6">🏆 WEEKLY SUPERSTARS</h2>
-              
-              <div className="bg-amber-900/20 rounded-lg p-6 mb-6 text-center">
-                <p className="text-6xl mb-4">🚀</p>
-                <p className="text-amber-300 text-xl font-semibold mb-2">Coming Soon!</p>
-                <p className="text-slate-300 text-sm">
-                  Weekly leaderboard will be available at launch. Compete with players worldwide to earn the most gems each week!
-                </p>
-              </div>
-              
-              <div className="space-y-3 text-sm text-slate-300 mb-6">
-                <p className="flex items-center gap-2">
-                  <span className="text-lg">💎</span>
-                  <span>Compete for most weekly gems</span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="text-lg">🥇</span>
-                  <span>Top 3 get gold, silver, bronze</span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="text-lg">📅</span>
-                  <span>Resets every Monday</span>
-                </p>
-                <p className="flex items-center gap-2">
-                  <span className="text-lg">🏆</span>
-                  <span>See top 50 players worldwide</span>
-                </p>
-              </div>
-              
-              <button
-                onClick={() => setShowSuperstars(false)}
-                className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
         {/* Level Info & Bonuses Popup */}
         {showLevelInfo && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6 overflow-y-auto" onClick={() => setShowLevelInfo(false)}>
@@ -4590,14 +4564,6 @@ const handleDailyChallengeReplay = () => {
             >
               💎 Gems & Rewards
             </button>
-            
-            <button
-              onClick={() => setShowSuperstars(true)}
-              className="w-full px-6 py-2 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-            >
-              🏆 Weekly Superstars
-            </button>
-            
             <button
               onClick={() => {
                 setDailyChallengeCompleted(false);
