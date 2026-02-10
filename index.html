@@ -3715,6 +3715,11 @@ const handleDailyChallengeReplay = () => {
                   setShowDailyChallengeResult(false);
                   setDailyChallengeCompleted(false);
                   setIsDailyChallenge(false);
+                  setDailyChallengeAttempted(false);
+                  setCurrentPuzzle(null);
+                  setFailCount(0);
+                  setPuzzleFirstAttempt(true);
+                  setHintLevel(0);
                   
                   // Start new Daily Challenge
                   startDailyChallenge();
@@ -3757,6 +3762,11 @@ const handleDailyChallengeReplay = () => {
                   setShowDailyChallengeResult(false);
                   setDailyChallengeFailed(false);
                   setIsDailyChallenge(false);
+                  setDailyChallengeAttempted(false);
+                  setCurrentPuzzle(null);
+                  setFailCount(0);
+                  setPuzzleFirstAttempt(true);
+                  setHintLevel(0);
                   
                   // Start new Daily Challenge
                   startDailyChallenge();
