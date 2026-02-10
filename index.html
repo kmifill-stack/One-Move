@@ -4244,11 +4244,10 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
         
-        {/* NEW TOP BAR - 4 ICONS */}
+        {/* NEW TOP BAR LAYOUT */}
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
-          {/* Left side: Home + Username */}
+          {/* Left: Home + Username + Title */}
           <div className="flex items-center gap-3">
-            {/* Home Button */}
             <button 
               onClick={() => setScreen('home')}
               className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
@@ -4256,7 +4255,6 @@ const handleDailyChallengeReplay = () => {
               <Home className="w-6 h-6 text-white" />
             </button>
             
-            {/* Username with Icon and Title */}
             <button 
               onClick={() => setShowUsernameEdit(true)}
               className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 hover:bg-slate-700/80 transition-all duration-300"
@@ -4273,27 +4271,30 @@ const handleDailyChallengeReplay = () => {
             </button>
           </div>
           
-          {/* Right side: Trophy + Gems */}
-          <div className="flex items-center gap-3">
-            {/* Trophy Icon */}
-            {getLevelInfo(getUserLevel()).icon && (
-              <div className="bg-slate-800/80 px-3 py-3 rounded-lg shadow-lg border border-amber-600/50 flex items-center justify-center">
-                <span className="text-3xl">{getLevelInfo(getUserLevel()).icon}</span>
-              </div>
-            )}
-            
-            {/* Gems Counter */}
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowGemBreakdown(true);
-              }}
-              className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-            >
+          {/* Center: Total Gems + Puzzle Count */}
+          <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
               <span className="text-white text-lg font-bold">💎</span>
               <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent}</span>
-            </button>
+            </div>
+            
+            <div className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2">
+              <span className="text-blue-400 text-lg">🧩</span>
+              <span className="text-white font-medium text-sm">{currentPuzzleIndex}</span>
+            </div>
           </div>
+          
+          {/* Right: Gem Details Button */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowGemBreakdown(true);
+            }}
+            className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-purple-500 hover:bg-slate-700/80 transition-all duration-300 flex items-center gap-2"
+          >
+            <span className="text-purple-400 text-lg">📊</span>
+            <span className="text-white font-medium text-sm">Gem Details</span>
+          </button>
         </div>
         
         {renderGemBreakdown()}
@@ -4457,12 +4458,6 @@ const handleDailyChallengeReplay = () => {
           <h1 className="text-6xl font-extralight text-white tracking-wider mb-4">
             ONE MOVE
           </h1>
-          
-          <div className="bg-slate-800/50 rounded-xl px-4 py-3 border border-slate-700">
-            <p className="text-slate-300 text-base">
-              <span className="text-amber-400 font-semibold">{getUserLevel()}</span> • {currentPuzzleIndex} Puzzles
-            </p>
-          </div>
           
           {/* Daily Challenge Banner */}
           {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
