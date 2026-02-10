@@ -2385,7 +2385,6 @@ const OneMove = () => {
   const [bonusGems, setBonusGems] = useState(0);
   const [lastAwardedLevel, setLastAwardedLevel] = useState('');
   const [showUsernameEdit, setShowUsernameEdit] = useState(false);
-  const [profileTab, setProfileTab] = useState('username'); // 'username', 'icons', 'themes', 'titles'
   const [tempUsername, setTempUsername] = useState('');
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   // Customization states
@@ -4113,35 +4112,58 @@ const handleDailyChallengeReplay = () => {
         
         {renderGemBreakdown()}
         
-        {/* PROFILE POPUP - Combined Username + Customization */}
+        {/* PROFILE POPUP - Username Always Visible + 3 Customization Tabs */}
         {showUsernameEdit && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => { setShowUsernameEdit(false); setProfileTab('username'); }}>
-            <div className="bg-slate-800 rounded-2xl pt-20 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-blue-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">✏️ YOUR PROFILE</h2>
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => { setShowUsernameEdit(false); setCustomizeTab('icons'); }}>
+            <div className="bg-slate-800 rounded-2xl pt-8 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-blue-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6 flex-shrink-0">✏️ YOUR PROFILE</h2>
               
-              {/* Tabs */}
+              {/* Username Section - Always Visible */}
+              <div className="flex-shrink-0 mb-6">
+                <div className="flex gap-3 items-center">
+                  <input
+                    type="text"
+                    value={tempUsername}
+                    onChange={(e) => setTempUsername(e.target.value)}
+                    placeholder={username}
+                    maxLength={20}
+                    className="flex-1 px-4 py-3 bg-slate-900 text-white rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none text-center text-lg"
+                  />
+                  <button
+                    onClick={() => {
+                      if (tempUsername.trim()) {
+                        setUsername(tempUsername.trim());
+                        saveProgress({ username: tempUsername.trim() });
+                      }
+                      setTempUsername('');
+                    }}
+                    className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 font-semibold whitespace-nowrap"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+              
+              {/* Divider */}
+              <div className="border-t border-slate-600 mb-6 flex-shrink-0"></div>
+              
+              {/* Customization Tabs - 3 buttons */}
               <div className="flex gap-2 mb-6 flex-shrink-0">
                 <button
-                  onClick={() => setProfileTab('username')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'username' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
-                >
-                  ✏️ Username
-                </button>
-                <button
-                  onClick={() => setProfileTab('icons')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'icons' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                  onClick={() => setCustomizeTab('icons')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'icons' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
                 >
                   😀 Icons
                 </button>
                 <button
-                  onClick={() => setProfileTab('themes')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'themes' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                  onClick={() => setCustomizeTab('themes')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'themes' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
                 >
                   🎨 Themes
                 </button>
                 <button
-                  onClick={() => setProfileTab('titles')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'titles' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                  onClick={() => setCustomizeTab('titles')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'titles' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
                 >
                   🏆 Titles
                 </button>
@@ -4149,37 +4171,8 @@ const handleDailyChallengeReplay = () => {
               
               {/* Scrollable Content */}
               <div className="overflow-y-auto flex-1 px-1">
-                
-                {/* USERNAME TAB */}
-                {profileTab === 'username' && (
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <p className="text-slate-300 mb-4 text-center">Edit your username</p>
-                    <input
-                      type="text"
-                      value={tempUsername}
-                      onChange={(e) => setTempUsername(e.target.value)}
-                      placeholder={username}
-                      maxLength={20}
-                      className="w-full max-w-sm px-4 py-3 bg-slate-900 text-white rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none text-center text-lg mb-4"
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => {
-                        if (tempUsername.trim()) {
-                          setUsername(tempUsername.trim());
-                          saveProgress({ username: tempUsername.trim() });
-                        }
-                        setTempUsername('');
-                      }}
-                      className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-semibold"
-                    >
-                      Save Username
-                    </button>
-                  </div>
-                )}
-                
                 {/* ICONS TAB - copy from customize shop */}
-                {profileTab === 'icons' && (
+                {customizeTab === 'icons' && (
                   <div className="grid grid-cols-3 gap-3">
                     {SHOP_ICONS.map(icon => {
                       const isUnlocked = unlockedIcons.includes(icon.id);
@@ -4226,7 +4219,7 @@ const handleDailyChallengeReplay = () => {
                 )}
                 
                 {/* THEMES TAB */}
-                {profileTab === 'themes' && (
+                {customizeTab === 'themes' && (
                   <div className="grid grid-cols-1 gap-3">
                     {SHOP_THEMES.map(theme => {
                       const isUnlocked = unlockedThemes.includes(theme.id);
@@ -4282,7 +4275,7 @@ const handleDailyChallengeReplay = () => {
                 )}
                 
                 {/* TITLES TAB */}
-                {profileTab === 'titles' && (
+                {customizeTab === 'titles' && (
                   <div className="grid grid-cols-1 gap-3">
                     {SHOP_TITLES.map(title => {
                       const isUnlocked = unlockedTitles.includes(title.id);
@@ -4331,10 +4324,11 @@ const handleDailyChallengeReplay = () => {
                   </div>
                 )}
                 
+                
               </div>
               
               <button
-                onClick={() => { setShowUsernameEdit(false); setProfileTab('username'); }}
+                onClick={() => { setShowUsernameEdit(false); setCustomizeTab('icons'); }}
                 className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
               >
                 Close
