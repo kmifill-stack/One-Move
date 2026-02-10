@@ -2368,6 +2368,8 @@ const OneMove = () => {
   const [gemsRewardsTab, setGemsRewardsTab] = useState('gems'); // 'gems', 'rewards', or 'superstars'
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
   const [gemsSpent, setGemsSpent] = useState(0);
+  const [gemsSpentOnCustomization, setGemsSpentOnCustomization] = useState(0);
+  const [gemsSpentOnSkips, setGemsSpentOnSkips] = useState(0);
   const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
@@ -2405,6 +2407,8 @@ const OneMove = () => {
       setPuzzleScore(data.puzzleScore || 0);
       setDailyChallengeGems(data.dailyChallengeGems || 0);
       setGemsSpent(data.gemsSpent || 0);
+      setGemsSpentOnCustomization(data.gemsSpentOnCustomization || 0);
+      setGemsSpentOnSkips(data.gemsSpentOnSkips || 0);
       setPuzzlesSkipped(data.puzzlesSkipped || 0);
       setUsedWords(data.usedWords || []);
       setUsedTrivia(data.usedTrivia || []);
@@ -3581,6 +3585,8 @@ const handleDailyChallengeReplay = () => {
     // Deduct gems
     const newGemsSpent = gemsSpent + skipCost;
     setGemsSpent(newGemsSpent);
+    const newSkipsSpent = gemsSpentOnSkips + skipCost;
+    setGemsSpentOnSkips(newSkipsSpent);
     
     const newSkipped = puzzlesSkipped + 1;
     setPuzzlesSkipped(newSkipped);
@@ -3588,7 +3594,7 @@ const handleDailyChallengeReplay = () => {
     
     const newIndex = currentPuzzleIndex + 1;
     setCurrentPuzzleIndex(newIndex);
-    saveProgress({ currentIndex: newIndex, puzzlesSkipped: newSkipped, gemsSpent: newGemsSpent });
+    saveProgress({ currentIndex: newIndex, puzzlesSkipped: newSkipped, gemsSpent: newGemsSpent, gemsSpentOnSkips: newSkipsSpent });
     
     if (newIndex >= 500) {
       setScreen('complete');
@@ -3648,10 +3654,23 @@ const handleDailyChallengeReplay = () => {
             {gemsSpent > 0 && (
               <div>
                 <p className="text-red-400 font-semibold mb-3">SPENT:</p>
-                <div className="ml-3">
+                <div className="ml-3 space-y-2">
                   <p className="flex justify-between">
-                    <span>💸 Total Spent:</span>
-                    <span className="text-white font-bold">-{gemsSpent}</span>
+                    <span>🎨 Customization:</span>
+                    <span className="text-white font-bold">{gemsSpentOnCustomization}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span>⏭️ Puzzle Skips:</span>
+                    <span className="text-white font-bold">{gemsSpentOnSkips}</span>
+                  </p>
+                  {puzzlesSkipped > 0 && (
+                    <p className="text-xs text-slate-400 ml-4">({puzzlesSkipped} skipped)</p>
+                  )}
+                </div>
+                <div className="border-t border-slate-600 mt-3 pt-2 ml-3">
+                  <p className="flex justify-between font-semibold">
+                    <span className="text-red-400">Total Spent:</span>
+                    <span className="text-white">-{gemsSpent}</span>
                   </p>
                 </div>
               </div>
@@ -4101,9 +4120,11 @@ const handleDailyChallengeReplay = () => {
                               const newGemsSpent = gemsSpent + icon.cost;
                               const newUnlocked = [...unlockedIcons, icon.id];
                               setGemsSpent(newGemsSpent);
+                              const newCustomSpent = gemsSpentOnCustomization + icon.cost;
+                              setGemsSpentOnCustomization(newCustomSpent);
                               setUnlockedIcons(newUnlocked);
                               setSelectedIcon(icon.id);
-                              saveProgress({ gemsSpent: newGemsSpent, unlockedIcons: newUnlocked, selectedIcon: icon.id });
+                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedIcons: newUnlocked, selectedIcon: icon.id });
                             } else {
                               alert(`Not enough gems! You need ${icon.cost} gems.`);
                             }
@@ -4146,9 +4167,11 @@ const handleDailyChallengeReplay = () => {
                               const newGemsSpent = gemsSpent + theme.cost;
                               const newUnlocked = [...unlockedThemes, theme.id];
                               setGemsSpent(newGemsSpent);
+                              const newCustomSpent = gemsSpentOnCustomization + theme.cost;
+                              setGemsSpentOnCustomization(newCustomSpent);
                               setUnlockedThemes(newUnlocked);
                               setSelectedTheme(theme.id);
-                              saveProgress({ gemsSpent: newGemsSpent, unlockedThemes: newUnlocked, selectedTheme: theme.id });
+                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedThemes: newUnlocked, selectedTheme: theme.id });
                             } else {
                               alert(`Not enough gems! You need ${theme.cost} gems.`);
                             }
@@ -4200,9 +4223,11 @@ const handleDailyChallengeReplay = () => {
                               const newGemsSpent = gemsSpent + title.cost;
                               const newUnlocked = [...unlockedTitles, title.id];
                               setGemsSpent(newGemsSpent);
+                              const newCustomSpent = gemsSpentOnCustomization + title.cost;
+                              setGemsSpentOnCustomization(newCustomSpent);
                               setUnlockedTitles(newUnlocked);
                               setSelectedTitle(title.id);
-                              saveProgress({ gemsSpent: newGemsSpent, unlockedTitles: newUnlocked, selectedTitle: title.id });
+                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedTitles: newUnlocked, selectedTitle: title.id });
                             } else {
                               alert(`Not enough gems! You need ${title.cost} gems.`);
                             }
