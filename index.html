@@ -4244,9 +4244,9 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
         
-        {/* NEW TOP BAR LAYOUT */}
+        {/* TOP BAR */}
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
-          {/* Left: Home + Username + Title */}
+          {/* Left side: Home + Username with Icon/Title */}
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setScreen('home')}
@@ -4271,29 +4271,16 @@ const handleDailyChallengeReplay = () => {
             </button>
           </div>
           
-          {/* Center: Total Gems + Puzzle Count */}
-          <div className="flex items-center gap-4">
-            <div className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2">
-              <span className="text-white text-lg font-bold">💎</span>
-              <span className="text-white text-xl font-bold">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent}</span>
-            </div>
-            
-            <div className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2">
-              <span className="text-blue-400 text-lg">🧩</span>
-              <span className="text-white font-medium text-sm">{currentPuzzleIndex}</span>
-            </div>
-          </div>
-          
-          {/* Right: Gem Details Button */}
+          {/* Right side: Gem Economy Details Button */}
           <button 
             onClick={(e) => {
               e.stopPropagation();
               setShowGemBreakdown(true);
             }}
-            className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-purple-500 hover:bg-slate-700/80 transition-all duration-300 flex items-center gap-2"
+            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
           >
-            <span className="text-purple-400 text-lg">📊</span>
-            <span className="text-white font-medium text-sm">Gem Details</span>
+            <span className="text-white text-lg font-bold">💎</span>
+            <span className="text-white text-base font-semibold">Gem Economy Details</span>
           </button>
         </div>
         
@@ -4458,6 +4445,25 @@ const handleDailyChallengeReplay = () => {
           <h1 className="text-6xl font-extralight text-white tracking-wider mb-4">
             ONE MOVE
           </h1>
+          
+          
+          <div className="bg-slate-800/50 rounded-xl px-6 py-3 border border-slate-700">
+            <div className="flex items-center justify-center gap-3 text-base">
+              {getLevelInfo(getUserLevel()).icon && (
+                <span className="text-3xl">{getLevelInfo(getUserLevel()).icon}</span>
+              )}
+              <span className="text-slate-400">•</span>
+              <div className="flex items-center gap-1">
+                <span className="text-lg">💎</span>
+                <span className="text-white font-bold">{triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent}</span>
+              </div>
+              <span className="text-slate-400">•</span>
+              <div className="flex items-center gap-1">
+                <span className="text-blue-400">🧩</span>
+                <span className="text-slate-300">{currentPuzzleIndex} Puzzles</span>
+              </div>
+            </div>
+          </div>
           
           {/* Daily Challenge Banner */}
           {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
