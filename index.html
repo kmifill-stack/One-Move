@@ -2365,8 +2365,6 @@ const OneMove = () => {
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
   const [showGemsAndRewards, setShowGemsAndRewards] = useState(false); // Combined popup
-  const [weeklyGems, setWeeklyGems] = useState(0);
-  const [weekStartDate, setWeekStartDate] = useState(null);
   const [showSuperstars, setShowSuperstars] = useState(false);
   const [gemsRewardsTab, setGemsRewardsTab] = useState('gems'); // 'gems', 'rewards', or 'superstars'
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
@@ -2467,17 +2465,6 @@ const OneMove = () => {
       
       // Load username
       setUsername(data.username || 'Player');
-      
-      // Load weekly gems
-      const currentWeekStart = getWeekStart().getTime();
-      if (data.weekStartDate === currentWeekStart) {
-        setWeeklyGems(data.weeklyGems || 0);
-        setWeekStartDate(data.weekStartDate);
-      } else {
-        // New week - reset
-        setWeeklyGems(0);
-        setWeekStartDate(currentWeekStart);
-      }
       
       // Load customization data
       setSelectedIcon(data.selectedIcon || 'default');
@@ -2803,93 +2790,6 @@ const OneMove = () => {
   const getLevelInfo = (levelName) => {
     const levels = {
       "Beginner": { icon: "", reward: 0, threshold: 0 },
-  // MOCK LEADERBOARD DATA (replace with Game Center later)
-  const MOCK_LEADERBOARD = [
-    { rank: 1, username: 'BrainMaster', icon: '🧠', weeklyGems: 3250 },
-    { rank: 2, username: 'PuzzleKing', icon: '👑', weeklyGems: 2980 },
-    { rank: 3, username: 'GemCollector', icon: '💎', weeklyGems: 2750 },
-    { rank: 4, username: 'QuizWhiz', icon: '⚡', weeklyGems: 2500 },
-    { rank: 5, username: 'LogicLegend', icon: '🎯', weeklyGems: 2350 },
-    { rank: 6, username: 'SmartCookie', icon: '🍪', weeklyGems: 2180 },
-    { rank: 7, username: 'ThinkTank', icon: '🎲', weeklyGems: 2050 },
-    { rank: 8, username: 'MindBender', icon: '🔮', weeklyGems: 1920 },
-    { rank: 9, username: 'BrainBox', icon: '📦', weeklyGems: 1850 },
-    { rank: 10, username: 'CleverCat', icon: '🐱', weeklyGems: 1780 },
-  ];
-
-  // Get week start (Monday 00:00)
-  const getWeekStart = () => {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Monday
-    const monday = new Date(now);
-    monday.setDate(now.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday;
-  };
-
-  // Get week end (Sunday 23:59)
-  const getWeekEnd = () => {
-    const monday = getWeekStart();
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-    sunday.setHours(23, 59, 59, 999);
-    return sunday;
-  };
-
-  // Format week range
-  const getWeekRange = () => {
-    const start = getWeekStart();
-    const end = getWeekEnd();
-    const options = { month: 'short', day: 'numeric' };
-    return `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
-  };
-
-  // Time until reset
-  const getTimeUntilReset = () => {
-    const now = new Date();
-    const nextMonday = getWeekStart();
-    nextMonday.setDate(nextMonday.getDate() + 7);
-    const diff = nextMonday - now;
-    
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''}, ${hours} hour${hours !== 1 ? 's' : ''}`;
-    return `${hours} hour${hours !== 1 ? 's' : ''}`;
-  };
-
-  // Add current user to leaderboard
-  const getFullLeaderboard = () => {
-    const userEntry = {
-      rank: MOCK_LEADERBOARD.length + 1,
-      username: username,
-      icon: SHOP_ICONS.find(i => i.id === selectedIcon)?.emoji || '👤',
-      weeklyGems: weeklyGems,
-      isCurrentUser: true
-    };
-    return [...MOCK_LEADERBOARD, userEntry].sort((a, b) => b.weeklyGems - a.weeklyGems).map((entry, index) => ({
-      ...entry,
-      rank: index + 1
-
-  // Add gems to weekly total
-  const addWeeklyGems = (amount) => {
-    const currentWeekStart = getWeekStart().getTime();
-    
-    // Check if we need to reset (new week)
-    if (!weekStartDate || weekStartDate !== currentWeekStart) {
-      setWeekStartDate(currentWeekStart);
-      setWeeklyGems(amount);
-      saveProgress({ weekStartDate: currentWeekStart, weeklyGems: amount });
-    } else {
-      const newWeeklyGems = weeklyGems + amount;
-      setWeeklyGems(newWeeklyGems);
-      saveProgress({ weeklyGems: newWeeklyGems });
-    }
-  };
-    }));
-  };
-
       "Pattern Seeker": { icon: "📜", reward: 75, threshold: 76 },
       "Logic Master": { icon: "🥉", reward: 250, threshold: 250 },
       "Mind Bender": { icon: "🥈", reward: 400, threshold: 400 },
@@ -2913,7 +2813,6 @@ const OneMove = () => {
     // Award bonus gems for new level
     const newBonusGems = bonusGems + levelInfo.reward;
     setBonusGems(newBonusGems);
-    addWeeklyGems(levelInfo.reward);
     setLastAwardedLevel(currentLevel);
     saveProgress({ bonusGems: newBonusGems, lastAwardedLevel: currentLevel });
     
@@ -2927,7 +2826,6 @@ const OneMove = () => {
         const newTotal = bonusGems + levelInfo.reward + milestoneBonus;
         setBonusGems(newTotal);
         setLastAwardedLevel(currentLevel + `,${milestoneKey}`);
-        addWeeklyGems(levelInfo.reward + milestoneBonus);
         saveProgress({ bonusGems: newTotal, lastAwardedLevel: currentLevel + `,${milestoneKey}` });
         console.log(`🎯 MILESTONE! Puzzle ${currentPuzzleIndex} - Awarded ${milestoneBonus} bonus gems`);
       }
@@ -3163,7 +3061,6 @@ const OneMove = () => {
     setShuffledChoices(choices);
     setTriviaFirstAttempt(true);
     setShowGemBreakdown(false); // Reset popup state
-        addWeeklyGems(100);
     setScreen('trivia');
   };
 
@@ -3336,7 +3233,6 @@ const handleDailyChallengeSuccess = () => {
   if (!dailyChallengeGemsAwarded) {
     const newDCGems = dailyChallengeGems + 500;
     setDailyChallengeGems(newDCGems);
-    addWeeklyGems(500);
     setDailyChallengeGemsAwarded(true);
     saveProgress({ dailyChallengeGems: newDCGems });
   }
@@ -3403,7 +3299,6 @@ const handleDailyChallengeReplay = () => {
         const newDCGems = dailyChallengeGems + 500;
         setDailyChallengeGems(newDCGems);
         
-        addWeeklyGems(500);
         // Update streak
         const dcData = getDailyChallengeData();
         const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
@@ -3428,7 +3323,6 @@ const handleDailyChallengeReplay = () => {
       if (puzzleFirstAttempt) {
         const newPuzzleScore = puzzleScore + 100;
         setPuzzleScore(newPuzzleScore);
-        addWeeklyGems(100);
         saveProgress({ puzzleScore: newPuzzleScore });
       }
       
@@ -3523,7 +3417,6 @@ const handleDailyChallengeReplay = () => {
       if (puzzleFirstAttempt) {
         const newPuzzleScore = puzzleScore + 100;
         setPuzzleScore(newPuzzleScore);
-        addWeeklyGems(100);
         saveProgress({ puzzleScore: newPuzzleScore });
       }
       
@@ -4446,65 +4339,42 @@ const handleDailyChallengeReplay = () => {
         )}
         
 
-        {/* SUPERSTARS LEADERBOARD POPUP */}
+        {/* SUPERSTARS LEADERBOARD - COMING SOON */}
         {showSuperstars && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowSuperstars(false)}>
-            <div className="bg-slate-800 rounded-2xl pt-8 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-2 flex-shrink-0">🏆 WEEKLY SUPERSTARS</h2>
-              <p className="text-center text-slate-400 text-sm mb-1 flex-shrink-0">Week of {getWeekRange()}</p>
-              <p className="text-center text-amber-400 text-xs mb-6 flex-shrink-0">Resets in {getTimeUntilReset()}</p>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-amber-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">🏆 WEEKLY SUPERSTARS</h2>
               
-              <div className="bg-amber-900/20 rounded-lg p-3 mb-4 flex-shrink-0">
-                <p className="text-center text-amber-200 text-sm">
-                  🧪 <strong>TEST MODE</strong> - Mock data shown. Will connect to Game Center at launch.
+              <div className="bg-amber-900/20 rounded-lg p-6 mb-6 text-center">
+                <p className="text-6xl mb-4">🚀</p>
+                <p className="text-amber-300 text-xl font-semibold mb-2">Coming Soon!</p>
+                <p className="text-slate-300 text-sm">
+                  Weekly leaderboard will be available at launch. Compete with players worldwide to earn the most gems each week!
                 </p>
               </div>
               
-              {/* Scrollable Leaderboard */}
-              <div className="overflow-y-auto flex-1 px-1">
-                <div className="space-y-2">
-                  {getFullLeaderboard().slice(0, 50).map((player) => {
-                    const isTop3 = player.rank <= 3;
-                    const medal = player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : '';
-                    
-                    return (
-                      <div
-                        key={player.rank}
-                        className={`p-4 rounded-xl transition-all ${
-                          player.isCurrentUser
-                            ? 'bg-blue-600 border-2 border-blue-400'
-                            : isTop3
-                            ? 'bg-gradient-to-r from-amber-600/30 to-amber-700/30 border-2 border-amber-500/50'
-                            : 'bg-slate-700/50 border-2 border-slate-600'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <span className={`text-2xl font-bold ${player.isCurrentUser ? 'text-white' : isTop3 ? 'text-amber-300' : 'text-slate-400'} w-8`}>
-                              {player.rank <= 3 ? medal : `#${player.rank}`}
-                            </span>
-                            <span className="text-3xl">{player.icon}</span>
-                            <div>
-                              <p className={`font-semibold ${player.isCurrentUser ? 'text-white' : 'text-slate-200'}`}>
-                                {player.username} {player.isCurrentUser && '(You)'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className={`font-bold ${player.isCurrentUser ? 'text-white' : isTop3 ? 'text-amber-300' : 'text-slate-300'}`}>
-                              {player.weeklyGems.toLocaleString()} 💎
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className="space-y-3 text-sm text-slate-300 mb-6">
+                <p className="flex items-center gap-2">
+                  <span className="text-lg">💎</span>
+                  <span>Compete for most weekly gems</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="text-lg">🥇</span>
+                  <span>Top 3 get gold, silver, bronze</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="text-lg">📅</span>
+                  <span>Resets every Monday</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <span className="text-lg">🏆</span>
+                  <span>See top 50 players worldwide</span>
+                </p>
               </div>
               
               <button
                 onClick={() => setShowSuperstars(false)}
-                className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+                className="w-full px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
               >
                 Close
               </button>
@@ -5566,7 +5436,6 @@ const handleDailyChallengeReplay = () => {
           setPuzzleScore(puzzleScore + 100);
         }
         
-          addWeeklyGems(100);
         // Check level up
         setTimeout(() => checkLevelUp(), 100);
         
@@ -5784,7 +5653,6 @@ const handleDailyChallengeReplay = () => {
               setPuzzleScore(newPuzzleScore);
               saveProgress({ puzzleScore: newPuzzleScore });
             } else if (wrongAttempts <= 2) {
-              addWeeklyGems(100);
               resultTier = 'excellent'; // ALMOST PERFECT! +50 gems
               // Award 50 gems for excellent score (1-2 wrong)
               const newPuzzleScore = puzzleScore + 50;
