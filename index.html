@@ -2448,6 +2448,14 @@ const OneMove = () => {
       
       // Load username
       setUsername(data.username || 'Player');
+      
+      // Load customization data
+      setSelectedIcon(data.selectedIcon || 'default');
+      setSelectedTheme(data.selectedTheme || 'default');
+      setSelectedTitle(data.selectedTitle || '');
+      setUnlockedIcons(data.unlockedIcons || ['default']);
+      setUnlockedThemes(data.unlockedThemes || ['default']);
+      setUnlockedTitles(data.unlockedTitles || []);
     }
     
     // Load Daily Challenge status
@@ -2755,6 +2763,11 @@ const OneMove = () => {
     if (count >= 250) return "Logic Master";
     if (count >= 76) return "Pattern Seeker";
     return "Beginner";
+  };
+  
+  const getThemeColors = () => {
+    const theme = SHOP_THEMES.find(t => t.id === selectedTheme) || SHOP_THEMES[0];
+    return `bg-gradient-to-br from-${theme.colors.from} via-${theme.colors.via} to-${theme.colors.to}`;
   };
 
   const getLevelInfo = (levelName) => {
@@ -3773,7 +3786,7 @@ const handleDailyChallengeReplay = () => {
   // Home Screen
   if (screen === 'home') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-6">
+      <div className={`min-h-screen ${getThemeColors()} flex items-center justify-center p-6`}>
         {showAboutGems && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowAboutGems(false)}>
             <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
@@ -4029,6 +4042,196 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
         
+        {/* CUSTOMIZE SHOP POPUP */}
+        {showCustomizeShop && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowCustomizeShop(false)}>
+            <div className="bg-slate-800 rounded-2xl pt-20 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-pink-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">🎨 CUSTOMIZE SHOP</h2>
+              
+              {/* Tabs */}
+              <div className="flex gap-2 mb-6 flex-shrink-0">
+                <button
+                  onClick={() => setCustomizeTab('icons')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'icons' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  😀 Icons
+                </button>
+                <button
+                  onClick={() => setCustomizeTab('themes')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'themes' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  🎨 Themes
+                </button>
+                <button
+                  onClick={() => setCustomizeTab('titles')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'titles' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  🏆 Titles
+                </button>
+              </div>
+              
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto flex-1 px-1">
+                
+                {/* ICONS TAB */}
+                {customizeTab === 'icons' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    {SHOP_ICONS.map(icon => {
+                      const isUnlocked = unlockedIcons.includes(icon.id);
+                      const isSelected = selectedIcon === icon.id;
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      const canAfford = totalGems >= icon.cost;
+                      
+                      return (
+                        <button
+                          key={icon.id}
+                          onClick={() => {
+                            if (isUnlocked) {
+                              setSelectedIcon(icon.id);
+                              saveProgress({ selectedIcon: icon.id });
+                            } else if (canAfford) {
+                              const newGemsSpent = gemsSpent + icon.cost;
+                              const newUnlocked = [...unlockedIcons, icon.id];
+                              setGemsSpent(newGemsSpent);
+                              setUnlockedIcons(newUnlocked);
+                              setSelectedIcon(icon.id);
+                              saveProgress({ gemsSpent: newGemsSpent, unlockedIcons: newUnlocked, selectedIcon: icon.id });
+                            } else {
+                              alert(`Not enough gems! You need ${icon.cost} gems.`);
+                            }
+                          }}
+                          className={`p-4 rounded-xl transition-all ${
+                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
+                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
+                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
+                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
+                          }`}
+                        >
+                          <div className="text-4xl mb-2">{icon.emoji}</div>
+                          <p className="text-white text-sm font-semibold">{icon.name}</p>
+                          {!isUnlocked && <p className="text-amber-300 text-xs mt-1">{icon.cost} 💎</p>}
+                          {isSelected && <p className="text-pink-200 text-xs mt-1">✓ Selected</p>}
+                          {isUnlocked && !isSelected && <p className="text-slate-400 text-xs mt-1">Owned</p>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {/* THEMES TAB */}
+                {customizeTab === 'themes' && (
+                  <div className="grid grid-cols-1 gap-3">
+                    {SHOP_THEMES.map(theme => {
+                      const isUnlocked = unlockedThemes.includes(theme.id);
+                      const isSelected = selectedTheme === theme.id;
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      const canAfford = totalGems >= theme.cost;
+                      
+                      return (
+                        <button
+                          key={theme.id}
+                          onClick={() => {
+                            if (isUnlocked) {
+                              setSelectedTheme(theme.id);
+                              saveProgress({ selectedTheme: theme.id });
+                            } else if (canAfford) {
+                              const newGemsSpent = gemsSpent + theme.cost;
+                              const newUnlocked = [...unlockedThemes, theme.id];
+                              setGemsSpent(newGemsSpent);
+                              setUnlockedThemes(newUnlocked);
+                              setSelectedTheme(theme.id);
+                              saveProgress({ gemsSpent: newGemsSpent, unlockedThemes: newUnlocked, selectedTheme: theme.id });
+                            } else {
+                              alert(`Not enough gems! You need ${theme.cost} gems.`);
+                            }
+                          }}
+                          className={`p-4 rounded-xl transition-all ${
+                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
+                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
+                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
+                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="text-left">
+                              <p className="text-white text-base font-semibold">{theme.name}</p>
+                              <div className="flex gap-2 mt-2">
+                                <div className={`w-8 h-8 rounded bg-gradient-to-r from-${theme.colors.from} to-${theme.colors.via}`}></div>
+                                <div className={`w-8 h-8 rounded bg-gradient-to-r from-${theme.colors.via} to-${theme.colors.to}`}></div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              {!isUnlocked && <p className="text-amber-300 text-sm">{theme.cost} 💎</p>}
+                              {isSelected && <p className="text-pink-200 text-sm">✓ Selected</p>}
+                              {isUnlocked && !isSelected && <p className="text-slate-400 text-sm">Owned</p>}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {/* TITLES TAB */}
+                {customizeTab === 'titles' && (
+                  <div className="grid grid-cols-1 gap-3">
+                    {SHOP_TITLES.map(title => {
+                      const isUnlocked = unlockedTitles.includes(title.id);
+                      const isSelected = selectedTitle === title.id;
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      const canAfford = totalGems >= title.cost;
+                      
+                      return (
+                        <button
+                          key={title.id}
+                          onClick={() => {
+                            if (isUnlocked) {
+                              setSelectedTitle(title.id);
+                              saveProgress({ selectedTitle: title.id });
+                            } else if (canAfford) {
+                              const newGemsSpent = gemsSpent + title.cost;
+                              const newUnlocked = [...unlockedTitles, title.id];
+                              setGemsSpent(newGemsSpent);
+                              setUnlockedTitles(newUnlocked);
+                              setSelectedTitle(title.id);
+                              saveProgress({ gemsSpent: newGemsSpent, unlockedTitles: newUnlocked, selectedTitle: title.id });
+                            } else {
+                              alert(`Not enough gems! You need ${title.cost} gems.`);
+                            }
+                          }}
+                          className={`p-4 rounded-xl transition-all ${
+                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
+                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
+                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
+                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-white text-base font-semibold">{title.name}</p>
+                            <div className="text-right">
+                              {!isUnlocked && <p className="text-amber-300 text-sm">{title.cost} 💎</p>}
+                              {isSelected && <p className="text-pink-200 text-sm">✓ Selected</p>}
+                              {isUnlocked && !isSelected && <p className="text-slate-400 text-sm">Owned</p>}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+              </div>
+              
+              <button
+                onClick={() => setShowCustomizeShop(false)}
+                className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+        
         {/* NEW TOP BAR - 4 ICONS */}
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
           {/* Left side: Home + Username */}
@@ -4041,15 +4244,20 @@ const handleDailyChallengeReplay = () => {
               <Home className="w-6 h-6 text-white" />
             </button>
             
-            {/* Username */}
+            {/* Username with Icon and Title */}
             <button 
               onClick={() => setShowUsernameEdit(true)}
-              className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 flex items-center gap-2 hover:bg-slate-700/80 transition-all duration-300"
+              className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 hover:bg-slate-700/80 transition-all duration-300"
             >
-              <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
-              <span className="text-white font-medium text-sm">{username}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">{SHOP_ICONS.find(i => i.id === selectedIcon)?.emoji || '👤'}</span>
+                <div className="text-left">
+                  <span className="text-white font-medium text-sm block">{username}</span>
+                  {selectedTitle && (
+                    <span className="text-slate-400 text-xs block">{SHOP_TITLES.find(t => t.id === selectedTitle)?.name}</span>
+                  )}
+                </div>
+              </div>
             </button>
           </div>
           
