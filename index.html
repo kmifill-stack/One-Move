@@ -2385,6 +2385,7 @@ const OneMove = () => {
   const [bonusGems, setBonusGems] = useState(0);
   const [lastAwardedLevel, setLastAwardedLevel] = useState('');
   const [showUsernameEdit, setShowUsernameEdit] = useState(false);
+  const [profileTab, setProfileTab] = useState('username'); // 'username', 'icons', 'themes', 'titles'
   const [tempUsername, setTempUsername] = useState('');
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   // Customization states
@@ -4069,201 +4070,6 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
         
-        {/* CUSTOMIZE SHOP POPUP */}
-        {showCustomizeShop && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowCustomizeShop(false)}>
-            <div className="bg-slate-800 rounded-2xl pt-20 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-pink-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">🎨 CUSTOMIZE SHOP</h2>
-              
-              {/* Tabs */}
-              <div className="flex gap-2 mb-6 flex-shrink-0">
-                <button
-                  onClick={() => setCustomizeTab('icons')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'icons' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
-                >
-                  😀 Icons
-                </button>
-                <button
-                  onClick={() => setCustomizeTab('themes')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'themes' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
-                >
-                  🎨 Themes
-                </button>
-                <button
-                  onClick={() => setCustomizeTab('titles')}
-                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${customizeTab === 'titles' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
-                >
-                  🏆 Titles
-                </button>
-              </div>
-              
-              {/* Scrollable Content */}
-              <div className="overflow-y-auto flex-1 px-1">
-                
-                {/* ICONS TAB */}
-                {customizeTab === 'icons' && (
-                  <div className="grid grid-cols-3 gap-3">
-                    {SHOP_ICONS.map(icon => {
-                      const isUnlocked = unlockedIcons.includes(icon.id);
-                      const isSelected = selectedIcon === icon.id;
-                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                      const canAfford = totalGems >= icon.cost;
-                      
-                      return (
-                        <button
-                          key={icon.id}
-                          onClick={() => {
-                            if (isUnlocked) {
-                              setSelectedIcon(icon.id);
-                              saveProgress({ selectedIcon: icon.id });
-                            } else if (canAfford) {
-                              const newGemsSpent = gemsSpent + icon.cost;
-                              const newUnlocked = [...unlockedIcons, icon.id];
-                              setGemsSpent(newGemsSpent);
-                              const newCustomSpent = gemsSpentOnCustomization + icon.cost;
-                              setGemsSpentOnCustomization(newCustomSpent);
-                              setUnlockedIcons(newUnlocked);
-                              setSelectedIcon(icon.id);
-                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedIcons: newUnlocked, selectedIcon: icon.id });
-                            } else {
-                              alert(`Not enough gems! You need ${icon.cost} gems.`);
-                            }
-                          }}
-                          className={`p-4 rounded-xl transition-all ${
-                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
-                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
-                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
-                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
-                          }`}
-                        >
-                          <div className="text-4xl mb-2">{icon.emoji}</div>
-                          <p className="text-white text-sm font-semibold">{icon.name}</p>
-                          {!isUnlocked && <p className="text-amber-300 text-xs mt-1">{icon.cost} 💎</p>}
-                          {isSelected && <p className="text-pink-200 text-xs mt-1">✓ Selected</p>}
-                          {isUnlocked && !isSelected && <p className="text-slate-400 text-xs mt-1">Owned</p>}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-                
-                {/* THEMES TAB */}
-                {customizeTab === 'themes' && (
-                  <div className="grid grid-cols-1 gap-3">
-                    {SHOP_THEMES.map(theme => {
-                      const isUnlocked = unlockedThemes.includes(theme.id);
-                      const isSelected = selectedTheme === theme.id;
-                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                      const canAfford = totalGems >= theme.cost;
-                      
-                      return (
-                        <button
-                          key={theme.id}
-                          onClick={() => {
-                            if (isUnlocked) {
-                              setSelectedTheme(theme.id);
-                              saveProgress({ selectedTheme: theme.id });
-                            } else if (canAfford) {
-                              const newGemsSpent = gemsSpent + theme.cost;
-                              const newUnlocked = [...unlockedThemes, theme.id];
-                              setGemsSpent(newGemsSpent);
-                              const newCustomSpent = gemsSpentOnCustomization + theme.cost;
-                              setGemsSpentOnCustomization(newCustomSpent);
-                              setUnlockedThemes(newUnlocked);
-                              setSelectedTheme(theme.id);
-                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedThemes: newUnlocked, selectedTheme: theme.id });
-                            } else {
-                              alert(`Not enough gems! You need ${theme.cost} gems.`);
-                            }
-                          }}
-                          className={`p-4 rounded-xl transition-all ${
-                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
-                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
-                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
-                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="text-left">
-                              <p className="text-white text-base font-semibold">{theme.name}</p>
-                              <div className="flex gap-2 mt-2">
-                                <div className={`w-8 h-8 rounded bg-gradient-to-r from-${theme.colors.from} to-${theme.colors.via}`}></div>
-                                <div className={`w-8 h-8 rounded bg-gradient-to-r from-${theme.colors.via} to-${theme.colors.to}`}></div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              {!isUnlocked && <p className="text-amber-300 text-sm">{theme.cost} 💎</p>}
-                              {isSelected && <p className="text-pink-200 text-sm">✓ Selected</p>}
-                              {isUnlocked && !isSelected && <p className="text-slate-400 text-sm">Owned</p>}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-                
-                {/* TITLES TAB */}
-                {customizeTab === 'titles' && (
-                  <div className="grid grid-cols-1 gap-3">
-                    {SHOP_TITLES.map(title => {
-                      const isUnlocked = unlockedTitles.includes(title.id);
-                      const isSelected = selectedTitle === title.id;
-                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                      const canAfford = totalGems >= title.cost;
-                      
-                      return (
-                        <button
-                          key={title.id}
-                          onClick={() => {
-                            if (isUnlocked) {
-                              setSelectedTitle(title.id);
-                              saveProgress({ selectedTitle: title.id });
-                            } else if (canAfford) {
-                              const newGemsSpent = gemsSpent + title.cost;
-                              const newUnlocked = [...unlockedTitles, title.id];
-                              setGemsSpent(newGemsSpent);
-                              const newCustomSpent = gemsSpentOnCustomization + title.cost;
-                              setGemsSpentOnCustomization(newCustomSpent);
-                              setUnlockedTitles(newUnlocked);
-                              setSelectedTitle(title.id);
-                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedTitles: newUnlocked, selectedTitle: title.id });
-                            } else {
-                              alert(`Not enough gems! You need ${title.cost} gems.`);
-                            }
-                          }}
-                          className={`p-4 rounded-xl transition-all ${
-                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
-                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
-                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
-                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <p className="text-white text-base font-semibold">{title.name}</p>
-                            <div className="text-right">
-                              {!isUnlocked && <p className="text-amber-300 text-sm">{title.cost} 💎</p>}
-                              {isSelected && <p className="text-pink-200 text-sm">✓ Selected</p>}
-                              {isUnlocked && !isSelected && <p className="text-slate-400 text-sm">Owned</p>}
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-                
-              </div>
-              
-              <button
-                onClick={() => setShowCustomizeShop(false)}
-                className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        )}
         
         {/* TOP BAR */}
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
@@ -4307,43 +4113,232 @@ const handleDailyChallengeReplay = () => {
         
         {renderGemBreakdown()}
         
-        {/* Username Edit Popup */}
+        {/* PROFILE POPUP - Combined Username + Customization */}
         {showUsernameEdit && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowUsernameEdit(false)}>
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-blue-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-6">✏️ EDIT USERNAME</h2>
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => { setShowUsernameEdit(false); setProfileTab('username'); }}>
+            <div className="bg-slate-800 rounded-2xl pt-20 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-blue-500" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">✏️ YOUR PROFILE</h2>
               
-              <input
-                type="text"
-                value={tempUsername}
-                onChange={(e) => setTempUsername(e.target.value)}
-                placeholder={username}
-                maxLength={20}
-                className="w-full px-4 py-3 bg-slate-900 text-white rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none text-center text-lg mb-6"
-                autoFocus
-              />
-              
-              <div className="flex gap-3">
+              {/* Tabs */}
+              <div className="flex gap-2 mb-6 flex-shrink-0">
                 <button
-                  onClick={() => setShowUsernameEdit(false)}
-                  className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                  onClick={() => setProfileTab('username')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'username' ? 'bg-blue-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
                 >
-                  Cancel
+                  ✏️ Username
                 </button>
                 <button
-                  onClick={() => {
-                    if (tempUsername.trim()) {
-                      setUsername(tempUsername.trim());
-                      saveProgress({ username: tempUsername.trim() });
-                    }
-                    setShowUsernameEdit(false);
-                    setTempUsername('');
-                  }}
-                  className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                  onClick={() => setProfileTab('icons')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'icons' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
                 >
-                  Save
+                  😀 Icons
+                </button>
+                <button
+                  onClick={() => setProfileTab('themes')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'themes' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  🎨 Themes
+                </button>
+                <button
+                  onClick={() => setProfileTab('titles')}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all font-semibold ${profileTab === 'titles' ? 'bg-pink-600 text-white' : 'bg-slate-700/50 text-slate-400'}`}
+                >
+                  🏆 Titles
                 </button>
               </div>
+              
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto flex-1 px-1">
+                
+                {/* USERNAME TAB */}
+                {profileTab === 'username' && (
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <p className="text-slate-300 mb-4 text-center">Edit your username</p>
+                    <input
+                      type="text"
+                      value={tempUsername}
+                      onChange={(e) => setTempUsername(e.target.value)}
+                      placeholder={username}
+                      maxLength={20}
+                      className="w-full max-w-sm px-4 py-3 bg-slate-900 text-white rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none text-center text-lg mb-4"
+                      autoFocus
+                    />
+                    <button
+                      onClick={() => {
+                        if (tempUsername.trim()) {
+                          setUsername(tempUsername.trim());
+                          saveProgress({ username: tempUsername.trim() });
+                        }
+                        setTempUsername('');
+                      }}
+                      className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 text-lg font-semibold"
+                    >
+                      Save Username
+                    </button>
+                  </div>
+                )}
+                
+                {/* ICONS TAB - copy from customize shop */}
+                {profileTab === 'icons' && (
+                  <div className="grid grid-cols-3 gap-3">
+                    {SHOP_ICONS.map(icon => {
+                      const isUnlocked = unlockedIcons.includes(icon.id);
+                      const isSelected = selectedIcon === icon.id;
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      const canAfford = totalGems >= icon.cost;
+                      
+                      return (
+                        <button
+                          key={icon.id}
+                          onClick={() => {
+                            if (isUnlocked) {
+                              setSelectedIcon(icon.id);
+                              saveProgress({ selectedIcon: icon.id });
+                            } else if (canAfford) {
+                              const newGemsSpent = gemsSpent + icon.cost;
+                              const newCustomSpent = gemsSpentOnCustomization + icon.cost;
+                              const newUnlocked = [...unlockedIcons, icon.id];
+                              setGemsSpent(newGemsSpent);
+                              setGemsSpentOnCustomization(newCustomSpent);
+                              setUnlockedIcons(newUnlocked);
+                              setSelectedIcon(icon.id);
+                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedIcons: newUnlocked, selectedIcon: icon.id });
+                            } else {
+                              alert(`Not enough gems! You need ${icon.cost} gems.`);
+                            }
+                          }}
+                          className={`p-4 rounded-xl transition-all ${
+                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
+                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
+                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
+                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
+                          }`}
+                        >
+                          <div className="text-4xl mb-2">{icon.emoji}</div>
+                          <p className="text-white text-sm font-semibold">{icon.name}</p>
+                          {!isUnlocked && <p className="text-amber-300 text-xs mt-1">{icon.cost} 💎</p>}
+                          {isSelected && <p className="text-pink-200 text-xs mt-1">✓ Selected</p>}
+                          {isUnlocked && !isSelected && <p className="text-slate-400 text-xs mt-1">Owned</p>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {/* THEMES TAB */}
+                {profileTab === 'themes' && (
+                  <div className="grid grid-cols-1 gap-3">
+                    {SHOP_THEMES.map(theme => {
+                      const isUnlocked = unlockedThemes.includes(theme.id);
+                      const isSelected = selectedTheme === theme.id;
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      const canAfford = totalGems >= theme.cost;
+                      
+                      return (
+                        <button
+                          key={theme.id}
+                          onClick={() => {
+                            if (isUnlocked) {
+                              setSelectedTheme(theme.id);
+                              saveProgress({ selectedTheme: theme.id });
+                            } else if (canAfford) {
+                              const newGemsSpent = gemsSpent + theme.cost;
+                              const newCustomSpent = gemsSpentOnCustomization + theme.cost;
+                              const newUnlocked = [...unlockedThemes, theme.id];
+                              setGemsSpent(newGemsSpent);
+                              setGemsSpentOnCustomization(newCustomSpent);
+                              setUnlockedThemes(newUnlocked);
+                              setSelectedTheme(theme.id);
+                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedThemes: newUnlocked, selectedTheme: theme.id });
+                            } else {
+                              alert(`Not enough gems! You need ${theme.cost} gems.`);
+                            }
+                          }}
+                          className={`p-4 rounded-xl transition-all ${
+                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
+                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
+                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
+                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="text-left">
+                              <p className="text-white text-base font-semibold">{theme.name}</p>
+                              <div className="flex gap-2 mt-2">
+                                <div className={`w-8 h-8 rounded bg-gradient-to-r from-${theme.colors.from} to-${theme.colors.via}`}></div>
+                                <div className={`w-8 h-8 rounded bg-gradient-to-r from-${theme.colors.via} to-${theme.colors.to}`}></div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              {!isUnlocked && <p className="text-amber-300 text-sm">{theme.cost} 💎</p>}
+                              {isSelected && <p className="text-pink-200 text-sm">✓ Selected</p>}
+                              {isUnlocked && !isSelected && <p className="text-slate-400 text-sm">Owned</p>}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+                {/* TITLES TAB */}
+                {profileTab === 'titles' && (
+                  <div className="grid grid-cols-1 gap-3">
+                    {SHOP_TITLES.map(title => {
+                      const isUnlocked = unlockedTitles.includes(title.id);
+                      const isSelected = selectedTitle === title.id;
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      const canAfford = totalGems >= title.cost;
+                      
+                      return (
+                        <button
+                          key={title.id}
+                          onClick={() => {
+                            if (isUnlocked) {
+                              setSelectedTitle(title.id);
+                              saveProgress({ selectedTitle: title.id });
+                            } else if (canAfford) {
+                              const newGemsSpent = gemsSpent + title.cost;
+                              const newCustomSpent = gemsSpentOnCustomization + title.cost;
+                              const newUnlocked = [...unlockedTitles, title.id];
+                              setGemsSpent(newGemsSpent);
+                              setGemsSpentOnCustomization(newCustomSpent);
+                              setUnlockedTitles(newUnlocked);
+                              setSelectedTitle(title.id);
+                              saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnCustomization: newCustomSpent, unlockedTitles: newUnlocked, selectedTitle: title.id });
+                            } else {
+                              alert(`Not enough gems! You need ${title.cost} gems.`);
+                            }
+                          }}
+                          className={`p-4 rounded-xl transition-all ${
+                            isSelected ? 'bg-pink-600 border-2 border-pink-400' :
+                            isUnlocked ? 'bg-slate-700 hover:bg-slate-600 border-2 border-slate-600' :
+                            canAfford ? 'bg-slate-700/50 hover:bg-slate-700 border-2 border-slate-500' :
+                            'bg-slate-800/50 border-2 border-slate-700 opacity-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <p className="text-white text-base font-semibold">{title.name}</p>
+                            <div className="text-right">
+                              {!isUnlocked && <p className="text-amber-300 text-sm">{title.cost} 💎</p>}
+                              {isSelected && <p className="text-pink-200 text-sm">✓ Selected</p>}
+                              {isUnlocked && !isSelected && <p className="text-slate-400 text-sm">Owned</p>}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                
+              </div>
+              
+              <button
+                onClick={() => { setShowUsernameEdit(false); setProfileTab('username'); }}
+                className="w-full mt-6 flex-shrink-0 px-8 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg transition-all duration-300"
+              >
+                Close
+              </button>
             </div>
           </div>
         )}
@@ -4556,13 +4551,6 @@ const handleDailyChallengeReplay = () => {
               className="w-full px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               💎 Gems & Rewards
-            </button>
-            
-            <button
-              onClick={() => setShowCustomizeShop(true)}
-              className="w-full px-6 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
-            >
-              🎨 Customize Shop
             </button>
             
             <button
