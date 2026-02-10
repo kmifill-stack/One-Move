@@ -2276,6 +2276,43 @@ const PUZZLE_TYPES = {
   MEMORY_MATCH: 'memory_match',
 };
 
+
+// Customization Shop Data
+const SHOP_ICONS = [
+  { id: 'default', name: 'Default', emoji: '👤', cost: 0 },
+  { id: 'star', name: 'Star', emoji: '⭐', cost: 100 },
+  { id: 'fire', name: 'Fire', emoji: '🔥', cost: 100 },
+  { id: 'gem', name: 'Gem', emoji: '💎', cost: 150 },
+  { id: 'trophy', name: 'Trophy', emoji: '🏆', cost: 150 },
+  { id: 'rocket', name: 'Rocket', emoji: '🚀', cost: 200 },
+  { id: 'crown', name: 'Crown', emoji: '👑', cost: 250 },
+  { id: 'lightning', name: 'Lightning', emoji: '⚡', cost: 200 },
+  { id: 'brain', name: 'Brain', emoji: '🧠', cost: 200 },
+  { id: 'robot', name: 'Robot', emoji: '🤖', cost: 300 },
+];
+
+const SHOP_THEMES = [
+  { id: 'default', name: 'Classic Purple', colors: { from: 'purple-950', via: 'blue-900', to: 'slate-900' }, cost: 0 },
+  { id: 'ocean', name: 'Ocean Blue', colors: { from: 'blue-950', via: 'cyan-900', to: 'teal-900' }, cost: 300 },
+  { id: 'sunset', name: 'Sunset', colors: { from: 'orange-950', via: 'red-900', to: 'pink-900' }, cost: 300 },
+  { id: 'forest', name: 'Forest Green', colors: { from: 'green-950', via: 'emerald-900', to: 'lime-900' }, cost: 300 },
+  { id: 'royal', name: 'Royal Purple', colors: { from: 'violet-950', via: 'purple-900', to: 'fuchsia-900' }, cost: 400 },
+  { id: 'midnight', name: 'Midnight', colors: { from: 'slate-950', via: 'gray-900', to: 'zinc-900' }, cost: 400 },
+  { id: 'neon', name: 'Neon Nights', colors: { from: 'pink-950', via: 'purple-900', to: 'blue-900' }, cost: 500 },
+];
+
+const SHOP_TITLES = [
+  { id: 'beginner', name: 'Puzzle Beginner', cost: 0 },
+  { id: 'solver', name: 'Puzzle Solver', cost: 150 },
+  { id: 'master', name: 'Puzzle Master', cost: 250 },
+  { id: 'genius', name: 'Puzzle Genius', cost: 300 },
+  { id: 'legend', name: 'Legend', cost: 400 },
+  { id: 'champion', name: 'Champion', cost: 350 },
+  { id: 'collector', name: 'Gem Collector', cost: 200 },
+  { id: 'streak', name: 'Streak King', cost: 300 },
+  { id: 'perfect', name: 'Perfect Player', cost: 500 },
+];
+
 const OneMove = () => {
   const [screen, setScreen] = useState('splash');
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
@@ -2336,6 +2373,15 @@ const OneMove = () => {
   const [showUsernameEdit, setShowUsernameEdit] = useState(false);
   const [tempUsername, setTempUsername] = useState('');
   const [showLevelInfo, setShowLevelInfo] = useState(false);
+  // Customization states
+  const [selectedIcon, setSelectedIcon] = useState('default');
+  const [selectedTheme, setSelectedTheme] = useState('default');
+  const [selectedTitle, setSelectedTitle] = useState('');
+  const [unlockedIcons, setUnlockedIcons] = useState(['default']);
+  const [unlockedThemes, setUnlockedThemes] = useState(['default']);
+  const [unlockedTitles, setUnlockedTitles] = useState([]);
+  const [showCustomizeShop, setShowCustomizeShop] = useState(false);
+  const [customizeTab, setCustomizeTab] = useState('icons'); // 'icons', 'themes', 'titles'
 
   // Load/save progress
   useEffect(() => {
@@ -3699,35 +3745,6 @@ const handleDailyChallengeReplay = () => {
               >
                 Awesome!
               </button>
-              <button
-                onClick={() => {
-                  const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                  if (totalGems < 300) {
-                    alert('Not enough gems! You need 300 gems to replay.');
-                    return;
-                  }
-                  // Deduct 300 gems
-                  const newGemsSpent = gemsSpent + 300;
-                  setGemsSpent(newGemsSpent);
-                  saveProgress({ gemsSpent: newGemsSpent });
-                  
-                  // Reset Daily Challenge state for replay
-                  setShowDailyChallengeResult(false);
-                  setDailyChallengeCompleted(false);
-                  setIsDailyChallenge(false);
-                  setDailyChallengeAttempted(false);
-                  setCurrentPuzzle(null);
-                  setFailCount(0);
-                  setPuzzleFirstAttempt(true);
-                  setHintLevel(0);
-                  
-                  // Start new Daily Challenge
-                  startDailyChallenge();
-                }}
-                className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
-              >
-                🔄 Replay Challenge (-300 💎)
-              </button>
             </>
           ) : (
             <>
@@ -3745,35 +3762,6 @@ const handleDailyChallengeReplay = () => {
                 className="w-full px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white rounded-lg transition-all duration-300 text-lg font-bold mb-3"
               >
                 Try Again Tomorrow
-              </button>
-              <button
-                onClick={() => {
-                  const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-                  if (totalGems < 300) {
-                    alert('Not enough gems! You need 300 gems to replay.');
-                    return;
-                  }
-                  // Deduct 300 gems
-                  const newGemsSpent = gemsSpent + 300;
-                  setGemsSpent(newGemsSpent);
-                  saveProgress({ gemsSpent: newGemsSpent });
-                  
-                  // Reset Daily Challenge state for replay
-                  setShowDailyChallengeResult(false);
-                  setDailyChallengeFailed(false);
-                  setIsDailyChallenge(false);
-                  setDailyChallengeAttempted(false);
-                  setCurrentPuzzle(null);
-                  setFailCount(0);
-                  setPuzzleFirstAttempt(true);
-                  setHintLevel(0);
-                  
-                  // Start new Daily Challenge
-                  startDailyChallenge();
-                }}
-                className="w-full px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm"
-              >
-                🔄 Replay Challenge (-300 💎)
               </button>
             </>
           )}
@@ -4326,6 +4314,13 @@ const handleDailyChallengeReplay = () => {
               className="w-full px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
             >
               💎 Gems & Rewards
+            </button>
+            
+            <button
+              onClick={() => setShowCustomizeShop(true)}
+              className="w-full px-6 py-2 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+            >
+              🎨 Customize Shop
             </button>
             
             <button
