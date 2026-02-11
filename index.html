@@ -2375,6 +2375,7 @@ const OneMove = () => {
   const [hintLevel, setHintLevel] = useState(0);
   const [highlightedArea, setHighlightedArea] = useState(null);
   const [usedWords, setUsedWords] = useState([]);
+  const [usedPatterns, setUsedPatterns] = useState([]);
   const [usedTrivia, setUsedTrivia] = useState([]);
   const [showInstructionPopup, setShowInstructionPopup] = useState(null);
   const [username, setUsername] = useState('Player');
@@ -2411,6 +2412,7 @@ const OneMove = () => {
       setGemsSpentOnSkips(data.gemsSpentOnSkips || 0);
       setPuzzlesSkipped(data.puzzlesSkipped || 0);
       setUsedWords(data.usedWords || []);
+      setUsedPatterns(data.usedPatterns || []);
       setUsedTrivia(data.usedTrivia || []);
       
       // ONE-TIME MIGRATION: Award past level bonuses
@@ -2542,6 +2544,7 @@ const OneMove = () => {
       gemsSpent,
       puzzlesSkipped,
       usedWords,
+      usedPatterns,
       usedTrivia,
       bonusGems,
       lastAwardedLevel,
@@ -2836,7 +2839,11 @@ const OneMove = () => {
     const row = Math.floor(Math.random() * size);
     const col = Math.floor(Math.random() * size);
     const patterns = Object.values(FLIP_PATTERNS);
-    const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+    const availablePatterns = patterns.filter(p => !usedPatterns.slice(-6).includes(p));
+    const pattern = availablePatterns.length > 0 
+      ? availablePatterns[Math.floor(Math.random() * availablePatterns.length)]
+      : patterns[Math.floor(Math.random() * patterns.length)];
+    setUsedPatterns([...usedPatterns, pattern].slice(-10)); // Keep last 10
     const colorIndex = Math.floor(currentPuzzleIndex / 7) % TILE_COLORS.length;
     
     const solvedGrid = Array(size).fill(null).map(() => Array(size).fill(1));
@@ -5556,6 +5563,9 @@ const handleDailyChallengeReplay = () => {
       const card = memoryCards.find(c => c.id === cardId);
       if (card.isMatched || flippedCards.includes(cardId)) return;
       
+      // Prevent clicking if 2 cards already flipped
+      if (flippedCards.length >= 2) return;
+      
       // Track which unique emojis have been seen
       if (!seenCards.includes(card.emoji)) {
         const newSeen = [...seenCards, card.emoji];
@@ -5596,10 +5606,6 @@ const handleDailyChallengeReplay = () => {
               resultTier = 'perfect'; // YOU ARE A PRO! +100 gems
               
               // Check if this is Daily Challenge
-             if (isDailyChallenge) {
-  					handleDailyChallengeSuccess();
-  					return;
-		}              
               // Award 100 gems for perfect score
               const newPuzzleScore = puzzleScore + 100;
               setPuzzleScore(newPuzzleScore);
@@ -5621,6 +5627,12 @@ const handleDailyChallengeReplay = () => {
             }
             
             setMemoryResult(resultTier);
+            
+            // Check if this is Daily Challenge - handle it BEFORE continuing to next puzzle
+            if (isDailyChallenge) {
+              handleDailyChallengeSuccess();
+              return;
+            }
             
             // Advance to next trivia
             setCurrentPuzzleIndex(currentPuzzleIndex + 1);
