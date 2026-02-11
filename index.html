@@ -4564,20 +4564,6 @@ const handleDailyChallengeReplay = () => {
             >
               💎 Gems & Rewards
             </button>
-            <button
-              onClick={() => {
-                setDailyChallengeCompleted(false);
-                setDailyChallengeFailed(false);
-                setDailyChallengeAttempted(false);
-                setShowDailyChallengeResult(false);
-                setIsDailyChallenge(false);
-                localStorage.removeItem('dailyChallenge');
-                alert('Daily Challenge reset! You can test again.');
-              }}
-              className="w-full px-6 py-2 bg-yellow-600 hover:bg-yellow-700 text-black font-bold rounded-lg transition-all duration-300 text-sm border-2 border-yellow-400"
-            >
-              🧪 TEST: Reset Daily Challenge
-            </button>
           </div>
         </div>
       </div>
