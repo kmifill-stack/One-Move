@@ -2332,6 +2332,8 @@ const OneMove = () => {
   const [puzzleScore, setPuzzleScore] = useState(0);
   const [processing, setProcessing] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [fiftyFiftyUsed, setFiftyFiftyUsed] = useState(false);
+  const [eliminatedAnswers, setEliminatedAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
   const [shuffledChoices, setShuffledChoices] = useState([]);
   const [triviaFirstAttempt, setTriviaFirstAttempt] = useState(true);
@@ -3037,6 +3039,32 @@ const OneMove = () => {
     };
   };
 
+
+  const handleFiftyFifty = () => {
+    if (fiftyFiftyUsed) return; // Already used
+    
+    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+    if (totalGems < 50) {
+      alert('Not enough gems! You need 50 gems to use 50/50.');
+      return;
+    }
+    
+    // Deduct 50 gems
+    const newGemsSpent = gemsSpent + 50;
+    setGemsSpent(newGemsSpent);
+    saveProgress({ gemsSpent: newGemsSpent });
+    
+    // Find wrong answers
+    const correctAnswer = currentTriviaQuestion.a;
+    const wrongChoices = currentTriviaQuestion.c.filter(choice => choice !== correctAnswer);
+    
+    // Randomly select 2 wrong answers to eliminate
+    const shuffled = [...wrongChoices].sort(() => Math.random() - 0.5);
+    const toEliminate = shuffled.slice(0, 2);
+    
+    setEliminatedAnswers(toEliminate);
+    setFiftyFiftyUsed(true);
+  };
   const handleCategorySelect = (category) => {
     const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
     
@@ -3064,6 +3092,8 @@ const OneMove = () => {
     
     setSelectedCategory(category);
     setCurrentTriviaQuestion(question);
+    setFiftyFiftyUsed(false);
+    setEliminatedAnswers([]);
     setShuffledChoices(choices);
     setTriviaFirstAttempt(true);
     setShowGemBreakdown(false); // Reset popup state
@@ -3840,6 +3870,8 @@ const handleDailyChallengeReplay = () => {
                   <div className="space-y-1 ml-3 text-xs">
                     <p>🎨 Customize Profile: <span className="text-white font-bold">100-500 gems</span></p>
                     <p className="ml-5 text-slate-400 text-xs">• Icons, Themes, Titles (tap username)</p>
+                    <p>🎯 50/50 (Trivia): <span className="text-white font-bold">-50 gems</span></p>
+                    <p className="ml-5 text-slate-400 text-xs">• Eliminates 2 wrong answers</p>
                     <p>💡 Hint 1: <span className="text-white font-bold">-50</span></p>
                     <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
                     <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
@@ -3916,6 +3948,8 @@ const handleDailyChallengeReplay = () => {
                     <div className="space-y-1 ml-3 text-xs">
                     <p>🎨 Customize Profile: <span className="text-white font-bold">100-500 gems</span></p>
                     <p className="ml-5 text-slate-400 text-xs">• Icons, Themes, Titles (tap username)</p>
+                    <p>🎯 50/50 (Trivia): <span className="text-white font-bold">-50 gems</span></p>
+                    <p className="ml-5 text-slate-400 text-xs">• Eliminates 2 wrong answers</p>
                       <p>💡 Hint 1: <span className="text-white font-bold">-50</span></p>
                       <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
                       <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
@@ -4991,15 +5025,36 @@ const handleDailyChallengeReplay = () => {
             </h2>
           </div>
           
+          
+          {/* 50/50 Button */}
+          {!showResult && (
+            <div className="flex justify-center mb-4">
+              <button
+                onClick={handleFiftyFifty}
+                disabled={fiftyFiftyUsed}
+                className={`
+                  px-6 py-3 rounded-lg font-semibold transition-all duration-300
+                  ${fiftyFiftyUsed 
+                    ? 'bg-slate-700 text-slate-500 cursor-not-allowed' 
+                    : 'bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-lg hover:shadow-xl'
+                  }
+                `}
+              >
+                {fiftyFiftyUsed ? '50/50 Used ✓' : '🎯 50/50 (50 gems)'}
+              </button>
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-4">
             {shuffledChoices.map((choice, index) => (
               <button
                 key={index}
                 onClick={() => handleAnswerSelect(choice)}
-                disabled={showResult}
+                disabled={showResult || eliminatedAnswers.includes(choice)}
                 className={`
                   p-6 rounded-xl text-lg font-light transition-all duration-300
-                  ${showResult && choice === selectedAnswer && choice.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()
+                  ${eliminatedAnswers.includes(choice)
+                    ? 'bg-slate-800/20 text-slate-600 line-through cursor-not-allowed opacity-50'
+                    : showResult && choice === selectedAnswer && choice.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()
                     ? 'bg-green-600 text-white scale-105'
                     : showResult && choice === selectedAnswer && choice.toLowerCase().trim() !== currentTriviaQuestion.a.toLowerCase().trim()
                     ? 'bg-red-600 text-white'
