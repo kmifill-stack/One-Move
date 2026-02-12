@@ -2372,6 +2372,8 @@ const OneMove = () => {
   const [gemsSpent, setGemsSpent] = useState(0);
   const [gemsSpentOnCustomization, setGemsSpentOnCustomization] = useState(0);
   const [gemsSpentOnSkips, setGemsSpentOnSkips] = useState(0);
+  const [gemsSpentOn5050, setGemsSpentOn5050] = useState(0);
+  const [gemsSpentOnHints, setGemsSpentOnHints] = useState(0);
   const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
@@ -2411,6 +2413,8 @@ const OneMove = () => {
       setDailyChallengeGems(data.dailyChallengeGems || 0);
       setGemsSpent(data.gemsSpent || 0);
       setGemsSpentOnCustomization(data.gemsSpentOnCustomization || 0);
+      setGemsSpentOn5050(data.gemsSpentOn5050 || 0);
+      setGemsSpentOnHints(data.gemsSpentOnHints || 0);
       setGemsSpentOnSkips(data.gemsSpentOnSkips || 0);
       setPuzzlesSkipped(data.puzzlesSkipped || 0);
       setUsedWords(data.usedWords || []);
@@ -3052,7 +3056,9 @@ const OneMove = () => {
     // Deduct 50 gems
     const newGemsSpent = gemsSpent + 50;
     setGemsSpent(newGemsSpent);
-    saveProgress({ gemsSpent: newGemsSpent });
+    const new5050Spent = gemsSpentOn5050 + 50;
+    setGemsSpentOn5050(new5050Spent);
+    saveProgress({ gemsSpent: newGemsSpent, gemsSpentOn5050: new5050Spent });
     
     // Find wrong answers
     const correctAnswer = currentTriviaQuestion.a;
@@ -3546,8 +3552,10 @@ const handleDailyChallengeReplay = () => {
     
     const newGemsSpent = gemsSpent + 50;
     setGemsSpent(newGemsSpent);
+    const newHintsSpent = gemsSpentOnHints + 50;
+    setGemsSpentOnHints(newHintsSpent);
     setHintLevel(1);
-    saveProgress({ gemsSpent: newGemsSpent });
+    saveProgress({ gemsSpent: newGemsSpent, gemsSpentOnHints: newHintsSpent });
     
     if (currentPuzzle.type === PUZZLE_TYPES.TILE_FLIP) {
       const highlightType = Math.random() > 0.5 ? 'row' : 'col';
@@ -3565,6 +3573,8 @@ const handleDailyChallengeReplay = () => {
     const newGemsSpent = gemsSpent + 100;
     setGemsSpent(newGemsSpent);
     setHintLevel(2);
+    const newHintsSpent = gemsSpentOnHints + 100;
+    setGemsSpentOnHints(newHintsSpent);
     saveProgress({ gemsSpent: newGemsSpent });
   };
 
@@ -3575,6 +3585,8 @@ const handleDailyChallengeReplay = () => {
     const newGemsSpent = gemsSpent + 150;
     setGemsSpent(newGemsSpent);
     setHintLevel(3);
+    const newHintsSpent = gemsSpentOnHints + 150;
+    setGemsSpentOnHints(newHintsSpent);
     saveProgress({ gemsSpent: newGemsSpent });
   };
 
@@ -3585,6 +3597,8 @@ const handleDailyChallengeReplay = () => {
     const newGemsSpent = gemsSpent + 200;
     setGemsSpent(newGemsSpent);
     setHintLevel(4);
+    const newHintsSpent = gemsSpentOnHints + 200;
+    setGemsSpentOnHints(newHintsSpent);
     saveProgress({ gemsSpent: newGemsSpent });
   };
 
@@ -3695,6 +3709,14 @@ const handleDailyChallengeReplay = () => {
                   <p className="flex justify-between">
                     <span>🎨 Customization:</span>
                     <span className="text-white font-bold">{gemsSpentOnCustomization}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span>🎯 50/50:</span>
+                    <span className="text-white font-bold">{gemsSpentOn5050}</span>
+                  </p>
+                  <p className="flex justify-between">
+                    <span>💡 Hints:</span>
+                    <span className="text-white font-bold">{gemsSpentOnHints}</span>
                   </p>
                   <p className="flex justify-between">
                     <span>⏭️ Puzzle Skips:</span>
