@@ -2595,27 +2595,29 @@ const OneMove = () => {
     // Get day of month (1-31)
     const dayOfMonth = new Date().getDate();
     
-    // Determine puzzle type based on monthly frequency
-    // Tile Flip: 6 times per month (days 5, 10, 15, 20, 25, 30)
-    // Word Scramble: 8 times 
-    // Memory Match: 8 times
-    // Quick Math: 8 times
+    // NEW DISTRIBUTION (prioritizing Quick Math):
+    // Quick Math: ~37% (11 days)
+    // Memory Match: ~30% (9 days)
+    // Word Scramble: ~20% (6 days)
+    // Tile Flip: ~13% (4 days)
     
     let puzzleType;
     
-    if ([5, 10, 15, 20, 25, 30].includes(dayOfMonth)) {
-      // Tile Flip days (6 times per month)
-      puzzleType = PUZZLE_TYPES.TILE_FLIP;
+    // Use weighted distribution based on day of month
+    const position = (dayOfMonth + seed) % 30;
+    
+    if (position < 11) {
+      // Days 0-10: Quick Math (11 occurrences = 37%)
+      puzzleType = PUZZLE_TYPES.QUICK_MATH;
+    } else if (position < 20) {
+      // Days 11-19: Memory Match (9 occurrences = 30%)
+      puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
+    } else if (position < 26) {
+      // Days 20-25: Word Scramble (6 occurrences = 20%)
+      puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
     } else {
-      // Rotate through other 3 types for remaining days
-      const remainder = (dayOfMonth + seed) % 3;
-      if (remainder === 0) {
-        puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-      } else if (remainder === 1) {
-        puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-      } else {
-        puzzleType = PUZZLE_TYPES.QUICK_MATH;
-      }
+      // Days 26-29: Tile Flip (4 occurrences = 13%)
+      puzzleType = PUZZLE_TYPES.TILE_FLIP;
     }
     
     // Generate HARD version of selected puzzle
@@ -2927,11 +2929,39 @@ const OneMove = () => {
     };
   };
 
-  const generateQuickMath = () => {
-    // Difficulty based on puzzle index
+  const generateQuickMath = (isDaily = false) => {
+    // Difficulty based on puzzle index OR if it's Daily Challenge
     let num1, num2, operation, answer, choices;
     
-    if (currentPuzzleIndex < 50) {
+    // DAILY CHALLENGE: Always use HARD difficulty
+    if (isDaily) {
+      const ops = ['+', '-', '×', '÷'];
+      operation = ops[Math.floor(Math.random() * ops.length)];
+      
+      if (operation === '+') {
+        // Large addition: 47 + 89 = 136
+        num1 = Math.floor(Math.random() * 70) + 30;  // 30-99
+        num2 = Math.floor(Math.random() * 70) + 30;  // 30-99
+        answer = num1 + num2;
+      } else if (operation === '-') {
+        // Large subtraction: 134 - 67 = 67
+        num1 = Math.floor(Math.random() * 100) + 50;  // 50-149
+        num2 = Math.floor(Math.random() * (num1 - 20)) + 10;  // Keep positive
+        answer = num1 - num2;
+      } else if (operation === '×') {
+        // Challenging multiplication: 47 × 8 = 376
+        num1 = Math.floor(Math.random() * 50) + 12;  // 12-61
+        num2 = Math.floor(Math.random() * 9) + 2;   // 2-10
+        answer = num1 * num2;
+      } else {
+        // Division: 156 ÷ 12 = 13
+        answer = Math.floor(Math.random() * 20) + 5;  // 5-24
+        num2 = Math.floor(Math.random() * 10) + 3;   // 3-12
+        num1 = answer * num2;
+      }
+    }
+    // REGULAR PLAY: Scaled difficulty
+    else if (currentPuzzleIndex < 50) {
       // Easy: Addition & Subtraction (single digit)
       operation = Math.random() < 0.5 ? '+' : '-';
       num1 = Math.floor(Math.random() * 10) + 1;
@@ -3451,20 +3481,24 @@ const handleDailyChallengeReplay = () => {
       playSound('success');
       setShowCorrectWord(true); // Show green word
       
-      // Check if this is Daily Challenge
-     if (isDailyChallenge) {
-  handleDailyChallengeSuccess();
-  return;
-}      
-      if (puzzleFirstAttempt) {
+      // Award gems for regular play
+      if (puzzleFirstAttempt && !isDailyChallenge) {
         const newPuzzleScore = puzzleScore + 100;
         setPuzzleScore(newPuzzleScore);
         saveProgress({ puzzleScore: newPuzzleScore });
       }
       
-      // Skip success screen, go straight to next trivia  
+      // Show success animation, then check if Daily Challenge
       setTimeout(() => {
         setShowCorrectWord(false); // Hide before transition
+        
+        // Check if this is Daily Challenge AFTER showing success
+        if (isDailyChallenge) {
+          handleDailyChallengeSuccess();
+          return;
+        }
+        
+        // Regular play - advance to next puzzle
         const newIndex = currentPuzzleIndex + 1;
         setCurrentPuzzleIndex(newIndex);
         saveProgress({ currentIndex: newIndex });
@@ -5324,6 +5358,18 @@ const handleDailyChallengeReplay = () => {
         </div>
         
         <div className="max-w-2xl w-full space-y-4 mt-20">
+          {/* DAILY CHALLENGE BANNER */}
+          {isDailyChallenge && (
+            <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-4 text-center shadow-xl border-2 border-purple-400 mb-6">
+              <p className="text-white text-xl font-bold">
+                🏆 DAILY CHALLENGE
+              </p>
+              <p className="text-purple-200 text-sm">
+                One attempt • Win 500 Gems!
+              </p>
+            </div>
+          )}
+          
           {/* BIG GREEN CORRECT WORD */}
           {showCorrectWord && (
             <div className="text-center mb-6 animate-pulse">
