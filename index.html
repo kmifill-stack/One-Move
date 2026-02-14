@@ -2536,7 +2536,7 @@ const OneMove = () => {
     if (screen === 'splash') {
       const timer = setTimeout(() => {
         setScreen('home');
-      }, 4000);
+      }, 2000);  // Changed from 4000 to 2000 (2 seconds)
       return () => clearTimeout(timer);
     }
   }, [screen]);
@@ -2555,6 +2555,16 @@ const OneMove = () => {
       bonusGems,
       lastAwardedLevel,
       username,
+      // CUSTOMIZATION DATA - Must be in base save!
+      selectedIcon,
+      selectedTheme,
+      selectedTitle,
+      unlockedIcons,
+      unlockedThemes,
+      unlockedTitles,
+      gemsSpentOnCustomization,
+      gemsSpentOn5050,
+      gemsSpentOnHints,
       ...data
     }));
   };
@@ -5511,6 +5521,7 @@ const handleDailyChallengeReplay = () => {
     const handleMathAnswer = (selected) => {
       if (selected === currentPuzzle.answer) {
         // CORRECT!
+        playSound('success');  // ADD SUCCESS SOUND
         setShowMathResult('correct');
         
         // Check if this is Daily Challenge
@@ -5727,7 +5738,10 @@ const handleDailyChallengeReplay = () => {
           
           // Check if all matched
           if (newMatched.length === currentPuzzle.pairs) {
-            // PUZZLE COMPLETE! Determine tier based on wrong attempts
+            // PUZZLE COMPLETE!
+            playSound('success');  // ADD SUCCESS SOUND
+            
+            // Determine tier based on wrong attempts
             let resultTier;
             if (wrongAttempts === 0) {
               resultTier = 'perfect'; // YOU ARE A PRO! +100 gems
