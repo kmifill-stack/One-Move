@@ -3350,6 +3350,7 @@ const PUZZLE_TYPES = {
   WORD_SCRAMBLE: 'word_scramble',
   QUICK_MATH: 'quick_math',
   MEMORY_MATCH: 'memory_match',
+  LOGIC_GRID: 'logic_grid',
 };
 
 
@@ -3446,6 +3447,7 @@ const OneMove = () => {
   const [gemsRewardsTab, setGemsRewardsTab] = useState('gems'); // 'gems', 'rewards', or 'superstars'
   const [showGemBreakdown, setShowGemBreakdown] = useState(false);
   const [gemsSpent, setGemsSpent] = useState(0);
+  const [logicGridSelections, setLogicGridSelections] = useState({}); // {person: {category: value}}
   const [gemsSpentOnCustomization, setGemsSpentOnCustomization] = useState(0);
   const [gemsSpentOnSkips, setGemsSpentOnSkips] = useState(0);
   const [gemsSpentOn5050, setGemsSpentOn5050] = useState(0);
@@ -3673,36 +3675,156 @@ const OneMove = () => {
     attempted: true
   }));
 };
+
+  // LOGIC GRID GENERATOR - Must be defined before generateDailyChallenge
+  const generateLogicGrid = (seed) => {
+    // Mystery image pool (40 diverse emojis)
+    const mysteryImages = [
+      // Animals
+      '🦁', '🦓', '🐄', '🐘', '🦒', '🐧', '🦉', '🐯', '🐻', '🦊',
+      // Objects
+      '💡', '🕯️', '🪞', '🖼️', '🎺', '🎸', '⚽', '🎨', '📚', '⌚',
+      // Buildings/Places
+      '🏛️', '🗼', '🏰', '🌉', '⛩️', '🗽', '🏔️', '🌋',
+      // Food
+      '🍕', '🍔', '🎂', '🍎', '🍇', '🌮', '🍜', '🍦',
+      // Symbols/Misc
+      '⭐', '💎', '🎯', '🏆', '👑', '🎭', '🎪', '🌈', '🔥', '⚡',
+      // Numbers
+      '7️⃣7️⃣7️⃣', '🔢'
+    ];
+    
+    // Predefined logic grid templates for consistent daily challenges
+    const templates = [
+      {
+        categories: ['Names', 'Jobs', 'Cities'],
+        items: [
+          ['Alice', 'Bob', 'Carol', 'Dan', 'Eve'],
+          ['Doctor', 'Teacher', 'Chef', 'Engineer', 'Artist'],
+          ['NYC', 'LA', 'Miami', 'Boston', 'Denver']
+        ],
+        solution: {
+          'Alice': {'Jobs': 'Teacher', 'Cities': 'Boston'},
+          'Bob': {'Jobs': 'Chef', 'Cities': 'Miami'},
+          'Carol': {'Jobs': 'Artist', 'Cities': 'LA'},
+          'Dan': {'Jobs': 'Doctor', 'Cities': 'NYC'},
+          'Eve': {'Jobs': 'Engineer', 'Cities': 'Denver'}
+        },
+        clues: [
+          'Bob is the Chef',
+          'The person in LA is the Artist',
+          'Alice lives in Boston',
+          'The Engineer lives in Denver',
+          'Dan is not the Teacher',
+          'Carol is not in NYC',
+          'Eve is not the Chef',
+          'The Doctor lives in NYC'
+        ]
+      },
+      {
+        categories: ['People', 'Pets', 'Colors'],
+        items: [
+          ['Anna', 'Ben', 'Cara', 'Dave', 'Emma'],
+          ['Dog', 'Cat', 'Bird', 'Fish', 'Rabbit'],
+          ['Red', 'Blue', 'Green', 'Yellow', 'Purple']
+        ],
+        solution: {
+          'Anna': {'Pets': 'Cat', 'Colors': 'Blue'},
+          'Ben': {'Pets': 'Dog', 'Colors': 'Red'},
+          'Cara': {'Pets': 'Rabbit', 'Colors': 'Green'},
+          'Dave': {'Pets': 'Fish', 'Colors': 'Purple'},
+          'Emma': {'Pets': 'Bird', 'Colors': 'Yellow'}
+        },
+        clues: [
+          'Ben has a Dog',
+          'The person with Red likes Dogs',
+          'Anna has a Cat',
+          'The Rabbit owner likes Green',
+          'Emma does not like Blue',
+          'Dave does not have a Bird',
+          'The person with Yellow has a Bird',
+          'The Fish owner likes Purple'
+        ]
+      },
+      {
+        categories: ['Kids', 'Sports', 'Seasons'],
+        items: [
+          ['Jake', 'Lily', 'Max', 'Nina', 'Owen'],
+          ['Soccer', 'Tennis', 'Swimming', 'Baseball', 'Basketball'],
+          ['Spring', 'Summer', 'Fall', 'Winter', 'Year-round']
+        ],
+        solution: {
+          'Jake': {'Sports': 'Soccer', 'Seasons': 'Fall'},
+          'Lily': {'Sports': 'Tennis', 'Seasons': 'Summer'},
+          'Max': {'Sports': 'Swimming', 'Seasons': 'Summer'},
+          'Nina': {'Sports': 'Basketball', 'Seasons': 'Winter'},
+          'Owen': {'Sports': 'Baseball', 'Seasons': 'Spring'}
+        },
+        clues: [
+          'Jake plays Soccer',
+          'The Tennis player likes Summer',
+          'Nina plays in Winter',
+          'Owen plays Baseball',
+          'Max does not play Soccer',
+          'Lily plays Tennis',
+          'The Basketball player is Nina',
+          'Owen plays in Spring'
+        ]
+      }
+    ];
+
+    const template = templates[seed % templates.length];
+    const mysteryImage = mysteryImages[seed % mysteryImages.length];
+    
+    return {
+      type: PUZZLE_TYPES.LOGIC_GRID,
+      categories: template.categories,
+      items: template.items,
+      clues: template.clues,
+      solution: template.solution,
+      mysteryImage: mysteryImage
+    };
+  };
+
   const generateDailyChallenge = () => {
     // Use today's date as seed for consistency
     const dateStr = getTodayDateString();
     const seed = dateStr.split('-').reduce((acc, val) => acc + parseInt(val), 0);
     
-    // Get day of month (1-31)
-    const dayOfMonth = new Date().getDate();
+    // NEW DISTRIBUTION - Logic Grid prioritized:
+    // Logic Grid: 30% (~9 days) - MOST PROMINENT!
+    // Quick Math: 25% (~7-8 days)
+    // Memory Match: 20% (~6 days)
+    // Word Scramble: 15% (~4-5 days)
+    // Tile Flip: 10% (~3 days)
     
-    // NEW DISTRIBUTION (prioritizing Quick Math):
-    // Quick Math: ~37% (11 days)
-    // Memory Match: ~30% (9 days)
-    // Word Scramble: ~20% (6 days)
-    // Tile Flip: ~13% (4 days)
+    // Improved randomization to avoid consecutive repeats
+    // Use day of year instead of just day of month for better distribution
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+    
+    // Combine dayOfYear with seed for better pseudo-randomness
+    const position = (dayOfYear * 7 + seed * 3) % 30;
     
     let puzzleType;
     
-    // Use weighted distribution based on day of month
-    const position = (dayOfMonth + seed) % 30;
-    
-    if (position < 11) {
-      // Days 0-10: Quick Math (11 occurrences = 37%)
+    if (position < 9) {
+      // Positions 0-8: Logic Grid (9 occurrences = 30%)
+      puzzleType = PUZZLE_TYPES.LOGIC_GRID;
+    } else if (position < 16) {
+      // Positions 9-15: Quick Math (7 occurrences = 23%)
       puzzleType = PUZZLE_TYPES.QUICK_MATH;
-    } else if (position < 20) {
-      // Days 11-19: Memory Match (9 occurrences = 30%)
+    } else if (position < 22) {
+      // Positions 16-21: Memory Match (6 occurrences = 20%)
       puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-    } else if (position < 26) {
-      // Days 20-25: Word Scramble (6 occurrences = 20%)
+    } else if (position < 27) {
+      // Positions 22-26: Word Scramble (5 occurrences = 17%)
       puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
     } else {
-      // Days 26-29: Tile Flip (4 occurrences = 13%)
+      // Positions 27-29: Tile Flip (3 occurrences = 10%)
       puzzleType = PUZZLE_TYPES.TILE_FLIP;
     }
     
@@ -3750,7 +3872,7 @@ const OneMove = () => {
       }));
       return {type: PUZZLE_TYPES.MEMORY_MATCH, cards, pairs: 8};
       
-    } else {
+    } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
       // Hard Quick Math: Logic-based puzzles (not simple calculator problems)
       const operations = [
         // Pattern Recognition
@@ -3795,6 +3917,9 @@ const OneMove = () => {
       ];
       const selected = operations[seed % operations.length];
       return {type: PUZZLE_TYPES.QUICK_MATH, ...selected};
+    } else if (puzzleType === PUZZLE_TYPES.LOGIC_GRID) {
+      // Hard Logic Grid: Always challenging with 3 categories
+      return generateLogicGrid(seed);
     }
   };
 
@@ -3830,6 +3955,10 @@ const OneMove = () => {
       setWrongAttempts(0);
       setHintLevel(0);
       setScreen('puzzle_memory');
+    } else if (challenge.type === PUZZLE_TYPES.LOGIC_GRID) {
+      setLogicGridSelections({});
+      setHintLevel(0);
+      setScreen('puzzle_logic');
     } else {
       setMathAnswer('');
       setHintLevel(0);
@@ -5001,59 +5130,50 @@ const handleDailyChallengeReplay = () => {
     return (
       <div className={`min-h-screen ${getThemeColors()} flex items-center justify-center p-6`}>
         {showAboutGems && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowAboutGems(false)}>
-            <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
-              <h2 className="text-3xl font-light text-white text-center mb-6">💎 ABOUT GEMS</h2>
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowAboutGems(false)}>
+            <div className="bg-slate-800 rounded-2xl max-w-md w-full border-2 border-purple-500 max-h-[95vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="p-6">
+              <h2 className="text-2xl font-semibold text-white text-center mb-4">💎 GEM ECONOMY</h2>
               
-              <div className="space-y-6 text-slate-300 text-sm">
+              <div className="space-y-3 text-slate-300 text-sm">
                 <div>
-                  <p className="text-amber-400 font-semibold mb-2">EARN GEMS:</p>
-                  <div className="space-y-1 ml-3">
-                    <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
-                    <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
+                  <p className="text-amber-400 font-semibold mb-1 text-sm">EARN GEMS:</p>
+                  <div className="space-y-0.5 ml-3 text-xs">
+                    <p>✓ Trivia correct: <span className="text-white font-bold">+100</span></p>
+                    <p>✓ Puzzle solved: <span className="text-white font-bold">+100</span></p>
                   </div>
                 </div>
                 
                 <div>
-                  <p className="text-red-400 font-semibold mb-2">SPEND GEMS:</p>
-                  <div className="space-y-1 ml-3 text-xs">
-                    <p>🎨 Customize Profile: <span className="text-white font-bold">100-500 gems</span></p>
-                    <p className="ml-5 text-slate-400 text-xs">• Icons, Themes, Titles (tap username)</p>
-                    <p>🎯 50/50 (Trivia): <span className="text-white font-bold">-50 gems</span></p>
-                    <p className="ml-5 text-slate-400 text-xs">• Eliminates 2 wrong answers</p>
-                    <p>💡 Hint 1: <span className="text-white font-bold">-50</span></p>
-                    <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
-                    <p>💡 Hint 3: <span className="text-white font-bold">-150</span></p>
-                    <p>💡 Hint 4: <span className="text-white font-bold">-200</span></p>
+                  <p className="text-red-400 font-semibold mb-1 text-sm">SPEND GEMS:</p>
+                  <div className="space-y-0.5 ml-3 text-xs">
+                    <p>🎨 Profile: <span className="text-white font-bold">100-500</span> <span className="text-slate-400">(icons, themes, titles)</span></p>
+                    <p>🎯 50/50 Trivia hint: <span className="text-white font-bold">-50</span></p>
+                    <p>💡 Puzzle hints: <span className="text-white font-bold">50/100/150/200</span></p>
+                    <p>⏭️ Skip puzzle: <span className="text-white font-bold">-200</span></p>
                   </div>
                 </div>
                 
-                <div>
-                  <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
-                  <div className="ml-3 text-xs">
-                    <p>⏭️ Skip Puzzle: -200 gems</p>
-                  </div>
-                </div>
-                
-                <div className="bg-slate-700/50 rounded-lg p-3 text-xs">
-                  <p className="text-center">Your gem total shows in the top right corner. Tap it anytime to see your full breakdown!</p>
+                <div className="bg-slate-700/50 rounded-lg p-2 text-xs">
+                  <p className="text-center text-slate-300">Tap gem counter (top right) anytime to see your breakdown!</p>
                 </div>
               </div>
               
               <button
                 onClick={() => setShowAboutGems(false)}
-                className="w-full mt-6 px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+                className="w-full mt-4 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-300 font-semibold"
               >
                 Got It!
               </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
         
         {/* NEW: Combined Gems & Rewards Popup with 3 Tabs */}
         {showGemsAndRewards && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6" onClick={() => setShowGemsAndRewards(false)}>
-            <div className="bg-slate-800 rounded-2xl pt-20 px-6 pb-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-slate-800 rounded-2xl px-6 py-6 max-w-2xl w-full flex flex-col max-h-[90vh] border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-3xl font-light text-white text-center mb-4 flex-shrink-0">💎 GEMS & REWARDS</h2>
               
               {/* Tabs */}
@@ -5281,7 +5401,8 @@ const handleDailyChallengeReplay = () => {
         )}
         
         
-        {/* TOP BAR */}
+        {/* TOP BAR - Hidden when Gems & Rewards popup is open */}
+        {!showGemsAndRewards && (
         <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
           {/* Left side: Home + Username with Icon/Title */}
           <div className="flex items-center gap-3">
@@ -5320,6 +5441,7 @@ const handleDailyChallengeReplay = () => {
             <span className="text-white text-base font-semibold">Gem Economy Details</span>
           </button>
         </div>
+        )}
         
         {renderGemBreakdown()}
         
@@ -5777,7 +5899,90 @@ const handleDailyChallengeReplay = () => {
 
         <div className="max-w-2xl mx-auto pt-20">
           <h1 className="text-4xl font-light text-white text-center mb-3">How to Play</h1>
-          <p className="text-slate-400 text-center mb-12">Tap a puzzle type to learn more</p>
+          <p className="text-slate-400 text-center mb-6">Master the game flow and puzzle types</p>
+          
+          {/* GAME FLOW VISUAL DIAGRAM - COMPACT VERSION */}
+          <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl p-4 mb-6 border border-slate-700/50">
+            <h2 className="text-lg font-semibold text-amber-400 text-center mb-3">🎮 Game Flow</h2>
+            
+            <div className="space-y-2">
+              {/* Step 1: Answer Trivia */}
+              <div className="bg-gradient-to-r from-blue-600/20 to-blue-700/20 rounded-lg p-2 border border-blue-500/30">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">📝</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white font-semibold text-sm">Answer Trivia Question</p>
+                    <p className="text-slate-400 text-xs">Get it correct → <span className="text-green-300 font-semibold">+100 💎</span></p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Arrow */}
+              <div className="text-center">
+                <span className="text-2xl text-slate-500">↓</span>
+              </div>
+              
+              {/* Step 2: Random Puzzle */}
+              <div className="bg-gradient-to-r from-purple-600/20 to-purple-700/20 rounded-lg p-2 border border-purple-500/30">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">🎲</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white font-semibold text-sm">Get Random Puzzle</p>
+                    <p className="text-slate-400 text-xs">One of 4 types - you can't choose!</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Arrow with split */}
+              <div className="text-center">
+                <span className="text-2xl text-slate-500">↓</span>
+              </div>
+              
+              {/* Step 3: Your Options */}
+              <div className="grid grid-cols-2 gap-2">
+                {/* Solve Option */}
+                <div className="bg-gradient-to-r from-green-600/20 to-green-700/20 rounded-lg p-2 border border-green-500/30">
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-1">
+                      <span className="text-lg">✓</span>
+                    </div>
+                    <p className="text-white font-semibold text-xs">Solve Puzzle</p>
+                    <p className="text-green-300 text-xs font-semibold">+100 💎</p>
+                  </div>
+                </div>
+                
+                {/* Skip Option */}
+                <div className="bg-gradient-to-r from-orange-600/20 to-orange-700/20 rounded-lg p-2 border border-orange-500/30">
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-1">
+                      <span className="text-lg">⏭️</span>
+                    </div>
+                    <p className="text-white font-semibold text-xs">Skip Puzzle</p>
+                    <p className="text-orange-300 text-xs">-200 💎</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Hints Info */}
+              <div className="bg-gradient-to-r from-yellow-600/20 to-yellow-700/20 rounded-lg p-2 border border-yellow-500/30">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">💡</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white font-semibold text-sm">Hints Available</p>
+                    <p className="text-slate-400 text-xs">50/100/150/200 💎 per hint</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-slate-400 text-center mb-4 text-sm">Tap a puzzle type to learn more</p>
           
           <div className="grid grid-cols-1 gap-4">
             {/* Tile Flip Card */}
@@ -5845,6 +6050,22 @@ const handleDailyChallengeReplay = () => {
                 <div>
                   <h3 className="text-xl font-semibold text-white">MEMORY MATCH</h3>
                   <p className="text-pink-200 text-sm">Match all the pairs</p>
+                </div>
+              </div>
+            </button>
+
+            {/* Logic Grid Card - NEW! */}
+            <button
+              onClick={() => setShowInstructionPopup('logic_grid')}
+              className="bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 rounded-xl p-6 text-left transition-all duration-300 shadow-lg transform hover:scale-105 border-2 border-yellow-400"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span className="text-3xl">🧩</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">LOGIC GRID</h3>
+                  <p className="text-amber-200 text-sm">Daily Challenge exclusive!</p>
                 </div>
               </div>
             </button>
@@ -6094,6 +6315,101 @@ const handleDailyChallengeReplay = () => {
               <button
                 onClick={() => setShowInstructionPopup(null)}
                 className="w-full mt-6 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Logic Grid Popup - NEW! */}
+        {showInstructionPopup === 'logic_grid' && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6" onClick={() => setShowInstructionPopup(null)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-lg border-2 border-amber-500 overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">🧩 LOGIC GRID</h2>
+              
+              <div className="space-y-6">
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                  <p className="text-amber-300 font-semibold text-center">⭐ Daily Challenge Exclusive!</p>
+                  <p className="text-slate-300 text-sm text-center mt-2">This puzzle only appears in Daily Challenges</p>
+                </div>
+
+                <p className="text-slate-300 text-center text-lg">
+                  Use logical clues to deduce the correct answers!
+                </p>
+
+                {/* Visual Demo */}
+                <div className="bg-slate-900 rounded-xl p-4 space-y-4">
+                  <div className="bg-slate-800 rounded-lg p-3">
+                    <p className="text-amber-400 font-semibold text-sm mb-2">📋 CLUES:</p>
+                    <div className="space-y-1 text-slate-300 text-xs">
+                      <p>1. Bob is the Chef</p>
+                      <p>2. The person in LA is the Artist</p>
+                      <p>3. Alice lives in Boston</p>
+                      <p>4. The Engineer lives in Denver</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-800 rounded-lg p-3">
+                    <p className="text-white font-semibold mb-2">Alice:</p>
+                    <p className="text-slate-400 text-xs mb-1">Job:</p>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="bg-slate-600 px-2 py-1 rounded text-xs text-white text-center">Doctor</div>
+                      <div className="bg-green-500 px-2 py-1 rounded text-xs text-white text-center font-bold">Teacher ✓</div>
+                      <div className="bg-slate-600 px-2 py-1 rounded text-xs text-white text-center">Chef</div>
+                    </div>
+                    <p className="text-slate-400 text-xs mt-2 mb-1">City:</p>
+                    <div className="grid grid-cols-3 gap-1">
+                      <div className="bg-slate-600 px-2 py-1 rounded text-xs text-white text-center">NYC</div>
+                      <div className="bg-green-500 px-2 py-1 rounded text-xs text-white text-center font-bold">Boston ✓</div>
+                      <div className="bg-slate-600 px-2 py-1 rounded text-xs text-white text-center">LA</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">1️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">Read All Clues</p>
+                      <p className="text-slate-400 text-sm">Study the clues carefully - they're your roadmap!</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">2️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">Use Logic to Deduce</p>
+                      <p className="text-slate-400 text-sm">Match each person with their correct attributes</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">3️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">Select Your Answers</p>
+                      <p className="text-slate-400 text-sm">Tap to select - selected answers show in green</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">4️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">Submit When Complete</p>
+                      <p className="text-slate-400 text-sm">Fill all fields to unlock the submit button</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                  <p className="text-blue-300 font-semibold">💡 Pro Tip:</p>
+                  <p className="text-slate-300 text-sm">Start with the most specific clues first. Process of elimination is your friend!</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowInstructionPopup(null)}
+                className="w-full mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg transition-all duration-300 text-lg font-semibold"
               >
                 Got It!
               </button>
@@ -7059,6 +7375,253 @@ const handleDailyChallengeReplay = () => {
             </div>
           </div>
         )}
+      </div>
+    );
+  }
+
+  // Logic Grid Puzzle Screen
+  if (screen === 'puzzle_logic' && currentPuzzle) {
+    const { categories, items, clues, solution, mysteryImage } = currentPuzzle;
+    
+    // Calculate how many people are correctly matched
+    const getCorrectMatchCount = () => {
+      if (!items || items.length === 0) return 0;
+      const people = items[0];
+      let correctCount = 0;
+      
+      for (const person of people) {
+        let personCorrect = true;
+        for (let i = 1; i < categories.length; i++) {
+          const category = categories[i];
+          if (logicGridSelections[person]?.[category] !== solution[person][category]) {
+            personCorrect = false;
+            break;
+          }
+        }
+        if (personCorrect && logicGridSelections[person]) {
+          // Check if this person has all categories filled
+          let allFilled = true;
+          for (let i = 1; i < categories.length; i++) {
+            if (!logicGridSelections[person]?.[categories[i]]) {
+              allFilled = false;
+              break;
+            }
+          }
+          if (allFilled) correctCount++;
+        }
+      }
+      return correctCount;
+    };
+    
+    const correctMatches = getCorrectMatchCount();
+    const totalPeople = items && items[0] ? items[0].length : 5;
+    const revealProgress = correctMatches / totalPeople; // 0 to 1
+    const blurAmount = Math.max(0, 20 - (revealProgress * 20)); // 20px to 0px
+    
+    const handleLogicGridSelection = (person, category, value) => {
+      setLogicGridSelections(prev => ({
+        ...prev,
+        [person]: {
+          ...prev[person],
+          [category]: value
+        }
+      }));
+    };
+    
+    const checkLogicGridSolution = () => {
+      console.log('Submit clicked!', logicGridSelections);
+      console.log('Solution:', solution);
+      
+      // Check if all selections match the solution
+      let correct = true;
+      const people = items[0];
+      
+      for (const person of people) {
+        for (let i = 1; i < categories.length; i++) {
+          const category = categories[i];
+          const userAnswer = logicGridSelections[person]?.[category];
+          const correctAnswer = solution[person]?.[category];
+          
+          console.log(`${person} - ${category}: ${userAnswer} vs ${correctAnswer}`);
+          
+          if (userAnswer !== correctAnswer) {
+            correct = false;
+          }
+        }
+      }
+      
+      console.log('All correct?', correct);
+      
+      if (correct) {
+        if (isDailyChallenge) {
+          handleDailyChallengeSuccess();
+        } else {
+          // Regular puzzle success
+          if (puzzleFirstAttempt) {
+            setPuzzleScore(puzzleScore + 100);
+          }
+          setCurrentPuzzleIndex(currentPuzzleIndex + 1);
+          setScreen('success');
+        }
+      } else {
+        setFailCount(prev => prev + 1);
+        if (failCount + 1 >= 3) {
+          if (isDailyChallenge) {
+            handleDailyChallengeFailure();
+          } else {
+            setScreen('home');
+          }
+        }
+      }
+    };
+    
+    const isComplete = () => {
+      if (!items || items.length === 0) return false;
+      const people = items[0];
+      
+      // Check every person has every category filled
+      for (const person of people) {
+        for (let i = 1; i < categories.length; i++) {
+          const category = categories[i];
+          const selection = logicGridSelections[person]?.[category];
+          if (!selection || selection === '') {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+    
+    return (
+      <div className="h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 overflow-y-auto">
+        {isDailyChallenge && (
+          <div className="sticky top-0 left-0 p-4 flex items-center gap-2 z-10 bg-gradient-to-r from-purple-950/90 to-blue-900/90">
+            <span className="text-4xl">🏆</span>
+            <div className="bg-gradient-to-r from-amber-500 to-yellow-600 rounded-xl px-4 py-2 border-2 border-amber-400 shadow-xl">
+              <p className="text-white font-bold text-sm">DAILY CHALLENGE</p>
+              <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+            </div>
+          </div>
+        )}
+        
+        <div className="max-w-4xl mx-auto bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-slate-700/50 p-6 space-y-6 my-4">
+          <div className="text-center space-y-3">
+            <p className="text-white text-2xl font-bold">🧩 Logic Grid Challenge</p>
+            <p className="text-slate-300 text-sm">Use the clues to deduce the correct answers!</p>
+            {failCount > 0 && (
+              <p className="text-red-400 text-sm">❌ Wrong! {3 - failCount} attempts left</p>
+            )}
+          </div>
+          
+          {/* MYSTERY IMAGE REVEAL */}
+          <div className="flex flex-col items-center justify-center bg-gradient-to-br from-purple-900/50 to-blue-900/50 rounded-2xl p-6 border-2 border-purple-500/30">
+            <p className="text-amber-400 font-bold text-sm mb-3">🎯 MYSTERY IMAGE</p>
+            <div 
+              className="text-9xl mb-3 transition-all duration-700"
+              style={{
+                filter: `blur(${blurAmount}px)`,
+                transform: revealProgress === 1 ? 'scale(1.1)' : 'scale(1)',
+                textShadow: revealProgress === 1 ? '0 0 30px rgba(251, 191, 36, 0.8)' : 'none'
+              }}
+            >
+              {mysteryImage}
+            </div>
+            <div className="w-full max-w-xs">
+              <div className="flex justify-between text-xs text-slate-400 mb-1">
+                <span>Progress</span>
+                <span>{correctMatches} / {totalPeople} matched</span>
+              </div>
+              <div className="w-full bg-slate-700 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="bg-gradient-to-r from-amber-500 to-yellow-500 h-full transition-all duration-500 rounded-full"
+                  style={{width: `${revealProgress * 100}%`}}
+                />
+              </div>
+            </div>
+            {revealProgress === 1 && (
+              <div className="mt-3 text-green-400 font-bold text-sm animate-pulse">
+                ✨ All Matched Correctly! Ready to submit!
+              </div>
+            )}
+          </div>
+          
+          {/* Clues Section */}
+          <div className="bg-slate-700/50 rounded-xl p-4 space-y-2">
+            <p className="text-amber-400 font-bold text-sm mb-3">📋 CLUES:</p>
+            <div className="grid gap-2">
+              {clues && clues.map((clue, idx) => (
+                <div key={idx} className="bg-slate-800/80 rounded-lg px-3 py-2 text-white text-sm">
+                  {idx + 1}. {clue}
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Logic Grid */}
+          <div className="space-y-4">
+            {items && items[0] && items[0].map((person, personIdx) => (
+              <div key={person} className="bg-slate-700/50 rounded-xl p-4 space-y-3">
+                <p className="text-amber-400 font-bold text-lg">{person}</p>
+                
+                <div className="grid gap-3">
+                  {categories.slice(1).map((category, catIdx) => (
+                    <div key={category} className="space-y-2">
+                      <p className="text-slate-300 text-sm font-semibold">{category}:</p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {items[catIdx + 1] && items[catIdx + 1].map((option) => {
+                          const isSelected = logicGridSelections[person]?.[category] === option;
+                          return (
+                            <button
+                              key={option}
+                              onClick={() => handleLogicGridSelection(person, category, option)}
+                              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                                isSelected
+                                  ? 'bg-green-500 text-white shadow-lg scale-105'
+                                  : 'bg-slate-600 text-slate-300 hover:bg-slate-500'
+                              }`}
+                            >
+                              {option}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Submit Button */}
+          <div className="flex gap-3">
+            <button
+              onClick={checkLogicGridSolution}
+              disabled={!isComplete()}
+              className={`flex-1 py-4 rounded-xl text-white font-bold text-lg transition-all ${
+                isComplete()
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-105 shadow-xl animate-pulse'
+                  : 'bg-slate-600 cursor-not-allowed opacity-50'
+              }`}
+            >
+              {isComplete() ? '✓ Submit Answer' : `Complete All Fields (${correctMatches}/${totalPeople})`}
+            </button>
+            
+            {!isDailyChallenge && (
+              <button
+                onClick={() => setScreen('home')}
+                className="px-6 py-4 bg-slate-600 hover:bg-slate-500 text-white rounded-xl transition-all"
+              >
+                ❌ Give Up
+              </button>
+            )}
+          </div>
+          
+          {isDailyChallenge && (
+            <div className="text-center text-slate-400 text-xs">
+              💎 Complete the puzzle correctly to earn 500 gems!
+            </div>
+          )}
+        </div>
       </div>
     );
   }
