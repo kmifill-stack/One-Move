@@ -6335,8 +6335,18 @@ const handleDailyChallengeReplay = () => {
                 </div>
 
                 <p className="text-slate-300 text-center text-lg">
-                  Use logical clues to deduce the correct answers!
+                  Use logical clues to deduce the correct answers and reveal a mystery image!
                 </p>
+
+                {/* Mystery Image Feature */}
+                <div className="bg-purple-900/30 border border-purple-500/30 rounded-lg p-4">
+                  <p className="text-purple-300 font-semibold text-center mb-2">🎯 MYSTERY IMAGE REVEAL</p>
+                  <p className="text-slate-300 text-sm text-center">Each correct match reveals 20% of a hidden image!</p>
+                  <div className="flex items-center justify-center gap-2 mt-3 text-xs text-slate-400">
+                    <span>🦁</span><span>🏰</span><span>💎</span><span>🎯</span><span>🌋</span>
+                  </div>
+                  <p className="text-center text-xs text-slate-400 mt-2">40+ diverse images to discover</p>
+                </div>
 
                 {/* Visual Demo */}
                 <div className="bg-slate-900 rounded-xl p-4 space-y-4">
@@ -6371,39 +6381,39 @@ const handleDailyChallengeReplay = () => {
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">1️⃣</span>
                     <div>
-                      <p className="text-white font-semibold">Read All Clues</p>
-                      <p className="text-slate-400 text-sm">Study the clues carefully - they're your roadmap!</p>
+                      <p className="text-white font-semibold">Mystery Image Appears</p>
+                      <p className="text-slate-400 text-sm">Starts fully blurred - can you solve before it reveals?</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">2️⃣</span>
                     <div>
-                      <p className="text-white font-semibold">Use Logic to Deduce</p>
-                      <p className="text-slate-400 text-sm">Match each person with their correct attributes</p>
+                      <p className="text-white font-semibold">Read All Clues</p>
+                      <p className="text-slate-400 text-sm">Study carefully - they're your roadmap!</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">3️⃣</span>
                     <div>
-                      <p className="text-white font-semibold">Select Your Answers</p>
-                      <p className="text-slate-400 text-sm">Tap to select - selected answers show in green</p>
+                      <p className="text-white font-semibold">Match & Reveal</p>
+                      <p className="text-slate-400 text-sm">Each correct person match un-blurs 20% of the image</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">4️⃣</span>
                     <div>
-                      <p className="text-white font-semibold">Submit When Complete</p>
-                      <p className="text-slate-400 text-sm">Fill all fields to unlock the submit button</p>
+                      <p className="text-white font-semibold">Complete & Submit</p>
+                      <p className="text-slate-400 text-sm">Fill all 5 people to unlock submit button</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
                   <p className="text-blue-300 font-semibold">💡 Pro Tip:</p>
-                  <p className="text-slate-300 text-sm">Start with the most specific clues first. Process of elimination is your friend!</p>
+                  <p className="text-slate-300 text-sm">Start with the most specific clues first. Process of elimination is your friend! Even if you recognize the image, you must complete all matches to submit.</p>
                 </div>
               </div>
 
