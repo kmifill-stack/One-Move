@@ -6069,6 +6069,22 @@ const handleDailyChallengeReplay = () => {
                 </div>
               </div>
             </button>
+
+            {/* Daily Challenge Card - NEW! */}
+            <button
+              onClick={() => setShowInstructionPopup('daily_challenge')}
+              className="bg-gradient-to-br from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 rounded-xl p-6 text-left transition-all duration-300 shadow-lg transform hover:scale-105 border-2 border-red-400"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center">
+                  <span className="text-3xl">🏆</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white">DAILY CHALLENGE</h3>
+                  <p className="text-red-100 text-sm">Win 500 gems every day!</p>
+                </div>
+              </div>
+            </button>
           </div>
           
           <button
@@ -6078,6 +6094,109 @@ const handleDailyChallengeReplay = () => {
             Got It!
           </button>
         </div>
+
+        {/* Daily Challenge Popup - NEW! */}
+        {showInstructionPopup === 'daily_challenge' && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6" onClick={() => setShowInstructionPopup(null)}>
+            <div className="bg-slate-800 rounded-2xl p-8 max-w-lg border-2 border-yellow-500 overflow-y-auto max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
+              <h2 className="text-3xl font-light text-white text-center mb-6">🏆 DAILY CHALLENGE</h2>
+              
+              <div className="space-y-6">
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                  <p className="text-yellow-300 font-semibold text-center text-xl">Win 500 Gems Every Day!</p>
+                  <p className="text-slate-300 text-sm text-center mt-2">New challenge resets at midnight</p>
+                </div>
+
+                <p className="text-slate-300 text-center text-lg">
+                  Take on a special puzzle once per day for a massive gem reward!
+                </p>
+
+                {/* What Is It */}
+                <div className="bg-slate-900 rounded-xl p-4 space-y-3">
+                  <p className="text-amber-400 font-semibold text-sm">🎯 WHAT IS IT?</p>
+                  <p className="text-slate-300 text-sm">
+                    Every day at midnight, a new Daily Challenge becomes available. It's a special, harder puzzle that awards <span className="text-yellow-400 font-bold">500 gems</span> when completed—5x the normal reward!
+                  </p>
+                </div>
+
+                {/* How It Works */}
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">1️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">New Challenge Daily</p>
+                      <p className="text-slate-400 text-sm">Resets every midnight - check back each day!</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">2️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">One Puzzle Type</p>
+                      <p className="text-slate-400 text-sm">Could be any of the 5 types - Logic Grid appears most often!</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">3️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">One Attempt Only</p>
+                      <p className="text-slate-400 text-sm">No retries - make it count!</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">4️⃣</span>
+                    <div>
+                      <p className="text-white font-semibold">Build Your Streak</p>
+                      <p className="text-slate-400 text-sm">Complete challenges on consecutive days to build momentum</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Puzzle Types in Daily Challenge */}
+                <div className="bg-slate-900 rounded-xl p-4">
+                  <p className="text-purple-400 font-semibold text-sm mb-3">🎲 POSSIBLE DAILY CHALLENGES:</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                      <span>🧩</span>
+                      <span>Logic Grid (with Mystery Image Reveal)</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                      <span>🔢</span>
+                      <span>Quick Math</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                      <span>🧠</span>
+                      <span>Memory Match</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                      <span>📝</span>
+                      <span>Word Scramble</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-300 text-sm">
+                      <span>🔲</span>
+                      <span>Tile Flip</span>
+                    </div>
+                  </div>
+                  <p className="text-slate-400 text-xs text-center mt-3">Which puzzle will appear today? Check back daily to find out!</p>
+                </div>
+
+                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+                  <p className="text-red-300 font-semibold">⚠️ Remember:</p>
+                  <p className="text-slate-300 text-sm">You only get ONE attempt at the Daily Challenge. Take your time, use hints if needed, and make it count!</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowInstructionPopup(null)}
+                className="w-full mt-6 px-8 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all duration-300 text-lg font-semibold"
+              >
+                Got It!
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tile Flip Popup */}
         {showInstructionPopup === 'tile_flip' && (
