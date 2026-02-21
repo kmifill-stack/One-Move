@@ -5044,6 +5044,1356 @@ const OneMove = () => {
           'Emeril works at Bistro',
           'The Roasting chef works at Tavern'
         ]
+      },
+      
+      // Template 51: Astronauts, Rockets, Missions
+      {
+        categories: ['Astronauts', 'Rockets', 'Missions'],
+        items: [
+          ['Armstrong', 'Aldrin', 'Collins', 'Ride', 'Glenn'],
+          ['Apollo', 'Gemini', 'Mercury', 'Shuttle', 'Dragon'],
+          ['Moon', 'Orbit', 'Station', 'Research', 'Test']
+        ],
+        solution: {
+          'Armstrong': {'Rockets': 'Apollo', 'Missions': 'Moon'},
+          'Aldrin': {'Rockets': 'Gemini', 'Missions': 'Research'},
+          'Collins': {'Rockets': 'Mercury', 'Missions': 'Test'},
+          'Ride': {'Rockets': 'Shuttle', 'Missions': 'Station'},
+          'Glenn': {'Rockets': 'Dragon', 'Missions': 'Orbit'}
+        },
+        clues: [
+          'Armstrong flew Apollo',
+          'The Gemini mission was Research',
+          'Collins did Test missions',
+          'Ride does not fly Dragon',
+          'The Apollo mission was Moon',
+          'Aldrin flew Gemini',
+          'Glenn flies Dragon',
+          'The Shuttle mission was Station'
+        ]
+      },
+      
+      // Template 52: Explorers, Continents, Discoveries
+      {
+        categories: ['Explorers', 'Continents', 'Discoveries'],
+        items: [
+          ['Columbus', 'Magellan', 'Cook', 'Polo', 'Vespucci'],
+          ['Americas', 'Pacific', 'Australia', 'Asia', 'Atlantic'],
+          ['Islands', 'Route', 'Land', 'Trade', 'Ocean']
+        ],
+        solution: {
+          'Columbus': {'Continents': 'Americas', 'Discoveries': 'Islands'},
+          'Magellan': {'Continents': 'Pacific', 'Discoveries': 'Route'},
+          'Cook': {'Continents': 'Australia', 'Discoveries': 'Land'},
+          'Polo': {'Continents': 'Asia', 'Discoveries': 'Trade'},
+          'Vespucci': {'Continents': 'Atlantic', 'Discoveries': 'Ocean'}
+        },
+        clues: [
+          'Columbus explored Americas',
+          'The Pacific explorer found a Route',
+          'Cook discovered Land',
+          'Polo does not explore Atlantic',
+          'The Americas explorer found Islands',
+          'Magellan explored Pacific',
+          'Vespucci explored Atlantic',
+          'The Asia explorer found Trade'
+        ]
+      },
+      
+      // Template 53: Blacksmiths, Tools, Materials
+      {
+        categories: ['Blacksmiths', 'Tools', 'Materials'],
+        items: [
+          ['Forge', 'Anvil', 'Hammer', 'Tongs', 'Bellows'],
+          ['Sword', 'Horseshoe', 'Nail', 'Chain', 'Gate'],
+          ['Iron', 'Steel', 'Bronze', 'Copper', 'Brass']
+        ],
+        solution: {
+          'Forge': {'Tools': 'Sword', 'Materials': 'Steel'},
+          'Anvil': {'Tools': 'Horseshoe', 'Materials': 'Iron'},
+          'Hammer': {'Tools': 'Nail', 'Materials': 'Copper'},
+          'Tongs': {'Tools': 'Chain', 'Materials': 'Bronze'},
+          'Bellows': {'Tools': 'Gate', 'Materials': 'Brass'}
+        },
+        clues: [
+          'Forge makes Swords',
+          'The Horseshoe is made with Iron',
+          'Hammer makes Nails',
+          'Tongs does not use Brass',
+          'The Sword is made with Steel',
+          'Anvil makes Horseshoes',
+          'Bellows uses Brass',
+          'The Chain is made with Bronze'
+        ]
+      },
+      
+      // Template 54: Captains, Ships, Cargo
+      {
+        categories: ['Captains', 'Ships', 'Cargo'],
+        items: [
+          ['Silva', 'Tanaka', 'O\'Brien', 'Petrov', 'Santos'],
+          ['Freighter', 'Tanker', 'Container', 'Cruise', 'Ferry'],
+          ['Oil', 'Goods', 'People', 'Cars', 'Food']
+        ],
+        solution: {
+          'Silva': {'Ships': 'Freighter', 'Cargo': 'Goods'},
+          'Tanaka': {'Ships': 'Tanker', 'Cargo': 'Oil'},
+          'O\'Brien': {'Ships': 'Container', 'Cargo': 'Cars'},
+          'Petrov': {'Ships': 'Cruise', 'Cargo': 'People'},
+          'Santos': {'Ships': 'Ferry', 'Cargo': 'Food'}
+        },
+        clues: [
+          'Silva captains a Freighter',
+          'The Tanker carries Oil',
+          'O\'Brien carries Cars',
+          'Petrov does not carry Food',
+          'The Freighter carries Goods',
+          'Tanaka captains a Tanker',
+          'Santos captains a Ferry',
+          'The Cruise ship carries People'
+        ]
+      },
+      
+      // Template 55: Investors, Sectors, Strategies
+      {
+        categories: ['Investors', 'Sectors', 'Strategies'],
+        items: [
+          ['Warren', 'Cathie', 'Ray', 'Peter', 'Carl'],
+          ['Tech', 'Energy', 'Finance', 'Health', 'Retail'],
+          ['Growth', 'Value', 'Index', 'Active', 'Hedge']
+        ],
+        solution: {
+          'Warren': {'Sectors': 'Finance', 'Strategies': 'Value'},
+          'Cathie': {'Sectors': 'Tech', 'Strategies': 'Growth'},
+          'Ray': {'Sectors': 'Energy', 'Strategies': 'Index'},
+          'Peter': {'Sectors': 'Health', 'Strategies': 'Active'},
+          'Carl': {'Sectors': 'Retail', 'Strategies': 'Hedge'}
+        },
+        clues: [
+          'Warren invests in Finance',
+          'The Tech investor uses Growth',
+          'Ray uses Index strategy',
+          'Peter does not use Hedge',
+          'The Finance investor uses Value',
+          'Cathie invests in Tech',
+          'Carl uses Hedge',
+          'The Health investor uses Active'
+        ]
+      },
+      
+      // Template 56: Archeologists, Artifacts, Ages
+      {
+        categories: ['Archeologists', 'Artifacts', 'Ages'],
+        items: [
+          ['Carter', 'Leakey', 'Schliemann', 'Evans', 'Wheeler'],
+          ['Tomb', 'Fossil', 'Troy', 'Palace', 'City'],
+          ['Egyptian', 'Prehistoric', 'Bronze', 'Minoan', 'Roman']
+        ],
+        solution: {
+          'Carter': {'Artifacts': 'Tomb', 'Ages': 'Egyptian'},
+          'Leakey': {'Artifacts': 'Fossil', 'Ages': 'Prehistoric'},
+          'Schliemann': {'Artifacts': 'Troy', 'Ages': 'Bronze'},
+          'Evans': {'Artifacts': 'Palace', 'Ages': 'Minoan'},
+          'Wheeler': {'Artifacts': 'City', 'Ages': 'Roman'}
+        },
+        clues: [
+          'Carter discovered a Tomb',
+          'The Fossil is from Prehistoric',
+          'Schliemann found Troy',
+          'Evans does not study Roman',
+          'The Tomb is from Egyptian',
+          'Leakey found Fossils',
+          'Wheeler studies Roman',
+          'The Palace is from Minoan'
+        ]
+      },
+      
+      // Template 57: Composers, Instruments, Eras
+      {
+        categories: ['Composers', 'Instruments', 'Eras'],
+        items: [
+          ['Bach', 'Mozart', 'Beethoven', 'Chopin', 'Vivaldi'],
+          ['Organ', 'Piano', 'Orchestra', 'Solo', 'Violin'],
+          ['Baroque', 'Classical', 'Romantic', 'Modern', 'Renaissance']
+        ],
+        solution: {
+          'Bach': {'Instruments': 'Organ', 'Eras': 'Baroque'},
+          'Mozart': {'Instruments': 'Piano', 'Eras': 'Classical'},
+          'Beethoven': {'Instruments': 'Orchestra', 'Eras': 'Romantic'},
+          'Chopin': {'Instruments': 'Solo', 'Eras': 'Modern'},
+          'Vivaldi': {'Instruments': 'Violin', 'Eras': 'Renaissance'}
+        },
+        clues: [
+          'Bach composed for Organ',
+          'The Piano composer is Classical',
+          'Beethoven composed for Orchestra',
+          'Chopin is not Renaissance',
+          'The Organ composer is Baroque',
+          'Mozart composed for Piano',
+          'Vivaldi is Renaissance',
+          'The Orchestra composer is Romantic'
+        ]
+      },
+      
+      // Template 58: Fishermen, Fish, Waters
+      {
+        categories: ['Fishermen', 'Fish', 'Waters'],
+        items: [
+          ['Eric', 'Lars', 'Olaf', 'Sven', 'Thor'],
+          ['Salmon', 'Cod', 'Tuna', 'Trout', 'Halibut'],
+          ['River', 'Ocean', 'Lake', 'Sea', 'Stream']
+        ],
+        solution: {
+          'Eric': {'Fish': 'Salmon', 'Waters': 'River'},
+          'Lars': {'Fish': 'Cod', 'Waters': 'Ocean'},
+          'Olaf': {'Fish': 'Tuna', 'Waters': 'Sea'},
+          'Sven': {'Fish': 'Trout', 'Waters': 'Lake'},
+          'Thor': {'Fish': 'Halibut', 'Waters': 'Stream'}
+        },
+        clues: [
+          'Eric catches Salmon',
+          'The Cod fisherman works in Ocean',
+          'Olaf fishes in Sea',
+          'Sven does not fish in Stream',
+          'The Salmon fisherman works in River',
+          'Lars catches Cod',
+          'Thor fishes in Stream',
+          'The Trout fisherman works in Lake'
+        ]
+      },
+      
+      // Template 59: Quilters, Patterns, Colors
+      {
+        categories: ['Quilters', 'Patterns', 'Colors'],
+        items: [
+          ['Mary', 'Susan', 'Linda', 'Karen', 'Nancy'],
+          ['Star', 'Log Cabin', 'Dresden', 'Pinwheel', 'Irish Chain'],
+          ['Blue', 'Red', 'Green', 'Yellow', 'Purple']
+        ],
+        solution: {
+          'Mary': {'Patterns': 'Star', 'Colors': 'Blue'},
+          'Susan': {'Patterns': 'Log Cabin', 'Colors': 'Red'},
+          'Linda': {'Patterns': 'Dresden', 'Colors': 'Green'},
+          'Karen': {'Patterns': 'Pinwheel', 'Colors': 'Yellow'},
+          'Nancy': {'Patterns': 'Irish Chain', 'Colors': 'Purple'}
+        },
+        clues: [
+          'Mary makes Star patterns',
+          'The Log Cabin quilt is Red',
+          'Linda uses Green',
+          'Karen does not use Purple',
+          'The Star pattern is Blue',
+          'Susan makes Log Cabin',
+          'Nancy uses Purple',
+          'The Pinwheel pattern is Yellow'
+        ]
+      },
+      
+      // Template 60: Vintners, Grapes, Valleys
+      {
+        categories: ['Vintners', 'Grapes', 'Valleys'],
+        items: [
+          ['Robert', 'Jean', 'Antonio', 'Hans', 'Gustav'],
+          ['Cabernet', 'Merlot', 'Pinot Noir', 'Syrah', 'Zinfandel'],
+          ['Napa', 'Sonoma', 'Rhone', 'Burgundy', 'Barossa']
+        ],
+        solution: {
+          'Robert': {'Grapes': 'Cabernet', 'Valleys': 'Napa'},
+          'Jean': {'Grapes': 'Merlot', 'Valleys': 'Burgundy'},
+          'Antonio': {'Grapes': 'Pinot Noir', 'Valleys': 'Sonoma'},
+          'Hans': {'Grapes': 'Syrah', 'Valleys': 'Rhone'},
+          'Gustav': {'Grapes': 'Zinfandel', 'Valleys': 'Barossa'}
+        },
+        clues: [
+          'Robert grows Cabernet',
+          'The Merlot vintner is in Burgundy',
+          'Antonio is in Sonoma',
+          'Hans is not in Barossa',
+          'The Cabernet vintner is in Napa',
+          'Jean grows Merlot',
+          'Gustav is in Barossa',
+          'The Syrah vintner is in Rhone'
+        ]
+      },
+      
+      // Template 61: Potters, Vessels, Clays
+      {
+        categories: ['Potters', 'Vessels', 'Clays'],
+        items: [
+          ['Maya', 'Chen', 'Diego', 'Aisha', 'Yuki'],
+          ['Bowl', 'Vase', 'Plate', 'Cup', 'Pitcher'],
+          ['Earthenware', 'Stoneware', 'Porcelain', 'Terracotta', 'Raku']
+        ],
+        solution: {
+          'Maya': {'Vessels': 'Bowl', 'Clays': 'Earthenware'},
+          'Chen': {'Vessels': 'Vase', 'Clays': 'Porcelain'},
+          'Diego': {'Vessels': 'Plate', 'Clays': 'Terracotta'},
+          'Aisha': {'Vessels': 'Cup', 'Clays': 'Stoneware'},
+          'Yuki': {'Vessels': 'Pitcher', 'Clays': 'Raku'}
+        },
+        clues: [
+          'Maya makes Bowls',
+          'The Vase is made with Porcelain',
+          'Diego uses Terracotta',
+          'Aisha does not use Raku',
+          'The Bowl is made with Earthenware',
+          'Chen makes Vases',
+          'Yuki uses Raku',
+          'The Cup is made with Stoneware'
+        ]
+      },
+      
+      // Template 62: Miners, Minerals, Regions
+      {
+        categories: ['Miners', 'Minerals', 'Regions'],
+        items: [
+          ['Jack', 'William', 'George', 'Henry', 'Thomas'],
+          ['Gold', 'Silver', 'Copper', 'Iron', 'Coal'],
+          ['West', 'North', 'South', 'East', 'Central']
+        ],
+        solution: {
+          'Jack': {'Minerals': 'Gold', 'Regions': 'West'},
+          'William': {'Minerals': 'Silver', 'Regions': 'North'},
+          'George': {'Minerals': 'Copper', 'Regions': 'Central'},
+          'Henry': {'Minerals': 'Iron', 'Regions': 'East'},
+          'Thomas': {'Minerals': 'Coal', 'Regions': 'South'}
+        },
+        clues: [
+          'Jack mines Gold',
+          'The Silver miner works in North',
+          'George works in Central',
+          'Henry does not work in South',
+          'The Gold miner works in West',
+          'William mines Silver',
+          'Thomas works in South',
+          'The Iron miner works in East'
+        ]
+      },
+      
+      // Template 63: Brewers, Beers, Styles
+      {
+        categories: ['Brewers', 'Beers', 'Styles'],
+        items: [
+          ['Sam', 'Jake', 'Mike', 'Todd', 'Brad'],
+          ['IPA', 'Lager', 'Stout', 'Pilsner', 'Ale'],
+          ['Hoppy', 'Crisp', 'Dark', 'Light', 'Malty']
+        ],
+        solution: {
+          'Sam': {'Beers': 'IPA', 'Styles': 'Hoppy'},
+          'Jake': {'Beers': 'Lager', 'Styles': 'Crisp'},
+          'Mike': {'Beers': 'Stout', 'Styles': 'Dark'},
+          'Todd': {'Beers': 'Pilsner', 'Styles': 'Light'},
+          'Brad': {'Beers': 'Ale', 'Styles': 'Malty'}
+        },
+        clues: [
+          'Sam brews IPA',
+          'The Lager is Crisp',
+          'Mike brews Stout',
+          'Todd does not brew Ale',
+          'The IPA is Hoppy',
+          'Jake brews Lager',
+          'Brad brews Ale',
+          'The Pilsner is Light'
+        ]
+      },
+      
+      // Template 64: Weavers, Fabrics, Uses
+      {
+        categories: ['Weavers', 'Fabrics', 'Uses'],
+        items: [
+          ['Elena', 'Maria', 'Rosa', 'Sofia', 'Ana'],
+          ['Silk', 'Wool', 'Cotton', 'Linen', 'Cashmere'],
+          ['Scarves', 'Blankets', 'Shirts', 'Sheets', 'Sweaters']
+        ],
+        solution: {
+          'Elena': {'Fabrics': 'Silk', 'Uses': 'Scarves'},
+          'Maria': {'Fabrics': 'Wool', 'Uses': 'Blankets'},
+          'Rosa': {'Fabrics': 'Cotton', 'Uses': 'Shirts'},
+          'Sofia': {'Fabrics': 'Linen', 'Uses': 'Sheets'},
+          'Ana': {'Fabrics': 'Cashmere', 'Uses': 'Sweaters'}
+        },
+        clues: [
+          'Elena weaves Silk',
+          'The Wool weaver makes Blankets',
+          'Rosa makes Shirts',
+          'Sofia does not weave Cashmere',
+          'The Silk weaver makes Scarves',
+          'Maria weaves Wool',
+          'Ana weaves Cashmere',
+          'The Linen weaver makes Sheets'
+        ]
+      },
+      
+      // Template 65: Jewelers, Gems, Settings
+      {
+        categories: ['Jewelers', 'Gems', 'Settings'],
+        items: [
+          ['Ruby', 'Pearl', 'Jade', 'Opal', 'Amber'],
+          ['Diamond', 'Emerald', 'Sapphire', 'Ruby', 'Topaz'],
+          ['Ring', 'Necklace', 'Bracelet', 'Earring', 'Brooch']
+        ],
+        solution: {
+          'Ruby': {'Gems': 'Diamond', 'Settings': 'Ring'},
+          'Pearl': {'Gems': 'Emerald', 'Settings': 'Necklace'},
+          'Jade': {'Gems': 'Sapphire', 'Settings': 'Bracelet'},
+          'Opal': {'Gems': 'Ruby', 'Settings': 'Earring'},
+          'Amber': {'Gems': 'Topaz', 'Settings': 'Brooch'}
+        },
+        clues: [
+          'Ruby sets Diamond',
+          'The Emerald is in a Necklace',
+          'Jade makes Bracelets',
+          'Opal does not make Brooches',
+          'The Diamond is in a Ring',
+          'Pearl sets Emerald',
+          'Amber makes Brooches',
+          'The Ruby is in an Earring'
+        ]
+      },
+      
+      // Template 66: Shoemakers, Shoes, Leathers
+      {
+        categories: ['Shoemakers', 'Shoes', 'Leathers'],
+        items: [
+          ['Bruno', 'Carlo', 'Dino', 'Enzo', 'Franco'],
+          ['Boot', 'Loafer', 'Oxford', 'Sandal', 'Sneaker'],
+          ['Calfskin', 'Suede', 'Patent', 'Nubuck', 'Cordovan']
+        ],
+        solution: {
+          'Bruno': {'Shoes': 'Boot', 'Leathers': 'Calfskin'},
+          'Carlo': {'Shoes': 'Loafer', 'Leathers': 'Suede'},
+          'Dino': {'Shoes': 'Oxford', 'Leathers': 'Patent'},
+          'Enzo': {'Shoes': 'Sandal', 'Leathers': 'Nubuck'},
+          'Franco': {'Shoes': 'Sneaker', 'Leathers': 'Cordovan'}
+        },
+        clues: [
+          'Bruno makes Boots',
+          'The Loafer is made with Suede',
+          'Dino uses Patent leather',
+          'Enzo does not use Cordovan',
+          'The Boot is made with Calfskin',
+          'Carlo makes Loafers',
+          'Franco uses Cordovan',
+          'The Sandal is made with Nubuck'
+        ]
+      },
+      
+      // Template 67: Watchmakers, Movements, Brands
+      {
+        categories: ['Watchmakers', 'Movements', 'Brands'],
+        items: [
+          ['Swiss', 'German', 'Japanese', 'French', 'Italian'],
+          ['Automatic', 'Manual', 'Quartz', 'Spring', 'Digital'],
+          ['Luxury', 'Sport', 'Dress', 'Casual', 'Dive']
+        ],
+        solution: {
+          'Swiss': {'Movements': 'Automatic', 'Brands': 'Luxury'},
+          'German': {'Movements': 'Manual', 'Brands': 'Dress'},
+          'Japanese': {'Movements': 'Quartz', 'Brands': 'Sport'},
+          'French': {'Movements': 'Spring', 'Brands': 'Casual'},
+          'Italian': {'Movements': 'Digital', 'Brands': 'Dive'}
+        },
+        clues: [
+          'Swiss uses Automatic',
+          'The Manual movement is in Dress watches',
+          'Japanese makes Sport watches',
+          'French does not make Dive watches',
+          'The Automatic movement is in Luxury',
+          'German uses Manual',
+          'Italian makes Dive watches',
+          'The Quartz movement is in Sport'
+        ]
+      },
+      
+      // Template 68: Carpenters, Woods, Projects
+      {
+        categories: ['Carpenters', 'Woods', 'Projects'],
+        items: [
+          ['Oak', 'Pine', 'Maple', 'Cherry', 'Walnut'],
+          ['Table', 'Chair', 'Desk', 'Cabinet', 'Shelf'],
+          ['Dining', 'Office', 'Living', 'Kitchen', 'Bedroom']
+        ],
+        solution: {
+          'Oak': {'Woods': 'Table', 'Projects': 'Dining'},
+          'Pine': {'Woods': 'Chair', 'Projects': 'Office'},
+          'Maple': {'Woods': 'Desk', 'Projects': 'Living'},
+          'Cherry': {'Woods': 'Cabinet', 'Projects': 'Kitchen'},
+          'Walnut': {'Woods': 'Shelf', 'Projects': 'Bedroom'}
+        },
+        clues: [
+          'Oak builds Tables',
+          'The Chair is for Office',
+          'Maple is for Living room',
+          'Cherry does not work on Bedroom',
+          'The Table is for Dining',
+          'Pine builds Chairs',
+          'Walnut is for Bedroom',
+          'The Cabinet is for Kitchen'
+        ]
+      },
+      
+      // Template 69: Beekeepers, Bees, Products
+      {
+        categories: ['Beekeepers', 'Bees', 'Products'],
+        items: [
+          ['Alice', 'Beth', 'Carol', 'Diana', 'Eve'],
+          ['Honey', 'Bumble', 'Mason', 'Carpenter', 'Leafcutter'],
+          ['Honey', 'Wax', 'Pollen', 'Propolis', 'Royal Jelly']
+        ],
+        solution: {
+          'Alice': {'Bees': 'Honey', 'Products': 'Honey'},
+          'Beth': {'Bees': 'Bumble', 'Products': 'Wax'},
+          'Carol': {'Bees': 'Mason', 'Products': 'Pollen'},
+          'Diana': {'Bees': 'Carpenter', 'Products': 'Propolis'},
+          'Eve': {'Bees': 'Leafcutter', 'Products': 'Royal Jelly'}
+        },
+        clues: [
+          'Alice keeps Honey bees',
+          'The Bumble beekeeper produces Wax',
+          'Carol produces Pollen',
+          'Diana does not produce Royal Jelly',
+          'The Honey beekeeper produces Honey',
+          'Beth keeps Bumble bees',
+          'Eve produces Royal Jelly',
+          'The Carpenter beekeeper produces Propolis'
+        ]
+      },
+      
+      // Template 70: Chocolatiers, Types, Fillings
+      {
+        categories: ['Chocolatiers', 'Types', 'Fillings'],
+        items: [
+          ['Pierre', 'Jacques', 'Henri', 'Andre', 'Louis'],
+          ['Dark', 'Milk', 'White', 'Ruby', 'Blonde'],
+          ['Caramel', 'Nuts', 'Fruit', 'Cream', 'Truffle']
+        ],
+        solution: {
+          'Pierre': {'Types': 'Dark', 'Fillings': 'Caramel'},
+          'Jacques': {'Types': 'Milk', 'Fillings': 'Nuts'},
+          'Henri': {'Types': 'White', 'Fillings': 'Fruit'},
+          'Andre': {'Types': 'Ruby', 'Fillings': 'Cream'},
+          'Louis': {'Types': 'Blonde', 'Fillings': 'Truffle'}
+        },
+        clues: [
+          'Pierre makes Dark chocolate',
+          'The Milk chocolate has Nuts',
+          'Henri uses Fruit filling',
+          'Andre does not use Truffle',
+          'The Dark chocolate has Caramel',
+          'Jacques makes Milk chocolate',
+          'Louis uses Truffle',
+          'The Ruby chocolate has Cream'
+        ]
+      },
+      
+      // Template 71: Distillers, Spirits, Barrels
+      {
+        categories: ['Distillers', 'Spirits', 'Barrels'],
+        items: [
+          ['Scotch', 'Irish', 'Bourbon', 'Rye', 'Japanese'],
+          ['Whiskey', 'Gin', 'Vodka', 'Rum', 'Brandy'],
+          ['Oak', 'Sherry', 'Bourbon', 'Wine', 'New']
+        ],
+        solution: {
+          'Scotch': {'Spirits': 'Whiskey', 'Barrels': 'Sherry'},
+          'Irish': {'Spirits': 'Gin', 'Barrels': 'Wine'},
+          'Bourbon': {'Spirits': 'Vodka', 'Barrels': 'Oak'},
+          'Rye': {'Spirits': 'Rum', 'Barrels': 'Bourbon'},
+          'Japanese': {'Spirits': 'Brandy', 'Barrels': 'New'}
+        },
+        clues: [
+          'Scotch distills Whiskey',
+          'The Gin uses Wine barrels',
+          'Bourbon uses Oak barrels',
+          'Rye does not use New barrels',
+          'The Whiskey uses Sherry barrels',
+          'Irish distills Gin',
+          'Japanese uses New barrels',
+          'The Rum uses Bourbon barrels'
+        ]
+      },
+      
+      // Template 72: Glassblowers, Items, Techniques
+      {
+        categories: ['Glassblowers', 'Items', 'Techniques'],
+        items: [
+          ['Venetian', 'Murano', 'Bohemian', 'Swedish', 'American'],
+          ['Vase', 'Bowl', 'Sculpture', 'Ornament', 'Window'],
+          ['Blown', 'Cast', 'Fused', 'Etched', 'Stained']
+        ],
+        solution: {
+          'Venetian': {'Items': 'Vase', 'Techniques': 'Blown'},
+          'Murano': {'Items': 'Bowl', 'Techniques': 'Cast'},
+          'Bohemian': {'Items': 'Sculpture', 'Techniques': 'Fused'},
+          'Swedish': {'Items': 'Ornament', 'Techniques': 'Etched'},
+          'American': {'Items': 'Window', 'Techniques': 'Stained'}
+        },
+        clues: [
+          'Venetian makes Vases',
+          'The Bowl is Cast',
+          'Bohemian makes Sculptures',
+          'Swedish does not make Windows',
+          'The Vase is Blown',
+          'Murano makes Bowls',
+          'American makes Windows',
+          'The Ornament is Etched'
+        ]
+      },
+      
+      // Template 73: Perfumers, Notes, Seasons
+      {
+        categories: ['Perfumers', 'Notes', 'Seasons'],
+        items: [
+          ['Chanel', 'Dior', 'Gucci', 'Prada', 'Hermes'],
+          ['Floral', 'Citrus', 'Woody', 'Oriental', 'Fresh'],
+          ['Spring', 'Summer', 'Fall', 'Winter', 'Year-round']
+        ],
+        solution: {
+          'Chanel': {'Notes': 'Floral', 'Seasons': 'Spring'},
+          'Dior': {'Notes': 'Citrus', 'Seasons': 'Summer'},
+          'Gucci': {'Notes': 'Woody', 'Seasons': 'Fall'},
+          'Prada': {'Notes': 'Oriental', 'Seasons': 'Winter'},
+          'Hermes': {'Notes': 'Fresh', 'Seasons': 'Year-round'}
+        },
+        clues: [
+          'Chanel uses Floral notes',
+          'The Citrus perfume is for Summer',
+          'Gucci is for Fall',
+          'Prada is not Year-round',
+          'The Floral perfume is for Spring',
+          'Dior uses Citrus notes',
+          'Hermes is Year-round',
+          'The Oriental perfume is for Winter'
+        ]
+      },
+      
+      // Template 74: Confectioners, Candies, Flavors
+      {
+        categories: ['Confectioners', 'Candies', 'Flavors'],
+        items: [
+          ['Sweet', 'Sugar', 'Candy', 'Treat', 'Delight'],
+          ['Gummy', 'Hard', 'Soft', 'Sour', 'Chocolate'],
+          ['Fruit', 'Mint', 'Caramel', 'Berry', 'Vanilla']
+        ],
+        solution: {
+          'Sweet': {'Candies': 'Gummy', 'Flavors': 'Fruit'},
+          'Sugar': {'Candies': 'Hard', 'Flavors': 'Mint'},
+          'Candy': {'Candies': 'Soft', 'Flavors': 'Caramel'},
+          'Treat': {'Candies': 'Sour', 'Flavors': 'Berry'},
+          'Delight': {'Candies': 'Chocolate', 'Flavors': 'Vanilla'}
+        },
+        clues: [
+          'Sweet makes Gummy',
+          'The Hard candy is Mint',
+          'Candy makes Soft candies',
+          'Treat does not make Chocolate',
+          'The Gummy candy is Fruit',
+          'Sugar makes Hard candy',
+          'Delight makes Chocolate',
+          'The Sour candy is Berry'
+        ]
+      },
+      
+      // Template 75: Cobblers, Repairs, Leathers
+      {
+        categories: ['Cobblers', 'Repairs', 'Leathers'],
+        items: [
+          ['Mario', 'Luigi', 'Giuseppe', 'Antonio', 'Paolo'],
+          ['Sole', 'Heel', 'Stitch', 'Polish', 'Stretch'],
+          ['Leather', 'Rubber', 'Suede', 'Vinyl', 'Canvas']
+        ],
+        solution: {
+          'Mario': {'Repairs': 'Sole', 'Leathers': 'Leather'},
+          'Luigi': {'Repairs': 'Heel', 'Leathers': 'Rubber'},
+          'Giuseppe': {'Repairs': 'Stitch', 'Leathers': 'Suede'},
+          'Antonio': {'Repairs': 'Polish', 'Leathers': 'Vinyl'},
+          'Paolo': {'Repairs': 'Stretch', 'Leathers': 'Canvas'}
+        },
+        clues: [
+          'Mario repairs Soles',
+          'The Heel repair uses Rubber',
+          'Giuseppe works with Suede',
+          'Antonio does not work with Canvas',
+          'The Sole repair uses Leather',
+          'Luigi repairs Heels',
+          'Paolo works with Canvas',
+          'The Polish uses Vinyl'
+        ]
+      },
+      
+      // Template 76: Milliners, Hats, Occasions
+      {
+        categories: ['Milliners', 'Hats', 'Occasions'],
+        items: [
+          ['Rose', 'Lily', 'Violet', 'Daisy', 'Iris'],
+          ['Derby', 'Fascinator', 'Cloche', 'Beret', 'Fedora'],
+          ['Race', 'Wedding', 'Tea', 'Party', 'Casual']
+        ],
+        solution: {
+          'Rose': {'Hats': 'Derby', 'Occasions': 'Race'},
+          'Lily': {'Hats': 'Fascinator', 'Occasions': 'Wedding'},
+          'Violet': {'Hats': 'Cloche', 'Occasions': 'Tea'},
+          'Daisy': {'Hats': 'Beret', 'Occasions': 'Party'},
+          'Iris': {'Hats': 'Fedora', 'Occasions': 'Casual'}
+        },
+        clues: [
+          'Rose makes Derbies',
+          'The Fascinator is for Weddings',
+          'Violet makes for Tea parties',
+          'Daisy does not make Fedoras',
+          'The Derby is for Races',
+          'Lily makes Fascinators',
+          'Iris makes Fedoras',
+          'The Beret is for Parties'
+        ]
+      },
+      
+      // Template 77: Furriers, Furs, Garments
+      {
+        categories: ['Furriers', 'Furs', 'Garments'],
+        items: [
+          ['Vladimir', 'Natasha', 'Boris', 'Olga', 'Igor'],
+          ['Mink', 'Fox', 'Sable', 'Chinchilla', 'Rabbit'],
+          ['Coat', 'Stole', 'Hat', 'Trim', 'Lining']
+        ],
+        solution: {
+          'Vladimir': {'Furs': 'Mink', 'Garments': 'Coat'},
+          'Natasha': {'Furs': 'Fox', 'Garments': 'Stole'},
+          'Boris': {'Furs': 'Sable', 'Garments': 'Hat'},
+          'Olga': {'Furs': 'Chinchilla', 'Garments': 'Trim'},
+          'Igor': {'Furs': 'Rabbit', 'Garments': 'Lining'}
+        },
+        clues: [
+          'Vladimir works with Mink',
+          'The Fox is used for Stoles',
+          'Boris makes Hats',
+          'Olga does not make Linings',
+          'The Mink is used for Coats',
+          'Natasha works with Fox',
+          'Igor makes Linings',
+          'The Chinchilla is used for Trim'
+        ]
+      },
+      
+      // Template 78: Hatters, Materials, Styles
+      {
+        categories: ['Hatters', 'Materials', 'Styles'],
+        items: [
+          ['Top', 'Bowler', 'Trilby', 'Panama', 'Homburg'],
+          ['Felt', 'Straw', 'Wool', 'Silk', 'Velvet'],
+          ['Formal', 'Summer', 'Classic', 'Elegant', 'Vintage']
+        ],
+        solution: {
+          'Top': {'Materials': 'Silk', 'Styles': 'Formal'},
+          'Bowler': {'Materials': 'Felt', 'Styles': 'Classic'},
+          'Trilby': {'Materials': 'Wool', 'Styles': 'Vintage'},
+          'Panama': {'Materials': 'Straw', 'Styles': 'Summer'},
+          'Homburg': {'Materials': 'Velvet', 'Styles': 'Elegant'}
+        },
+        clues: [
+          'Top hat uses Silk',
+          'The Felt hat is Classic',
+          'Trilby is Vintage style',
+          'Panama is not Elegant',
+          'The Silk hat is Formal',
+          'Bowler uses Felt',
+          'Homburg is Elegant',
+          'The Straw hat is Summer'
+        ]
+      },
+      
+      // Template 79: Engravers, Metals, Items
+      {
+        categories: ['Engravers', 'Metals', 'Items'],
+        items: [
+          ['Gold', 'Silver', 'Bronze', 'Platinum', 'Copper'],
+          ['Ring', 'Watch', 'Plate', 'Trophy', 'Coin'],
+          ['Wedding', 'Gift', 'Award', 'Sport', 'Collection']
+        ],
+        solution: {
+          'Gold': {'Metals': 'Ring', 'Items': 'Wedding'},
+          'Silver': {'Metals': 'Watch', 'Items': 'Gift'},
+          'Bronze': {'Metals': 'Plate', 'Items': 'Award'},
+          'Platinum': {'Metals': 'Trophy', 'Items': 'Sport'},
+          'Copper': {'Metals': 'Coin', 'Items': 'Collection'}
+        },
+        clues: [
+          'Gold engraves Rings',
+          'The Watch is a Gift',
+          'Bronze is for Awards',
+          'Platinum is not for Collection',
+          'The Ring is for Wedding',
+          'Silver engraves Watches',
+          'Copper is for Collection',
+          'The Trophy is for Sport'
+        ]
+      },
+      
+      // Template 80: Sculptors, Materials, Subjects
+      {
+        categories: ['Sculptors', 'Materials', 'Subjects'],
+        items: [
+          ['Michelangelo', 'Rodin', 'Moore', 'Calder', 'Giacometti'],
+          ['Marble', 'Bronze', 'Stone', 'Metal', 'Clay'],
+          ['Human', 'Abstract', 'Animal', 'Mobile', 'Figure']
+        ],
+        solution: {
+          'Michelangelo': {'Materials': 'Marble', 'Subjects': 'Human'},
+          'Rodin': {'Materials': 'Bronze', 'Subjects': 'Figure'},
+          'Moore': {'Materials': 'Stone', 'Subjects': 'Abstract'},
+          'Calder': {'Materials': 'Metal', 'Subjects': 'Mobile'},
+          'Giacometti': {'Materials': 'Clay', 'Subjects': 'Animal'}
+        },
+        clues: [
+          'Michelangelo uses Marble',
+          'The Bronze sculptor makes Figures',
+          'Moore makes Abstract art',
+          'Calder does not make Animals',
+          'The Marble sculptor makes Human forms',
+          'Rodin uses Bronze',
+          'Giacometti makes Animals',
+          'The Metal sculptor makes Mobiles'
+        ]
+      },
+      
+      // Template 81: Mapmakers, Regions, Scales
+      {
+        categories: ['Mapmakers', 'Regions', 'Scales'],
+        items: [
+          ['Atlas', 'Globe', 'Chart', 'Survey', 'Navigator'],
+          ['World', 'Country', 'City', 'Ocean', 'Mountain'],
+          ['Small', 'Large', 'Medium', 'Detailed', 'Overview']
+        ],
+        solution: {
+          'Atlas': {'Regions': 'World', 'Scales': 'Overview'},
+          'Globe': {'Regions': 'Country', 'Scales': 'Small'},
+          'Chart': {'Regions': 'City', 'Scales': 'Detailed'},
+          'Survey': {'Regions': 'Ocean', 'Scales': 'Medium'},
+          'Navigator': {'Regions': 'Mountain', 'Scales': 'Large'}
+        },
+        clues: [
+          'Atlas maps World',
+          'The Country map is Small scale',
+          'Chart makes Detailed maps',
+          'Survey does not make Large scale',
+          'The World map is Overview',
+          'Globe maps Country',
+          'Navigator makes Large scale',
+          'The Ocean map is Medium'
+        ]
+      },
+      
+      // Template 82: Printers, Processes, Materials
+      {
+        categories: ['Printers', 'Processes', 'Materials'],
+        items: [
+          ['Offset', 'Digital', 'Screen', 'Letterpress', 'Gravure'],
+          ['Book', 'Poster', 'Label', 'Magazine', 'Package'],
+          ['Paper', 'Cardboard', 'Fabric', 'Plastic', 'Metal']
+        ],
+        solution: {
+          'Offset': {'Processes': 'Book', 'Materials': 'Paper'},
+          'Digital': {'Processes': 'Poster', 'Materials': 'Cardboard'},
+          'Screen': {'Processes': 'Label', 'Materials': 'Fabric'},
+          'Letterpress': {'Processes': 'Magazine', 'Materials': 'Plastic'},
+          'Gravure': {'Processes': 'Package', 'Materials': 'Metal'}
+        },
+        clues: [
+          'Offset prints Books',
+          'The Poster uses Cardboard',
+          'Screen prints Labels',
+          'Letterpress does not use Metal',
+          'The Book uses Paper',
+          'Digital prints Posters',
+          'Gravure uses Metal',
+          'The Magazine uses Plastic'
+        ]
+      },
+      
+      // Template 83: Calligraphers, Scripts, Tools
+      {
+        categories: ['Calligraphers', 'Scripts', 'Tools'],
+        items: [
+          ['Arabic', 'Chinese', 'Gothic', 'Italic', 'Copperplate'],
+          ['Brush', 'Pen', 'Quill', 'Marker', 'Fountain'],
+          ['Ink', 'Paint', 'Dye', 'Pigment', 'Graphite']
+        ],
+        solution: {
+          'Arabic': {'Scripts': 'Brush', 'Tools': 'Ink'},
+          'Chinese': {'Scripts': 'Pen', 'Tools': 'Paint'},
+          'Gothic': {'Scripts': 'Quill', 'Tools': 'Dye'},
+          'Italic': {'Scripts': 'Marker', 'Tools': 'Pigment'},
+          'Copperplate': {'Scripts': 'Fountain', 'Tools': 'Graphite'}
+        },
+        clues: [
+          'Arabic uses Brush',
+          'The Pen uses Paint',
+          'Gothic uses Quill',
+          'Italic does not use Graphite',
+          'The Brush uses Ink',
+          'Chinese uses Pen',
+          'Copperplate uses Graphite',
+          'The Marker uses Pigment'
+        ]
+      },
+      
+      // Template 84: Bookbinders, Covers, Styles
+      {
+        categories: ['Bookbinders', 'Covers', 'Styles'],
+        items: [
+          ['Leather', 'Cloth', 'Paper', 'Vellum', 'Board'],
+          ['Journal', 'Novel', 'Album', 'Bible', 'Ledger'],
+          ['Classic', 'Modern', 'Vintage', 'Ornate', 'Simple']
+        ],
+        solution: {
+          'Leather': {'Covers': 'Journal', 'Styles': 'Classic'},
+          'Cloth': {'Covers': 'Novel', 'Styles': 'Modern'},
+          'Paper': {'Covers': 'Album', 'Styles': 'Simple'},
+          'Vellum': {'Covers': 'Bible', 'Styles': 'Ornate'},
+          'Board': {'Covers': 'Ledger', 'Styles': 'Vintage'}
+        },
+        clues: [
+          'Leather binds Journals',
+          'The Novel is Modern style',
+          'Paper is Simple style',
+          'Vellum is not Vintage',
+          'The Journal is Classic',
+          'Cloth binds Novels',
+          'Board is Vintage',
+          'The Bible is Ornate'
+        ]
+      },
+      
+      // Template 85: Framers, Art, Woods
+      {
+        categories: ['Framers', 'Art', 'Woods'],
+        items: [
+          ['Photo', 'Painting', 'Print', 'Mirror', 'Certificate'],
+          ['Oak', 'Walnut', 'Cherry', 'Pine', 'Mahogany'],
+          ['Natural', 'Stained', 'Painted', 'Gilded', 'Antique']
+        ],
+        solution: {
+          'Photo': {'Art': 'Oak', 'Woods': 'Natural'},
+          'Painting': {'Art': 'Walnut', 'Woods': 'Stained'},
+          'Print': {'Art': 'Cherry', 'Woods': 'Painted'},
+          'Mirror': {'Art': 'Pine', 'Woods': 'Gilded'},
+          'Certificate': {'Art': 'Mahogany', 'Woods': 'Antique'}
+        },
+        clues: [
+          'Photo uses Oak',
+          'The Walnut frame is Stained',
+          'Print is Painted finish',
+          'Mirror is not Antique',
+          'The Oak frame is Natural',
+          'Painting uses Walnut',
+          'Certificate is Antique',
+          'The Pine frame is Gilded'
+        ]
+      },
+      
+      // Template 86: Tanners, Hides, Processes
+      {
+        categories: ['Tanners', 'Hides', 'Processes'],
+        items: [
+          ['Cow', 'Sheep', 'Goat', 'Pig', 'Buffalo'],
+          ['Boot', 'Belt', 'Bag', 'Jacket', 'Glove'],
+          ['Chrome', 'Vegetable', 'Oil', 'Brain', 'Aldehyde']
+        ],
+        solution: {
+          'Cow': {'Hides': 'Boot', 'Processes': 'Chrome'},
+          'Sheep': {'Hides': 'Belt', 'Processes': 'Vegetable'},
+          'Goat': {'Hides': 'Bag', 'Processes': 'Oil'},
+          'Pig': {'Hides': 'Jacket', 'Processes': 'Brain'},
+          'Buffalo': {'Hides': 'Glove', 'Processes': 'Aldehyde'}
+        },
+        clues: [
+          'Cow hide makes Boots',
+          'The Belt uses Vegetable tanning',
+          'Goat makes Bags',
+          'Pig does not use Aldehyde',
+          'The Boot uses Chrome tanning',
+          'Sheep makes Belts',
+          'Buffalo uses Aldehyde',
+          'The Jacket uses Brain tanning'
+        ]
+      },
+      
+      // Template 87: Upholsterers, Furniture, Fabrics
+      {
+        categories: ['Upholsterers', 'Furniture', 'Fabrics'],
+        items: [
+          ['Sofa', 'Chair', 'Ottoman', 'Bench', 'Chaise'],
+          ['Velvet', 'Linen', 'Cotton', 'Silk', 'Wool'],
+          ['Living', 'Dining', 'Bedroom', 'Office', 'Entry']
+        ],
+        solution: {
+          'Sofa': {'Furniture': 'Velvet', 'Fabrics': 'Living'},
+          'Chair': {'Furniture': 'Linen', 'Fabrics': 'Dining'},
+          'Ottoman': {'Furniture': 'Cotton', 'Fabrics': 'Bedroom'},
+          'Bench': {'Furniture': 'Silk', 'Fabrics': 'Office'},
+          'Chaise': {'Furniture': 'Wool', 'Fabrics': 'Entry'}
+        },
+        clues: [
+          'Sofa uses Velvet',
+          'The Linen piece is for Dining',
+          'Ottoman is for Bedroom',
+          'Bench is not for Entry',
+          'The Velvet piece is for Living',
+          'Chair uses Linen',
+          'Chaise is for Entry',
+          'The Silk piece is for Office'
+        ]
+      },
+      
+      // Template 88: Saddlers, Tack, Styles
+      {
+        categories: ['Saddlers', 'Tack', 'Styles'],
+        items: [
+          ['English', 'Western', 'Australian', 'Endurance', 'Racing'],
+          ['Saddle', 'Bridle', 'Halter', 'Girth', 'Stirrup'],
+          ['Show', 'Trail', 'Work', 'Sport', 'Training']
+        ],
+        solution: {
+          'English': {'Tack': 'Saddle', 'Styles': 'Show'},
+          'Western': {'Tack': 'Bridle', 'Styles': 'Trail'},
+          'Australian': {'Tack': 'Halter', 'Styles': 'Work'},
+          'Endurance': {'Tack': 'Girth', 'Styles': 'Sport'},
+          'Racing': {'Tack': 'Stirrup', 'Styles': 'Training'}
+        },
+        clues: [
+          'English makes Saddles',
+          'The Bridle is for Trail',
+          'Australian is for Work',
+          'Endurance is not for Training',
+          'The Saddle is for Show',
+          'Western makes Bridles',
+          'Racing is for Training',
+          'The Girth is for Sport'
+        ]
+      },
+      
+      // Template 89: Taxidermists, Animals, Poses
+      {
+        categories: ['Taxidermists', 'Animals', 'Poses'],
+        items: [
+          ['Bear', 'Deer', 'Fish', 'Bird', 'Fox'],
+          ['Standing', 'Running', 'Flying', 'Swimming', 'Sitting'],
+          ['Habitat', 'Action', 'Display', 'Trophy', 'Study']
+        ],
+        solution: {
+          'Bear': {'Animals': 'Standing', 'Poses': 'Habitat'},
+          'Deer': {'Animals': 'Running', 'Poses': 'Action'},
+          'Fish': {'Animals': 'Swimming', 'Poses': 'Trophy'},
+          'Bird': {'Animals': 'Flying', 'Poses': 'Display'},
+          'Fox': {'Animals': 'Sitting', 'Poses': 'Study'}
+        },
+        clues: [
+          'Bear is Standing',
+          'The Running pose is Action',
+          'Fish is for Trophy',
+          'Bird is not for Study',
+          'The Standing pose is Habitat',
+          'Deer is Running',
+          'Fox is for Study',
+          'The Flying pose is Display'
+        ]
+      },
+      
+      // Template 90: Locksmiths, Locks, Security
+      {
+        categories: ['Locksmiths', 'Locks', 'Security'],
+        items: [
+          ['Padlock', 'Deadbolt', 'Cylinder', 'Mortise', 'Combination'],
+          ['Door', 'Gate', 'Safe', 'Cabinet', 'Bike'],
+          ['Home', 'Commercial', 'Vehicle', 'Storage', 'Personal']
+        ],
+        solution: {
+          'Padlock': {'Locks': 'Gate', 'Security': 'Storage'},
+          'Deadbolt': {'Locks': 'Door', 'Security': 'Home'},
+          'Cylinder': {'Locks': 'Cabinet', 'Security': 'Commercial'},
+          'Mortise': {'Locks': 'Safe', 'Security': 'Vehicle'},
+          'Combination': {'Locks': 'Bike', 'Security': 'Personal'}
+        },
+        clues: [
+          'Padlock secures Gates',
+          'The Door lock is for Home',
+          'Cylinder is Commercial',
+          'Mortise is not Personal',
+          'The Gate lock is Storage',
+          'Deadbolt secures Doors',
+          'Combination is Personal',
+          'The Safe lock is Vehicle'
+        ]
+      },
+      
+      // Template 91: Coopers, Barrels, Contents
+      {
+        categories: ['Coopers', 'Barrels', 'Contents'],
+        items: [
+          ['Wine', 'Whiskey', 'Beer', 'Rum', 'Vinegar'],
+          ['Oak', 'Chestnut', 'Acacia', 'Cherry', 'Ash'],
+          ['French', 'American', 'Hungarian', 'Slavonian', 'Japanese']
+        ],
+        solution: {
+          'Wine': {'Barrels': 'Oak', 'Contents': 'French'},
+          'Whiskey': {'Barrels': 'Chestnut', 'Contents': 'American'},
+          'Beer': {'Barrels': 'Acacia', 'Contents': 'Hungarian'},
+          'Rum': {'Barrels': 'Cherry', 'Contents': 'Slavonian'},
+          'Vinegar': {'Barrels': 'Ash', 'Contents': 'Japanese'}
+        },
+        clues: [
+          'Wine uses Oak barrels',
+          'The Chestnut barrel is American',
+          'Beer uses Hungarian oak',
+          'Rum is not Japanese',
+          'The Oak barrel is French',
+          'Whiskey uses Chestnut',
+          'Vinegar is Japanese',
+          'The Cherry barrel is Slavonian'
+        ]
+      },
+      
+      // Template 92: Tinkers, Repairs, Tools
+      {
+        categories: ['Tinkers', 'Repairs', 'Tools'],
+        items: [
+          ['Pot', 'Pan', 'Kettle', 'Bucket', 'Lamp'],
+          ['Solder', 'Rivet', 'Patch', 'Polish', 'Reshape'],
+          ['Hammer', 'Iron', 'Torch', 'File', 'Pliers']
+        ],
+        solution: {
+          'Pot': {'Repairs': 'Solder', 'Tools': 'Iron'},
+          'Pan': {'Repairs': 'Rivet', 'Tools': 'Hammer'},
+          'Kettle': {'Repairs': 'Patch', 'Tools': 'Torch'},
+          'Bucket': {'Repairs': 'Polish', 'Tools': 'File'},
+          'Lamp': {'Repairs': 'Reshape', 'Tools': 'Pliers'}
+        },
+        clues: [
+          'Pot needs Solder',
+          'The Rivet repair uses Hammer',
+          'Kettle uses Torch',
+          'Bucket does not use Pliers',
+          'The Solder repair uses Iron',
+          'Pan needs Rivet',
+          'Lamp uses Pliers',
+          'The Polish uses File'
+        ]
+      },
+      
+      // Template 93: Chandlers, Candles, Scents
+      {
+        categories: ['Chandlers', 'Candles', 'Scents'],
+        items: [
+          ['Taper', 'Pillar', 'Votive', 'Tea Light', 'Jar'],
+          ['Lavender', 'Vanilla', 'Citrus', 'Pine', 'Rose'],
+          ['Relax', 'Comfort', 'Energy', 'Fresh', 'Romance']
+        ],
+        solution: {
+          'Taper': {'Candles': 'Lavender', 'Scents': 'Relax'},
+          'Pillar': {'Candles': 'Vanilla', 'Scents': 'Comfort'},
+          'Votive': {'Candles': 'Citrus', 'Scents': 'Energy'},
+          'Tea Light': {'Candles': 'Pine', 'Scents': 'Fresh'},
+          'Jar': {'Candles': 'Rose', 'Scents': 'Romance'}
+        },
+        clues: [
+          'Taper uses Lavender',
+          'The Vanilla candle is for Comfort',
+          'Votive is for Energy',
+          'Tea Light is not Romance',
+          'The Lavender candle is for Relax',
+          'Pillar uses Vanilla',
+          'Jar is for Romance',
+          'The Pine candle is Fresh'
+        ]
+      },
+      
+      // Template 94: Wheelwrights, Wheels, Vehicles
+      {
+        categories: ['Wheelwrights', 'Wheels', 'Vehicles'],
+        items: [
+          ['Spoke', 'Solid', 'Wire', 'Alloy', 'Wooden'],
+          ['Cart', 'Wagon', 'Carriage', 'Bike', 'Car'],
+          ['Farm', 'Transport', 'Passenger', 'Sport', 'Modern']
+        ],
+        solution: {
+          'Spoke': {'Wheels': 'Cart', 'Vehicles': 'Farm'},
+          'Solid': {'Wheels': 'Wagon', 'Vehicles': 'Transport'},
+          'Wire': {'Wheels': 'Carriage', 'Vehicles': 'Passenger'},
+          'Alloy': {'Wheels': 'Bike', 'Vehicles': 'Sport'},
+          'Wooden': {'Wheels': 'Car', 'Vehicles': 'Modern'}
+        },
+        clues: [
+          'Spoke makes Cart wheels',
+          'The Wagon is for Transport',
+          'Wire is for Passenger use',
+          'Alloy is not Modern',
+          'The Cart is for Farm',
+          'Solid makes Wagons',
+          'Wooden is Modern',
+          'The Bike is Sport'
+        ]
+      },
+      
+      // Template 95: Plasterers, Walls, Finishes
+      {
+        categories: ['Plasterers', 'Walls', 'Finishes'],
+        items: [
+          ['Smooth', 'Rough', 'Textured', 'Polished', 'Decorative'],
+          ['Interior', 'Exterior', 'Ceiling', 'Column', 'Arch'],
+          ['White', 'Colored', 'Natural', 'Painted', 'Stained']
+        ],
+        solution: {
+          'Smooth': {'Walls': 'Interior', 'Finishes': 'White'},
+          'Rough': {'Walls': 'Exterior', 'Finishes': 'Natural'},
+          'Textured': {'Walls': 'Ceiling', 'Finishes': 'Painted'},
+          'Polished': {'Walls': 'Column', 'Finishes': 'Colored'},
+          'Decorative': {'Walls': 'Arch', 'Finishes': 'Stained'}
+        },
+        clues: [
+          'Smooth is for Interior',
+          'The Exterior is Natural finish',
+          'Textured is Painted',
+          'Polished is not Stained',
+          'The Interior is White',
+          'Rough is for Exterior',
+          'Decorative is Stained',
+          'The Column is Colored'
+        ]
+      },
+      
+      // Template 96: Masons, Stones, Structures
+      {
+        categories: ['Masons', 'Stones', 'Structures'],
+        items: [
+          ['Granite', 'Marble', 'Limestone', 'Sandstone', 'Slate'],
+          ['Wall', 'Floor', 'Fireplace', 'Counter', 'Steps'],
+          ['Building', 'Monument', 'Home', 'Kitchen', 'Garden']
+        ],
+        solution: {
+          'Granite': {'Stones': 'Counter', 'Structures': 'Kitchen'},
+          'Marble': {'Stones': 'Floor', 'Structures': 'Building'},
+          'Limestone': {'Stones': 'Wall', 'Structures': 'Monument'},
+          'Sandstone': {'Stones': 'Fireplace', 'Structures': 'Home'},
+          'Slate': {'Stones': 'Steps', 'Structures': 'Garden'}
+        },
+        clues: [
+          'Granite makes Counters',
+          'The Floor is in Buildings',
+          'Limestone is for Monuments',
+          'Sandstone is not for Garden',
+          'The Counter is in Kitchen',
+          'Marble makes Floors',
+          'Slate is for Garden',
+          'The Fireplace is in Homes'
+        ]
+      },
+      
+      // Template 97: Thatcher, Roofs, Materials
+      {
+        categories: ['Thatchers', 'Roofs', 'Materials'],
+        items: [
+          ['Reed', 'Straw', 'Heather', 'Palm', 'Grass'],
+          ['House', 'Cottage', 'Barn', 'Gazebo', 'Hut'],
+          ['Village', 'Countryside', 'Tropical', 'Farm', 'Garden']
+        ],
+        solution: {
+          'Reed': {'Roofs': 'House', 'Materials': 'Village'},
+          'Straw': {'Roofs': 'Cottage', 'Materials': 'Countryside'},
+          'Heather': {'Roofs': 'Barn', 'Materials': 'Farm'},
+          'Palm': {'Roofs': 'Gazebo', 'Materials': 'Tropical'},
+          'Grass': {'Roofs': 'Hut', 'Materials': 'Garden'}
+        },
+        clues: [
+          'Reed thatches Houses',
+          'The Cottage is in Countryside',
+          'Heather is for Farms',
+          'Palm is not for Garden',
+          'The House is in Village',
+          'Straw thatches Cottages',
+          'Grass is for Garden',
+          'The Gazebo is Tropical'
+        ]
+      },
+      
+      // Template 98: Farriers, Horses, Shoes
+      {
+        categories: ['Farriers', 'Horses', 'Shoes'],
+        items: [
+          ['Draft', 'Racing', 'Show', 'Trail', 'Polo'],
+          ['Steel', 'Aluminum', 'Plastic', 'Rubber', 'Titanium'],
+          ['Work', 'Speed', 'Display', 'Endurance', 'Sport']
+        ],
+        solution: {
+          'Draft': {'Horses': 'Steel', 'Shoes': 'Work'},
+          'Racing': {'Horses': 'Aluminum', 'Shoes': 'Speed'},
+          'Show': {'Horses': 'Plastic', 'Shoes': 'Display'},
+          'Trail': {'Horses': 'Rubber', 'Shoes': 'Endurance'},
+          'Polo': {'Horses': 'Titanium', 'Shoes': 'Sport'}
+        },
+        clues: [
+          'Draft uses Steel shoes',
+          'The Aluminum shoes are for Speed',
+          'Show is for Display',
+          'Trail is not Sport',
+          'The Steel shoes are for Work',
+          'Racing uses Aluminum',
+          'Polo is for Sport',
+          'The Rubber shoes are for Endurance'
+        ]
+      },
+      
+      // Template 99: Ropemakers, Fibers, Uses
+      {
+        categories: ['Ropemakers', 'Fibers', 'Uses'],
+        items: [
+          ['Hemp', 'Manila', 'Sisal', 'Nylon', 'Polyester'],
+          ['Marine', 'Industrial', 'Climbing', 'Decorative', 'Utility'],
+          ['Ship', 'Factory', 'Mountain', 'Home', 'Farm']
+        ],
+        solution: {
+          'Hemp': {'Fibers': 'Marine', 'Uses': 'Ship'},
+          'Manila': {'Fibers': 'Industrial', 'Uses': 'Factory'},
+          'Sisal': {'Fibers': 'Climbing', 'Uses': 'Mountain'},
+          'Nylon': {'Fibers': 'Decorative', 'Uses': 'Home'},
+          'Polyester': {'Fibers': 'Utility', 'Uses': 'Farm'}
+        },
+        clues: [
+          'Hemp makes Marine rope',
+          'The Industrial rope is for Factory',
+          'Sisal is for Mountain',
+          'Nylon is not for Farm',
+          'The Marine rope is for Ship',
+          'Manila makes Industrial',
+          'Polyester is for Farm',
+          'The Decorative rope is for Home'
+        ]
+      },
+      
+      // Template 100: Basketweavers, Reeds, Purposes
+      {
+        categories: ['Weavers', 'Reeds', 'Purposes'],
+        items: [
+          ['Willow', 'Rattan', 'Bamboo', 'Rush', 'Cane'],
+          ['Basket', 'Furniture', 'Screen', 'Mat', 'Tray'],
+          ['Storage', 'Seating', 'Privacy', 'Floor', 'Serving']
+        ],
+        solution: {
+          'Willow': {'Reeds': 'Basket', 'Purposes': 'Storage'},
+          'Rattan': {'Reeds': 'Furniture', 'Purposes': 'Seating'},
+          'Bamboo': {'Reeds': 'Screen', 'Purposes': 'Privacy'},
+          'Rush': {'Reeds': 'Mat', 'Purposes': 'Floor'},
+          'Cane': {'Reeds': 'Tray', 'Purposes': 'Serving'}
+        },
+        clues: [
+          'Willow weaves Baskets',
+          'The Furniture is for Seating',
+          'Bamboo is for Privacy',
+          'Rush is not for Serving',
+          'The Basket is for Storage',
+          'Rattan weaves Furniture',
+          'Cane is for Serving',
+          'The Mat is for Floor'
+        ]
       }
     ];
 
