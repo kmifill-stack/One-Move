@@ -3696,6 +3696,7 @@ const OneMove = () => {
     
     // Predefined logic grid templates for consistent daily challenges
     const templates = [
+      // Template 1: Names, Jobs, Cities
       {
         categories: ['Names', 'Jobs', 'Cities'],
         items: [
@@ -3721,6 +3722,8 @@ const OneMove = () => {
           'The Doctor lives in NYC'
         ]
       },
+      
+      // Template 2: People, Pets, Colors
       {
         categories: ['People', 'Pets', 'Colors'],
         items: [
@@ -3746,6 +3749,8 @@ const OneMove = () => {
           'The Fish owner likes Purple'
         ]
       },
+      
+      // Template 3: Kids, Sports, Seasons
       {
         categories: ['Kids', 'Sports', 'Seasons'],
         items: [
@@ -3769,6 +3774,1275 @@ const OneMove = () => {
           'Lily plays Tennis',
           'The Basketball player is Nina',
           'Owen plays in Spring'
+        ]
+      },
+      
+      // Template 4: Friends, Drinks, Countries
+      {
+        categories: ['Friends', 'Drinks', 'Countries'],
+        items: [
+          ['Sam', 'Riley', 'Jordan', 'Casey', 'Morgan'],
+          ['Coffee', 'Tea', 'Juice', 'Soda', 'Water'],
+          ['France', 'Japan', 'Brazil', 'Canada', 'Spain']
+        ],
+        solution: {
+          'Sam': {'Drinks': 'Coffee', 'Countries': 'France'},
+          'Riley': {'Drinks': 'Tea', 'Countries': 'Japan'},
+          'Jordan': {'Drinks': 'Juice', 'Countries': 'Brazil'},
+          'Casey': {'Drinks': 'Soda', 'Countries': 'Canada'},
+          'Morgan': {'Drinks': 'Water', 'Countries': 'Spain'}
+        },
+        clues: [
+          'Sam drinks Coffee',
+          'The Tea drinker is from Japan',
+          'Jordan is from Brazil',
+          'Casey is not from Spain',
+          'The person from France drinks Coffee',
+          'Morgan drinks Water',
+          'Riley drinks Tea',
+          'The Soda drinker is from Canada'
+        ]
+      },
+      
+      // Template 5: Students, Subjects, Grades
+      {
+        categories: ['Students', 'Subjects', 'Grades'],
+        items: [
+          ['Alex', 'Blake', 'Chris', 'Drew', 'Ellis'],
+          ['Math', 'Science', 'History', 'English', 'Art'],
+          ['A', 'B+', 'A-', 'B', 'A+']
+        ],
+        solution: {
+          'Alex': {'Subjects': 'Math', 'Grades': 'A+'},
+          'Blake': {'Subjects': 'Science', 'Grades': 'A'},
+          'Chris': {'Subjects': 'History', 'Grades': 'B+'},
+          'Drew': {'Subjects': 'English', 'Grades': 'A-'},
+          'Ellis': {'Subjects': 'Art', 'Grades': 'B'}
+        },
+        clues: [
+          'Alex studies Math',
+          'The Science student got an A',
+          'Chris got a B+',
+          'Drew does not study History',
+          'The Math student got A+',
+          'Blake studies Science',
+          'Ellis got a B',
+          'The English student got A-'
+        ]
+      },
+      
+      // Template 6: Musicians, Instruments, Genres
+      {
+        categories: ['Musicians', 'Instruments', 'Genres'],
+        items: [
+          ['Maya', 'Liam', 'Zoe', 'Noah', 'Aria'],
+          ['Piano', 'Guitar', 'Drums', 'Violin', 'Bass'],
+          ['Jazz', 'Rock', 'Classical', 'Pop', 'Blues']
+        ],
+        solution: {
+          'Maya': {'Instruments': 'Piano', 'Genres': 'Jazz'},
+          'Liam': {'Instruments': 'Guitar', 'Genres': 'Rock'},
+          'Zoe': {'Instruments': 'Drums', 'Genres': 'Pop'},
+          'Noah': {'Instruments': 'Violin', 'Genres': 'Classical'},
+          'Aria': {'Instruments': 'Bass', 'Genres': 'Blues'}
+        },
+        clues: [
+          'Maya plays Piano',
+          'The Guitar player plays Rock',
+          'Zoe plays Drums',
+          'Noah does not play Jazz',
+          'The Violin player plays Classical',
+          'Liam plays Guitar',
+          'Aria plays Blues',
+          'The Pop musician plays Drums'
+        ]
+      },
+      
+      // Template 7: Chefs, Cuisines, Cities
+      {
+        categories: ['Chefs', 'Cuisines', 'Cities'],
+        items: [
+          ['Marco', 'Sofia', 'Henri', 'Yuki', 'Diego'],
+          ['Italian', 'French', 'Japanese', 'Mexican', 'Thai'],
+          ['Rome', 'Paris', 'Tokyo', 'Bangkok', 'Mexico City']
+        ],
+        solution: {
+          'Marco': {'Cuisines': 'Italian', 'Cities': 'Rome'},
+          'Sofia': {'Cuisines': 'Thai', 'Cities': 'Bangkok'},
+          'Henri': {'Cuisines': 'French', 'Cities': 'Paris'},
+          'Yuki': {'Cuisines': 'Japanese', 'Cities': 'Tokyo'},
+          'Diego': {'Cuisines': 'Mexican', 'Cities': 'Mexico City'}
+        },
+        clues: [
+          'Marco cooks Italian',
+          'The chef in Paris cooks French',
+          'Yuki is in Tokyo',
+          'Sofia does not cook Mexican',
+          'The Italian chef is in Rome',
+          'Henri cooks French',
+          'Diego is in Mexico City',
+          'The Thai chef is in Bangkok'
+        ]
+      },
+      
+      // Template 8: Athletes, Sports, Teams
+      {
+        categories: ['Athletes', 'Sports', 'Teams'],
+        items: [
+          ['Tyler', 'Megan', 'Kyle', 'Sarah', 'Jason'],
+          ['Basketball', 'Soccer', 'Tennis', 'Baseball', 'Hockey'],
+          ['Lakers', 'Galaxy', 'Aces', 'Dodgers', 'Kings']
+        ],
+        solution: {
+          'Tyler': {'Sports': 'Basketball', 'Teams': 'Lakers'},
+          'Megan': {'Sports': 'Soccer', 'Teams': 'Galaxy'},
+          'Kyle': {'Sports': 'Tennis', 'Teams': 'Aces'},
+          'Sarah': {'Sports': 'Baseball', 'Teams': 'Dodgers'},
+          'Jason': {'Sports': 'Hockey', 'Teams': 'Kings'}
+        },
+        clues: [
+          'Tyler plays Basketball',
+          'The Soccer player is on Galaxy',
+          'Kyle is on the Aces',
+          'Sarah does not play Hockey',
+          'The Basketball player is on Lakers',
+          'Megan plays Soccer',
+          'Jason is on Kings',
+          'The Baseball player is on Dodgers'
+        ]
+      },
+      
+      // Template 9: Travelers, Transport, Destinations
+      {
+        categories: ['Travelers', 'Transport', 'Destinations'],
+        items: [
+          ['Emma', 'Oliver', 'Ava', 'Ethan', 'Mia'],
+          ['Plane', 'Train', 'Car', 'Boat', 'Bus'],
+          ['Beach', 'Mountains', 'City', 'Desert', 'Forest']
+        ],
+        solution: {
+          'Emma': {'Transport': 'Plane', 'Destinations': 'Beach'},
+          'Oliver': {'Transport': 'Train', 'Destinations': 'City'},
+          'Ava': {'Transport': 'Car', 'Destinations': 'Mountains'},
+          'Ethan': {'Transport': 'Boat', 'Destinations': 'Forest'},
+          'Mia': {'Transport': 'Bus', 'Destinations': 'Desert'}
+        },
+        clues: [
+          'Emma takes a Plane',
+          'The Train passenger goes to the City',
+          'Ava is going to the Mountains',
+          'Ethan does not take a Bus',
+          'The Plane passenger goes to the Beach',
+          'Oliver takes the Train',
+          'Mia takes a Bus',
+          'The Boat passenger goes to the Forest'
+        ]
+      },
+      
+      // Template 10: Gardeners, Plants, Seasons
+      {
+        categories: ['Gardeners', 'Plants', 'Seasons'],
+        items: [
+          ['Rose', 'Ivy', 'Lily', 'Daisy', 'Violet'],
+          ['Tomatoes', 'Roses', 'Herbs', 'Carrots', 'Tulips'],
+          ['Spring', 'Summer', 'Fall', 'Winter', 'Year-round']
+        ],
+        solution: {
+          'Rose': {'Plants': 'Roses', 'Seasons': 'Summer'},
+          'Ivy': {'Plants': 'Herbs', 'Seasons': 'Year-round'},
+          'Lily': {'Plants': 'Tulips', 'Seasons': 'Spring'},
+          'Daisy': {'Plants': 'Tomatoes', 'Seasons': 'Summer'},
+          'Violet': {'Plants': 'Carrots', 'Seasons': 'Fall'}
+        },
+        clues: [
+          'Rose grows Roses',
+          'The Herb gardener grows year-round',
+          'Lily plants in Spring',
+          'Daisy does not plant Tulips',
+          'The Rose gardener plants in Summer',
+          'Ivy grows Herbs',
+          'Violet plants in Fall',
+          'The Tulip gardener plants in Spring'
+        ]
+      },
+      
+      // Template 11: Readers, Genres, Authors
+      {
+        categories: ['Readers', 'Genres', 'Authors'],
+        items: [
+          ['Luna', 'Felix', 'Iris', 'Oscar', 'Ruby'],
+          ['Mystery', 'Romance', 'Sci-Fi', 'Fantasy', 'Thriller'],
+          ['Christie', 'Austen', 'Asimov', 'Tolkien', 'King']
+        ],
+        solution: {
+          'Luna': {'Genres': 'Mystery', 'Authors': 'Christie'},
+          'Felix': {'Genres': 'Romance', 'Authors': 'Austen'},
+          'Iris': {'Genres': 'Sci-Fi', 'Authors': 'Asimov'},
+          'Oscar': {'Genres': 'Fantasy', 'Authors': 'Tolkien'},
+          'Ruby': {'Genres': 'Thriller', 'Authors': 'King'}
+        },
+        clues: [
+          'Luna reads Mystery',
+          'The Romance reader loves Austen',
+          'Iris reads Asimov',
+          'Oscar does not read Sci-Fi',
+          'The Mystery reader loves Christie',
+          'Felix reads Romance',
+          'Ruby loves King',
+          'The Fantasy reader loves Tolkien'
+        ]
+      },
+      
+      // Template 12: Coders, Languages, Projects
+      {
+        categories: ['Coders', 'Languages', 'Projects'],
+        items: [
+          ['Zara', 'Finn', 'Nova', 'Kai', 'Sage'],
+          ['Python', 'JavaScript', 'Java', 'Ruby', 'Go'],
+          ['AI', 'Web', 'Mobile', 'Games', 'Data']
+        ],
+        solution: {
+          'Zara': {'Languages': 'Python', 'Projects': 'AI'},
+          'Finn': {'Languages': 'JavaScript', 'Projects': 'Web'},
+          'Nova': {'Languages': 'Java', 'Projects': 'Mobile'},
+          'Kai': {'Languages': 'Ruby', 'Projects': 'Data'},
+          'Sage': {'Languages': 'Go', 'Projects': 'Games'}
+        },
+        clues: [
+          'Zara codes in Python',
+          'The JavaScript coder builds Web apps',
+          'Nova builds Mobile apps',
+          'Kai does not use Go',
+          'The Python coder works on AI',
+          'Finn uses JavaScript',
+          'Sage works on Games',
+          'The Ruby coder works on Data'
+        ]
+      },
+      
+      // Template 13: Bakers, Desserts, Occasions
+      {
+        categories: ['Bakers', 'Desserts', 'Occasions'],
+        items: [
+          ['Grace', 'Leo', 'Hazel', 'Miles', 'Luna'],
+          ['Cake', 'Cookies', 'Pie', 'Cupcakes', 'Brownies'],
+          ['Birthday', 'Wedding', 'Holiday', 'Party', 'Picnic']
+        ],
+        solution: {
+          'Grace': {'Desserts': 'Cake', 'Occasions': 'Birthday'},
+          'Leo': {'Desserts': 'Cookies', 'Occasions': 'Holiday'},
+          'Hazel': {'Desserts': 'Pie', 'Occasions': 'Picnic'},
+          'Miles': {'Desserts': 'Cupcakes', 'Occasions': 'Party'},
+          'Luna': {'Desserts': 'Brownies', 'Occasions': 'Wedding'}
+        },
+        clues: [
+          'Grace bakes Cake',
+          'The Cookie baker works on Holidays',
+          'Hazel bakes for Picnics',
+          'Miles does not bake Brownies',
+          'The Cake baker works on Birthdays',
+          'Leo bakes Cookies',
+          'Luna bakes for Weddings',
+          'The Cupcake baker works on Parties'
+        ]
+      },
+      
+      // Template 14: Painters, Styles, Subjects
+      {
+        categories: ['Painters', 'Styles', 'Subjects'],
+        items: [
+          ['Stella', 'River', 'Jade', 'Phoenix', 'Sky'],
+          ['Abstract', 'Realism', 'Impressionism', 'Modern', 'Cubism'],
+          ['Portraits', 'Landscapes', 'Still Life', 'Animals', 'Cities']
+        ],
+        solution: {
+          'Stella': {'Styles': 'Abstract', 'Subjects': 'Cities'},
+          'River': {'Styles': 'Realism', 'Subjects': 'Portraits'},
+          'Jade': {'Styles': 'Impressionism', 'Subjects': 'Landscapes'},
+          'Phoenix': {'Styles': 'Modern', 'Subjects': 'Animals'},
+          'Sky': {'Styles': 'Cubism', 'Subjects': 'Still Life'}
+        },
+        clues: [
+          'Stella paints Abstract',
+          'The Realism painter does Portraits',
+          'Jade paints Landscapes',
+          'Phoenix does not paint Cities',
+          'The Abstract painter paints Cities',
+          'River paints Realism',
+          'Sky paints Still Life',
+          'The Modern painter paints Animals'
+        ]
+      },
+      
+      // Template 15: Hikers, Trails, Gear
+      {
+        categories: ['Hikers', 'Trails', 'Gear'],
+        items: [
+          ['Ash', 'Rowan', 'Cedar', 'Birch', 'Maple'],
+          ['Mountain', 'Forest', 'Desert', 'Coastal', 'Canyon'],
+          ['Boots', 'Poles', 'Pack', 'Hat', 'Bottle']
+        ],
+        solution: {
+          'Ash': {'Trails': 'Mountain', 'Gear': 'Poles'},
+          'Rowan': {'Trails': 'Forest', 'Gear': 'Boots'},
+          'Cedar': {'Trails': 'Desert', 'Gear': 'Hat'},
+          'Birch': {'Trails': 'Coastal', 'Gear': 'Bottle'},
+          'Maple': {'Trails': 'Canyon', 'Gear': 'Pack'}
+        },
+        clues: [
+          'Ash hikes Mountains',
+          'The Forest hiker uses Boots',
+          'Cedar hikes the Desert',
+          'Birch does not hike Canyons',
+          'The Mountain hiker uses Poles',
+          'Rowan hikes Forests',
+          'Maple uses a Pack',
+          'The Coastal hiker uses a Bottle'
+        ]
+      },
+      
+      // Template 16: Dancers, Styles, Venues
+      {
+        categories: ['Dancers', 'Styles', 'Venues'],
+        items: [
+          ['Aria', 'Cole', 'Eden', 'Finn', 'Ivy'],
+          ['Ballet', 'Hip-Hop', 'Salsa', 'Jazz', 'Tap'],
+          ['Theater', 'Club', 'Studio', 'Street', 'Hall']
+        ],
+        solution: {
+          'Aria': {'Styles': 'Ballet', 'Venues': 'Theater'},
+          'Cole': {'Styles': 'Hip-Hop', 'Venues': 'Street'},
+          'Eden': {'Styles': 'Salsa', 'Venues': 'Club'},
+          'Finn': {'Styles': 'Jazz', 'Venues': 'Studio'},
+          'Ivy': {'Styles': 'Tap', 'Venues': 'Hall'}
+        },
+        clues: [
+          'Aria dances Ballet',
+          'The Hip-Hop dancer performs on Streets',
+          'Eden dances at Clubs',
+          'Finn does not dance Tap',
+          'The Ballet dancer performs in Theaters',
+          'Cole dances Hip-Hop',
+          'Ivy performs in Halls',
+          'The Jazz dancer performs in Studios'
+        ]
+      },
+      
+      // Template 17: Photographers, Cameras, Subjects
+      {
+        categories: ['Photographers', 'Cameras', 'Subjects'],
+        items: [
+          ['Quinn', 'Blake', 'Drew', 'Sage', 'Alex'],
+          ['Canon', 'Nikon', 'Sony', 'Fuji', 'Leica'],
+          ['Wildlife', 'Fashion', 'Sports', 'Nature', 'Events']
+        ],
+        solution: {
+          'Quinn': {'Cameras': 'Canon', 'Subjects': 'Wildlife'},
+          'Blake': {'Cameras': 'Nikon', 'Subjects': 'Fashion'},
+          'Drew': {'Cameras': 'Sony', 'Subjects': 'Sports'},
+          'Sage': {'Cameras': 'Fuji', 'Subjects': 'Nature'},
+          'Alex': {'Cameras': 'Leica', 'Subjects': 'Events'}
+        },
+        clues: [
+          'Quinn uses Canon',
+          'The Nikon user shoots Fashion',
+          'Drew shoots Sports',
+          'Sage does not use Sony',
+          'The Canon user shoots Wildlife',
+          'Blake uses Nikon',
+          'Alex shoots Events',
+          'The Fuji user shoots Nature'
+        ]
+      },
+      
+      // Template 18: Scientists, Fields, Discoveries
+      {
+        categories: ['Scientists', 'Fields', 'Discoveries'],
+        items: [
+          ['Marie', 'Isaac', 'Ada', 'Carl', 'Jane'],
+          ['Physics', 'Chemistry', 'Math', 'Biology', 'Astronomy'],
+          ['Gravity', 'Radium', 'Algorithm', 'Evolution', 'Cosmos']
+        ],
+        solution: {
+          'Marie': {'Fields': 'Chemistry', 'Discoveries': 'Radium'},
+          'Isaac': {'Fields': 'Physics', 'Discoveries': 'Gravity'},
+          'Ada': {'Fields': 'Math', 'Discoveries': 'Algorithm'},
+          'Carl': {'Fields': 'Astronomy', 'Discoveries': 'Cosmos'},
+          'Jane': {'Fields': 'Biology', 'Discoveries': 'Evolution'}
+        },
+        clues: [
+          'Marie studies Chemistry',
+          'The Physics scientist discovered Gravity',
+          'Ada studies Math',
+          'Carl does not study Biology',
+          'The Chemistry scientist discovered Radium',
+          'Isaac studies Physics',
+          'Jane discovered Evolution',
+          'The Astronomy scientist studied Cosmos'
+        ]
+      },
+      
+      // Template 19: Drivers, Cars, Routes
+      {
+        categories: ['Drivers', 'Cars', 'Routes'],
+        items: [
+          ['Max', 'Ruby', 'Jack', 'Lily', 'Sam'],
+          ['Sedan', 'SUV', 'Truck', 'Coupe', 'Van'],
+          ['Highway', 'City', 'Country', 'Coast', 'Mountain']
+        ],
+        solution: {
+          'Max': {'Cars': 'Sedan', 'Routes': 'Highway'},
+          'Ruby': {'Cars': 'SUV', 'Routes': 'Mountain'},
+          'Jack': {'Cars': 'Truck', 'Routes': 'Country'},
+          'Lily': {'Cars': 'Coupe', 'Routes': 'Coast'},
+          'Sam': {'Cars': 'Van', 'Routes': 'City'}
+        },
+        clues: [
+          'Max drives a Sedan',
+          'The SUV driver takes Mountain routes',
+          'Jack drives in the Country',
+          'Lily does not drive a Van',
+          'The Sedan driver takes Highways',
+          'Ruby drives an SUV',
+          'Sam drives in the City',
+          'The Coupe driver takes Coast routes'
+        ]
+      },
+      
+      // Template 20: Writers, Genres, Settings
+      {
+        categories: ['Writers', 'Genres', 'Settings'],
+        items: [
+          ['Harper', 'Asher', 'Wren', 'Parker', 'Quinn'],
+          ['Mystery', 'Romance', 'Fantasy', 'Horror', 'Drama'],
+          ['Castle', 'City', 'Island', 'Space', 'Village']
+        ],
+        solution: {
+          'Harper': {'Genres': 'Mystery', 'Settings': 'Castle'},
+          'Asher': {'Genres': 'Romance', 'Settings': 'City'},
+          'Wren': {'Genres': 'Fantasy', 'Settings': 'Island'},
+          'Parker': {'Genres': 'Horror', 'Settings': 'Village'},
+          'Quinn': {'Genres': 'Drama', 'Settings': 'Space'}
+        },
+        clues: [
+          'Harper writes Mystery',
+          'The Romance writer sets stories in Cities',
+          'Wren writes about Islands',
+          'Parker does not write Drama',
+          'The Mystery writer uses Castles',
+          'Asher writes Romance',
+          'Quinn sets stories in Space',
+          'The Horror writer uses Villages'
+        ]
+      },
+      
+      // Template 21: Actors, Roles, Movies
+      {
+        categories: ['Actors', 'Roles', 'Movies'],
+        items: [
+          ['Chris', 'Emma', 'Tom', 'Scarlett', 'Ryan'],
+          ['Hero', 'Villain', 'Detective', 'Spy', 'Doctor'],
+          ['Action', 'Drama', 'Thriller', 'Comedy', 'Sci-Fi']
+        ],
+        solution: {
+          'Chris': {'Roles': 'Hero', 'Movies': 'Action'},
+          'Emma': {'Roles': 'Detective', 'Movies': 'Thriller'},
+          'Tom': {'Roles': 'Spy', 'Movies': 'Sci-Fi'},
+          'Scarlett': {'Roles': 'Villain', 'Movies': 'Drama'},
+          'Ryan': {'Roles': 'Doctor', 'Movies': 'Comedy'}
+        },
+        clues: [
+          'Chris plays a Hero',
+          'The Detective is in a Thriller',
+          'Tom is in Sci-Fi',
+          'Scarlett does not play the Hero',
+          'The Hero is in Action',
+          'Emma plays a Detective',
+          'Ryan is in Comedy',
+          'The Villain is in Drama'
+        ]
+      },
+      
+      // Template 22: Shoppers, Items, Stores
+      {
+        categories: ['Shoppers', 'Items', 'Stores'],
+        items: [
+          ['Maya', 'Luca', 'Nina', 'Owen', 'Vera'],
+          ['Books', 'Clothes', 'Tech', 'Food', 'Toys'],
+          ['Mall', 'Market', 'Online', 'Boutique', 'Store']
+        ],
+        solution: {
+          'Maya': {'Items': 'Books', 'Stores': 'Store'},
+          'Luca': {'Items': 'Clothes', 'Stores': 'Boutique'},
+          'Nina': {'Items': 'Tech', 'Stores': 'Online'},
+          'Owen': {'Items': 'Food', 'Stores': 'Market'},
+          'Vera': {'Items': 'Toys', 'Stores': 'Mall'}
+        },
+        clues: [
+          'Maya buys Books',
+          'The Clothes shopper goes to Boutiques',
+          'Nina shops Online',
+          'Owen does not buy Toys',
+          'The Book buyer shops at Stores',
+          'Luca buys Clothes',
+          'Vera goes to Malls',
+          'The Food buyer shops at Markets'
+        ]
+      },
+      
+      // Template 23: Detectives, Cases, Cities
+      {
+        categories: ['Detectives', 'Cases', 'Cities'],
+        items: [
+          ['Holmes', 'Poirot', 'Marple', 'Morse', 'Columbo'],
+          ['Murder', 'Theft', 'Fraud', 'Missing', 'Spy'],
+          ['London', 'Paris', 'Oxford', 'LA', 'Brussels']
+        ],
+        solution: {
+          'Holmes': {'Cases': 'Murder', 'Cities': 'London'},
+          'Poirot': {'Cases': 'Theft', 'Cities': 'Brussels'},
+          'Marple': {'Cases': 'Fraud', 'Cities': 'Paris'},
+          'Morse': {'Cases': 'Missing', 'Cities': 'Oxford'},
+          'Columbo': {'Cases': 'Spy', 'Cities': 'LA'}
+        },
+        clues: [
+          'Holmes investigates Murder',
+          'The Theft case is in Brussels',
+          'Marple is in Paris',
+          'Morse does not work in LA',
+          'The Murder case is in London',
+          'Poirot investigates Theft',
+          'Columbo is in LA',
+          'The Missing case is in Oxford'
+        ]
+      },
+      
+      // Template 24: Architects, Buildings, Materials
+      {
+        categories: ['Architects', 'Buildings', 'Materials'],
+        items: [
+          ['Zaha', 'Frank', 'Le', 'Renzo', 'Norman'],
+          ['Museum', 'Tower', 'Library', 'Bridge', 'Stadium'],
+          ['Glass', 'Steel', 'Concrete', 'Wood', 'Stone']
+        ],
+        solution: {
+          'Zaha': {'Buildings': 'Museum', 'Materials': 'Concrete'},
+          'Frank': {'Buildings': 'Tower', 'Materials': 'Steel'},
+          'Le': {'Buildings': 'Library', 'Materials': 'Wood'},
+          'Renzo': {'Buildings': 'Bridge', 'Materials': 'Stone'},
+          'Norman': {'Buildings': 'Stadium', 'Materials': 'Glass'}
+        },
+        clues: [
+          'Zaha designed a Museum',
+          'The Tower uses Steel',
+          'Le uses Wood',
+          'Renzo does not use Glass',
+          'The Museum uses Concrete',
+          'Frank designed a Tower',
+          'Norman uses Glass',
+          'The Bridge uses Stone'
+        ]
+      },
+      
+      // Template 25: Astronauts, Missions, Planets
+      {
+        categories: ['Astronauts', 'Missions', 'Planets'],
+        items: [
+          ['Neil', 'Sally', 'Buzz', 'Mae', 'Yuri'],
+          ['Landing', 'Orbit', 'Rover', 'Station', 'Probe'],
+          ['Moon', 'Mars', 'Venus', 'Jupiter', 'Saturn']
+        ],
+        solution: {
+          'Neil': {'Missions': 'Landing', 'Planets': 'Moon'},
+          'Sally': {'Missions': 'Orbit', 'Planets': 'Venus'},
+          'Buzz': {'Missions': 'Rover', 'Planets': 'Mars'},
+          'Mae': {'Missions': 'Station', 'Planets': 'Jupiter'},
+          'Yuri': {'Missions': 'Probe', 'Planets': 'Saturn'}
+        },
+        clues: [
+          'Neil did a Landing',
+          'The Orbit mission went to Venus',
+          'Buzz went to Mars',
+          'Mae does not use Probe',
+          'The Landing was on the Moon',
+          'Sally did Orbit',
+          'Yuri used a Probe',
+          'The Station mission went to Jupiter'
+        ]
+      },
+      
+      // Template 26: Journalists, Beats, Papers
+      {
+        categories: ['Journalists', 'Beats', 'Papers'],
+        items: [
+          ['Jane', 'Bob', 'Lisa', 'Mark', 'Sara'],
+          ['Politics', 'Sports', 'Tech', 'Business', 'Culture'],
+          ['Times', 'Post', 'Journal', 'Tribune', 'Herald']
+        ],
+        solution: {
+          'Jane': {'Beats': 'Politics', 'Papers': 'Times'},
+          'Bob': {'Beats': 'Sports', 'Papers': 'Post'},
+          'Lisa': {'Beats': 'Tech', 'Papers': 'Journal'},
+          'Mark': {'Beats': 'Business', 'Papers': 'Tribune'},
+          'Sara': {'Beats': 'Culture', 'Papers': 'Herald'}
+        },
+        clues: [
+          'Jane covers Politics',
+          'The Sports writer works for Post',
+          'Lisa works for Journal',
+          'Mark does not work for Herald',
+          'The Politics writer works for Times',
+          'Bob covers Sports',
+          'Sara works for Herald',
+          'The Business writer works for Tribune'
+        ]
+      },
+      
+      // Template 27: Baristas, Drinks, Sizes
+      {
+        categories: ['Baristas', 'Drinks', 'Sizes'],
+        items: [
+          ['Jade', 'Rio', 'Sky', 'Ash', 'Wren'],
+          ['Latte', 'Mocha', 'Espresso', 'Cappuccino', 'Americano'],
+          ['Small', 'Medium', 'Large', 'Venti', 'Tall']
+        ],
+        solution: {
+          'Jade': {'Drinks': 'Latte', 'Sizes': 'Large'},
+          'Rio': {'Drinks': 'Mocha', 'Sizes': 'Venti'},
+          'Sky': {'Drinks': 'Espresso', 'Sizes': 'Small'},
+          'Ash': {'Drinks': 'Cappuccino', 'Sizes': 'Tall'},
+          'Wren': {'Drinks': 'Americano', 'Sizes': 'Medium'}
+        },
+        clues: [
+          'Jade makes Latte',
+          'The Mocha is Venti',
+          'Sky makes Small drinks',
+          'Ash does not make Americano',
+          'The Latte is Large',
+          'Rio makes Mocha',
+          'Wren makes Medium',
+          'The Cappuccino is Tall'
+        ]
+      },
+      
+      // Template 28: Veterinarians, Animals, Treatments
+      {
+        categories: ['Vets', 'Animals', 'Treatments'],
+        items: [
+          ['Dr. Lee', 'Dr. Patel', 'Dr. Chen', 'Dr. Kim', 'Dr. Santos'],
+          ['Dog', 'Cat', 'Bird', 'Rabbit', 'Turtle'],
+          ['Surgery', 'Checkup', 'Vaccine', 'Medicine', 'XRay']
+        ],
+        solution: {
+          'Dr. Lee': {'Animals': 'Dog', 'Treatments': 'Surgery'},
+          'Dr. Patel': {'Animals': 'Cat', 'Treatments': 'Checkup'},
+          'Dr. Chen': {'Animals': 'Bird', 'Treatments': 'Vaccine'},
+          'Dr. Kim': {'Animals': 'Rabbit', 'Treatments': 'Medicine'},
+          'Dr. Santos': {'Animals': 'Turtle', 'Treatments': 'XRay'}
+        },
+        clues: [
+          'Dr. Lee treats Dogs',
+          'The Cat gets a Checkup',
+          'Dr. Chen gives Vaccines',
+          'Dr. Kim does not do XRays',
+          'The Dog needs Surgery',
+          'Dr. Patel treats Cats',
+          'Dr. Santos does XRays',
+          'The Rabbit gets Medicine'
+        ]
+      },
+      
+      // Template 29: Pilots, Aircraft, Routes
+      {
+        categories: ['Pilots', 'Aircraft', 'Routes'],
+        items: [
+          ['Captain Rex', 'Captain Eva', 'Captain Max', 'Captain Ivy', 'Captain Zoe'],
+          ['Boeing', 'Airbus', 'Cessna', 'Gulfstream', 'Embraer'],
+          ['Domestic', 'Europe', 'Asia', 'Cargo', 'Charter']
+        ],
+        solution: {
+          'Captain Rex': {'Aircraft': 'Boeing', 'Routes': 'Domestic'},
+          'Captain Eva': {'Aircraft': 'Airbus', 'Routes': 'Europe'},
+          'Captain Max': {'Aircraft': 'Cessna', 'Routes': 'Charter'},
+          'Captain Ivy': {'Aircraft': 'Gulfstream', 'Routes': 'Cargo'},
+          'Captain Zoe': {'Aircraft': 'Embraer', 'Routes': 'Asia'}
+        },
+        clues: [
+          'Captain Rex flies Boeing',
+          'The Airbus pilot flies to Europe',
+          'Captain Max flies Charter',
+          'Captain Ivy does not fly to Asia',
+          'The Boeing pilot flies Domestic',
+          'Captain Eva flies Airbus',
+          'Captain Zoe flies to Asia',
+          'The Gulfstream pilot flies Cargo'
+        ]
+      },
+      
+      // Template 30: Farmers, Crops, Markets
+      {
+        categories: ['Farmers', 'Crops', 'Markets'],
+        items: [
+          ['John', 'Mary', 'Pete', 'Anne', 'Carl'],
+          ['Corn', 'Wheat', 'Beans', 'Rice', 'Oats'],
+          ['Local', 'Export', 'Organic', 'Wholesale', 'Direct']
+        ],
+        solution: {
+          'John': {'Crops': 'Corn', 'Markets': 'Local'},
+          'Mary': {'Crops': 'Wheat', 'Markets': 'Export'},
+          'Pete': {'Crops': 'Beans', 'Markets': 'Organic'},
+          'Anne': {'Crops': 'Rice', 'Markets': 'Direct'},
+          'Carl': {'Crops': 'Oats', 'Markets': 'Wholesale'}
+        },
+        clues: [
+          'John grows Corn',
+          'The Wheat farmer sells for Export',
+          'Pete sells Organic',
+          'Anne does not sell Wholesale',
+          'The Corn farmer sells Local',
+          'Mary grows Wheat',
+          'Carl sells Wholesale',
+          'The Rice farmer sells Direct'
+        ]
+      },
+      
+      // Template 31: Tailors, Garments, Fabrics
+      {
+        categories: ['Tailors', 'Garments', 'Fabrics'],
+        items: [
+          ['Rosa', 'Andre', 'Sofia', 'Marco', 'Elena'],
+          ['Suit', 'Dress', 'Coat', 'Shirt', 'Gown'],
+          ['Silk', 'Cotton', 'Wool', 'Linen', 'Velvet']
+        ],
+        solution: {
+          'Rosa': {'Garments': 'Suit', 'Fabrics': 'Wool'},
+          'Andre': {'Garments': 'Dress', 'Fabrics': 'Silk'},
+          'Sofia': {'Garments': 'Coat', 'Fabrics': 'Cotton'},
+          'Marco': {'Garments': 'Shirt', 'Fabrics': 'Linen'},
+          'Elena': {'Garments': 'Gown', 'Fabrics': 'Velvet'}
+        },
+        clues: [
+          'Rosa makes Suits',
+          'The Dress is made with Silk',
+          'Sofia uses Cotton',
+          'Marco does not use Velvet',
+          'The Suit is made with Wool',
+          'Andre makes Dresses',
+          'Elena uses Velvet',
+          'The Shirt is made with Linen'
+        ]
+      },
+      
+      // Template 32: Florists, Flowers, Events
+      {
+        categories: ['Florists', 'Flowers', 'Events'],
+        items: [
+          ['Violet', 'Rose', 'Lily', 'Daisy', 'Iris'],
+          ['Roses', 'Tulips', 'Orchids', 'Lilies', 'Daisies'],
+          ['Wedding', 'Funeral', 'Birthday', 'Anniversary', 'Party']
+        ],
+        solution: {
+          'Violet': {'Flowers': 'Roses', 'Events': 'Wedding'},
+          'Rose': {'Flowers': 'Tulips', 'Events': 'Birthday'},
+          'Lily': {'Flowers': 'Orchids', 'Events': 'Anniversary'},
+          'Daisy': {'Flowers': 'Lilies', 'Events': 'Funeral'},
+          'Iris': {'Flowers': 'Daisies', 'Events': 'Party'}
+        },
+        clues: [
+          'Violet arranges Roses',
+          'The Tulips are for Birthdays',
+          'Lily does Anniversaries',
+          'Daisy does not do Parties',
+          'The Roses are for Weddings',
+          'Rose arranges Tulips',
+          'Iris does Parties',
+          'The Lilies are for Funerals'
+        ]
+      },
+      
+      // Template 33: Mechanics, Cars, Issues
+      {
+        categories: ['Mechanics', 'Cars', 'Issues'],
+        items: [
+          ['Tony', 'Maria', 'Luis', 'Nina', 'Pete'],
+          ['Honda', 'Ford', 'Toyota', 'BMW', 'Audi'],
+          ['Brakes', 'Engine', 'Tires', 'Battery', 'Transmission']
+        ],
+        solution: {
+          'Tony': {'Cars': 'Honda', 'Issues': 'Brakes'},
+          'Maria': {'Cars': 'Ford', 'Issues': 'Engine'},
+          'Luis': {'Cars': 'Toyota', 'Issues': 'Tires'},
+          'Nina': {'Cars': 'BMW', 'Issues': 'Battery'},
+          'Pete': {'Cars': 'Audi', 'Issues': 'Transmission'}
+        },
+        clues: [
+          'Tony fixes Honda',
+          'The Ford has Engine problems',
+          'Luis fixes Tires',
+          'Nina does not fix Transmission',
+          'The Honda needs Brakes',
+          'Maria fixes Ford',
+          'Pete fixes Transmission',
+          'The BMW needs Battery'
+        ]
+      },
+      
+      // Template 34: Librarians, Sections, Tasks
+      {
+        categories: ['Librarians', 'Sections', 'Tasks'],
+        items: [
+          ['Diana', 'Frank', 'Grace', 'Henry', 'Irene'],
+          ['Fiction', 'History', 'Science', 'Children', 'Reference'],
+          ['Shelving', 'Checkout', 'Research', 'Catalog', 'Tours']
+        ],
+        solution: {
+          'Diana': {'Sections': 'Fiction', 'Tasks': 'Shelving'},
+          'Frank': {'Sections': 'History', 'Tasks': 'Research'},
+          'Grace': {'Sections': 'Science', 'Tasks': 'Catalog'},
+          'Henry': {'Sections': 'Children', 'Tasks': 'Tours'},
+          'Irene': {'Sections': 'Reference', 'Tasks': 'Checkout'}
+        },
+        clues: [
+          'Diana works in Fiction',
+          'The History librarian does Research',
+          'Grace does Cataloging',
+          'Henry does not do Checkout',
+          'The Fiction librarian does Shelving',
+          'Frank works in History',
+          'Irene does Checkout',
+          'The Children librarian does Tours'
+        ]
+      },
+      
+      // Template 35: Sailors, Boats, Seas
+      {
+        categories: ['Sailors', 'Boats', 'Seas'],
+        items: [
+          ['Captain Hook', 'Captain Jack', 'Captain Morgan', 'Captain Nemo', 'Captain Ahab'],
+          ['Yacht', 'Sailboat', 'Catamaran', 'Schooner', 'Sloop'],
+          ['Caribbean', 'Mediterranean', 'Pacific', 'Atlantic', 'Baltic']
+        ],
+        solution: {
+          'Captain Hook': {'Boats': 'Yacht', 'Seas': 'Caribbean'},
+          'Captain Jack': {'Boats': 'Sailboat', 'Seas': 'Mediterranean'},
+          'Captain Morgan': {'Boats': 'Catamaran', 'Seas': 'Pacific'},
+          'Captain Nemo': {'Boats': 'Schooner', 'Seas': 'Atlantic'},
+          'Captain Ahab': {'Boats': 'Sloop', 'Seas': 'Baltic'}
+        },
+        clues: [
+          'Captain Hook sails a Yacht',
+          'The Sailboat is in Mediterranean',
+          'Captain Morgan is in Pacific',
+          'Captain Nemo is not in Baltic',
+          'The Yacht is in Caribbean',
+          'Captain Jack sails a Sailboat',
+          'Captain Ahab is in Baltic',
+          'The Schooner is in Atlantic'
+        ]
+      },
+      
+      // Template 36: Doctors, Specialties, Hospitals
+      {
+        categories: ['Doctors', 'Specialties', 'Hospitals'],
+        items: [
+          ['Dr. Smith', 'Dr. Jones', 'Dr. Brown', 'Dr. Wilson', 'Dr. Taylor'],
+          ['Cardiology', 'Neurology', 'Pediatrics', 'Oncology', 'Orthopedics'],
+          ['General', 'Children', 'Heart', 'Cancer', 'Sports']
+        ],
+        solution: {
+          'Dr. Smith': {'Specialties': 'Cardiology', 'Hospitals': 'Heart'},
+          'Dr. Jones': {'Specialties': 'Neurology', 'Hospitals': 'General'},
+          'Dr. Brown': {'Specialties': 'Pediatrics', 'Hospitals': 'Children'},
+          'Dr. Wilson': {'Specialties': 'Oncology', 'Hospitals': 'Cancer'},
+          'Dr. Taylor': {'Specialties': 'Orthopedics', 'Hospitals': 'Sports'}
+        },
+        clues: [
+          'Dr. Smith practices Cardiology',
+          'The Neurology doctor works at General',
+          'Dr. Brown works at Children',
+          'Dr. Wilson does not work at Sports',
+          'The Cardiology doctor works at Heart',
+          'Dr. Jones practices Neurology',
+          'Dr. Taylor works at Sports',
+          'The Oncology doctor works at Cancer'
+        ]
+      },
+      
+      // Template 37: Rangers, Parks, Wildlife
+      {
+        categories: ['Rangers', 'Parks', 'Wildlife'],
+        items: [
+          ['Alex', 'Blake', 'Casey', 'Drew', 'Elliot'],
+          ['Yellowstone', 'Yosemite', 'Glacier', 'Zion', 'Sequoia'],
+          ['Bears', 'Elk', 'Eagles', 'Deer', 'Wolves']
+        ],
+        solution: {
+          'Alex': {'Parks': 'Yellowstone', 'Wildlife': 'Bears'},
+          'Blake': {'Parks': 'Yosemite', 'Wildlife': 'Deer'},
+          'Casey': {'Parks': 'Glacier', 'Wildlife': 'Wolves'},
+          'Drew': {'Parks': 'Zion', 'Wildlife': 'Eagles'},
+          'Elliot': {'Parks': 'Sequoia', 'Wildlife': 'Elk'}
+        },
+        clues: [
+          'Alex works at Yellowstone',
+          'The Yosemite ranger tracks Deer',
+          'Casey works at Glacier',
+          'Drew does not track Elk',
+          'The Yellowstone ranger tracks Bears',
+          'Blake works at Yosemite',
+          'Elliot tracks Elk',
+          'The Zion ranger tracks Eagles'
+        ]
+      },
+      
+      // Template 38: Designers, Products, Brands
+      {
+        categories: ['Designers', 'Products', 'Brands'],
+        items: [
+          ['Coco', 'Ralph', 'Vera', 'Tom', 'Marc'],
+          ['Handbags', 'Suits', 'Dresses', 'Shoes', 'Watches'],
+          ['Luxury', 'Casual', 'Evening', 'Sport', 'Classic']
+        ],
+        solution: {
+          'Coco': {'Products': 'Handbags', 'Brands': 'Luxury'},
+          'Ralph': {'Products': 'Suits', 'Brands': 'Classic'},
+          'Vera': {'Products': 'Dresses', 'Brands': 'Evening'},
+          'Tom': {'Products': 'Shoes', 'Brands': 'Sport'},
+          'Marc': {'Products': 'Watches', 'Brands': 'Casual'}
+        },
+        clues: [
+          'Coco designs Handbags',
+          'The Suits are Classic',
+          'Vera designs for Evening',
+          'Tom does not design Casual',
+          'The Handbags are Luxury',
+          'Ralph designs Suits',
+          'Marc designs Casual',
+          'The Shoes are Sport'
+        ]
+      },
+      
+      // Template 39: Engineers, Projects, Fields
+      {
+        categories: ['Engineers', 'Projects', 'Fields'],
+        items: [
+          ['Sam', 'Taylor', 'Jordan', 'Morgan', 'Riley'],
+          ['Bridge', 'Dam', 'Tower', 'Tunnel', 'Airport'],
+          ['Civil', 'Structural', 'Transport', 'Water', 'Aerospace']
+        ],
+        solution: {
+          'Sam': {'Projects': 'Bridge', 'Fields': 'Civil'},
+          'Taylor': {'Projects': 'Dam', 'Fields': 'Water'},
+          'Jordan': {'Projects': 'Tower', 'Fields': 'Structural'},
+          'Morgan': {'Projects': 'Tunnel', 'Fields': 'Transport'},
+          'Riley': {'Projects': 'Airport', 'Fields': 'Aerospace'}
+        },
+        clues: [
+          'Sam builds Bridges',
+          'The Dam engineer works in Water',
+          'Jordan works in Structural',
+          'Morgan does not work in Aerospace',
+          'The Bridge engineer works in Civil',
+          'Taylor builds Dams',
+          'Riley works in Aerospace',
+          'The Tunnel engineer works in Transport'
+        ]
+      },
+      
+      // Template 40: Zoologists, Habitats, Studies
+      {
+        categories: ['Zoologists', 'Habitats', 'Studies'],
+        items: [
+          ['Jane', 'David', 'Diana', 'Steve', 'Rachel'],
+          ['Jungle', 'Ocean', 'Desert', 'Arctic', 'Savanna'],
+          ['Primates', 'Marine', 'Reptiles', 'Polar', 'Big Cats']
+        ],
+        solution: {
+          'Jane': {'Habitats': 'Jungle', 'Studies': 'Primates'},
+          'David': {'Habitats': 'Ocean', 'Studies': 'Marine'},
+          'Diana': {'Habitats': 'Desert', 'Studies': 'Reptiles'},
+          'Steve': {'Habitats': 'Arctic', 'Studies': 'Polar'},
+          'Rachel': {'Habitats': 'Savanna', 'Studies': 'Big Cats'}
+        },
+        clues: [
+          'Jane studies in Jungle',
+          'The Ocean researcher studies Marine life',
+          'Diana studies Reptiles',
+          'Steve does not study Big Cats',
+          'The Jungle researcher studies Primates',
+          'David studies in Ocean',
+          'Rachel studies Big Cats',
+          'The Arctic researcher studies Polar animals'
+        ]
+      },
+      
+      // Template 41: Coaches, Sports, Tactics
+      {
+        categories: ['Coaches', 'Sports', 'Tactics'],
+        items: [
+          ['Coach Brown', 'Coach Green', 'Coach White', 'Coach Black', 'Coach Gray'],
+          ['Football', 'Basketball', 'Baseball', 'Hockey', 'Soccer'],
+          ['Offense', 'Defense', 'Speed', 'Power', 'Precision']
+        ],
+        solution: {
+          'Coach Brown': {'Sports': 'Football', 'Tactics': 'Offense'},
+          'Coach Green': {'Sports': 'Basketball', 'Tactics': 'Speed'},
+          'Coach White': {'Sports': 'Baseball', 'Tactics': 'Precision'},
+          'Coach Black': {'Sports': 'Hockey', 'Tactics': 'Defense'},
+          'Coach Gray': {'Sports': 'Soccer', 'Tactics': 'Power'}
+        },
+        clues: [
+          'Coach Brown coaches Football',
+          'The Basketball coach uses Speed',
+          'Coach White uses Precision',
+          'Coach Black does not use Power',
+          'The Football coach uses Offense',
+          'Coach Green coaches Basketball',
+          'Coach Gray uses Power',
+          'The Hockey coach uses Defense'
+        ]
+      },
+      
+      // Template 42: Translators, Languages, Documents
+      {
+        categories: ['Translators', 'Languages', 'Documents'],
+        items: [
+          ['Ana', 'Boris', 'Chen', 'Deepa', 'Erik'],
+          ['Spanish', 'Russian', 'Mandarin', 'Hindi', 'Swedish'],
+          ['Legal', 'Medical', 'Technical', 'Literary', 'Business']
+        ],
+        solution: {
+          'Ana': {'Languages': 'Spanish', 'Documents': 'Legal'},
+          'Boris': {'Languages': 'Russian', 'Documents': 'Literary'},
+          'Chen': {'Languages': 'Mandarin', 'Documents': 'Business'},
+          'Deepa': {'Languages': 'Hindi', 'Documents': 'Medical'},
+          'Erik': {'Languages': 'Swedish', 'Documents': 'Technical'}
+        },
+        clues: [
+          'Ana translates Spanish',
+          'The Russian translator does Literary',
+          'Chen does Business documents',
+          'Deepa does not do Technical',
+          'The Spanish translator does Legal',
+          'Boris translates Russian',
+          'Erik does Technical',
+          'The Hindi translator does Medical'
+        ]
+      },
+      
+      // Template 43: Curators, Exhibits, Museums
+      {
+        categories: ['Curators', 'Exhibits', 'Museums'],
+        items: [
+          ['Laura', 'Miguel', 'Nadia', 'Omar', 'Paula'],
+          ['Ancient', 'Modern', 'Medieval', 'Contemporary', 'Classical'],
+          ['History', 'Art', 'Science', 'Culture', 'Natural']
+        ],
+        solution: {
+          'Laura': {'Exhibits': 'Ancient', 'Museums': 'History'},
+          'Miguel': {'Exhibits': 'Modern', 'Museums': 'Art'},
+          'Nadia': {'Exhibits': 'Medieval', 'Museums': 'Culture'},
+          'Omar': {'Exhibits': 'Contemporary', 'Museums': 'Science'},
+          'Paula': {'Exhibits': 'Classical', 'Museums': 'Natural'}
+        },
+        clues: [
+          'Laura curates Ancient exhibits',
+          'The Modern exhibit is at Art museum',
+          'Nadia works at Culture museum',
+          'Omar does not work at Natural museum',
+          'The Ancient exhibit is at History museum',
+          'Miguel curates Modern',
+          'Paula works at Natural museum',
+          'The Contemporary exhibit is at Science museum'
+        ]
+      },
+      
+      // Template 44: Sommeliers, Wines, Regions
+      {
+        categories: ['Sommeliers', 'Wines', 'Regions'],
+        items: [
+          ['Pierre', 'Isabella', 'Antonio', 'Sophie', 'Carlos'],
+          ['Merlot', 'Chardonnay', 'Pinot', 'Cabernet', 'Riesling'],
+          ['Bordeaux', 'Burgundy', 'Tuscany', 'Napa', 'Mosel']
+        ],
+        solution: {
+          'Pierre': {'Wines': 'Merlot', 'Regions': 'Bordeaux'},
+          'Isabella': {'Wines': 'Chardonnay', 'Regions': 'Burgundy'},
+          'Antonio': {'Wines': 'Pinot', 'Regions': 'Tuscany'},
+          'Sophie': {'Wines': 'Cabernet', 'Regions': 'Napa'},
+          'Carlos': {'Wines': 'Riesling', 'Regions': 'Mosel'}
+        },
+        clues: [
+          'Pierre specializes in Merlot',
+          'The Chardonnay expert knows Burgundy',
+          'Antonio knows Tuscany',
+          'Sophie does not know Mosel',
+          'The Merlot expert knows Bordeaux',
+          'Isabella specializes in Chardonnay',
+          'Carlos knows Mosel',
+          'The Cabernet expert knows Napa'
+        ]
+      },
+      
+      // Template 45: Pharmacists, Medicines, Purposes
+      {
+        categories: ['Pharmacists', 'Medicines', 'Purposes'],
+        items: [
+          ['Dr. Lee', 'Dr. Gupta', 'Dr. Wong', 'Dr. Silva', 'Dr. Khan'],
+          ['Antibiotic', 'Painkiller', 'Vitamin', 'Allergy', 'Antihistamine'],
+          ['Infection', 'Pain', 'Health', 'Sneezing', 'Inflammation']
+        ],
+        solution: {
+          'Dr. Lee': {'Medicines': 'Antibiotic', 'Purposes': 'Infection'},
+          'Dr. Gupta': {'Medicines': 'Painkiller', 'Purposes': 'Pain'},
+          'Dr. Wong': {'Medicines': 'Vitamin', 'Purposes': 'Health'},
+          'Dr. Silva': {'Medicines': 'Allergy', 'Purposes': 'Sneezing'},
+          'Dr. Khan': {'Medicines': 'Antihistamine', 'Purposes': 'Inflammation'}
+        },
+        clues: [
+          'Dr. Lee dispenses Antibiotics',
+          'The Painkiller treats Pain',
+          'Dr. Wong dispenses Vitamins',
+          'Dr. Silva does not dispense Antihistamine',
+          'The Antibiotic treats Infection',
+          'Dr. Gupta dispenses Painkillers',
+          'Dr. Khan dispenses Antihistamine',
+          'The Allergy medicine treats Sneezing'
+        ]
+      },
+      
+      // Template 46: Meteorologists, Weather, Seasons
+      {
+        categories: ['Meteorologists', 'Weather', 'Seasons'],
+        items: [
+          ['Al', 'Ginger', 'Jim', 'Maria', 'Sam'],
+          ['Sunny', 'Rainy', 'Snowy', 'Windy', 'Cloudy'],
+          ['Spring', 'Summer', 'Fall', 'Winter', 'Monsoon']
+        ],
+        solution: {
+          'Al': {'Weather': 'Sunny', 'Seasons': 'Summer'},
+          'Ginger': {'Weather': 'Rainy', 'Seasons': 'Monsoon'},
+          'Jim': {'Weather': 'Snowy', 'Seasons': 'Winter'},
+          'Maria': {'Weather': 'Windy', 'Seasons': 'Spring'},
+          'Sam': {'Weather': 'Cloudy', 'Seasons': 'Fall'}
+        },
+        clues: [
+          'Al forecasts Sunny',
+          'The Rainy forecast is for Monsoon',
+          'Jim forecasts for Winter',
+          'Maria does not forecast Fall',
+          'The Sunny forecast is for Summer',
+          'Ginger forecasts Rainy',
+          'Sam forecasts Fall',
+          'The Windy forecast is for Spring'
+        ]
+      },
+      
+      // Template 47: Geologists, Rocks, Locations
+      {
+        categories: ['Geologists', 'Rocks', 'Locations'],
+        items: [
+          ['Prof. Stone', 'Prof. Hill', 'Prof. Rock', 'Prof. Peak', 'Prof. Vale'],
+          ['Granite', 'Basalt', 'Limestone', 'Marble', 'Sandstone'],
+          ['Mountain', 'Volcano', 'Cave', 'Quarry', 'Desert']
+        ],
+        solution: {
+          'Prof. Stone': {'Rocks': 'Granite', 'Locations': 'Mountain'},
+          'Prof. Hill': {'Rocks': 'Basalt', 'Locations': 'Volcano'},
+          'Prof. Rock': {'Rocks': 'Limestone', 'Locations': 'Cave'},
+          'Prof. Peak': {'Rocks': 'Marble', 'Locations': 'Quarry'},
+          'Prof. Vale': {'Rocks': 'Sandstone', 'Locations': 'Desert'}
+        },
+        clues: [
+          'Prof. Stone studies Granite',
+          'The Basalt researcher works at Volcanoes',
+          'Prof. Rock works in Caves',
+          'Prof. Peak does not work in Desert',
+          'The Granite researcher works in Mountains',
+          'Prof. Hill studies Basalt',
+          'Prof. Vale works in Desert',
+          'The Marble researcher works in Quarries'
+        ]
+      },
+      
+      // Template 48: Magicians, Tricks, Venues
+      {
+        categories: ['Magicians', 'Tricks', 'Venues'],
+        items: [
+          ['Houdini', 'Copperfield', 'Penn', 'Teller', 'Blaine'],
+          ['Escape', 'Levitation', 'Cards', 'Illusion', 'Sleight'],
+          ['Theater', 'Street', 'Stage', 'TV', 'Casino']
+        ],
+        solution: {
+          'Houdini': {'Tricks': 'Escape', 'Venues': 'Theater'},
+          'Copperfield': {'Tricks': 'Levitation', 'Venues': 'Stage'},
+          'Penn': {'Tricks': 'Cards', 'Venues': 'Casino'},
+          'Teller': {'Tricks': 'Illusion', 'Venues': 'TV'},
+          'Blaine': {'Tricks': 'Sleight', 'Venues': 'Street'}
+        },
+        clues: [
+          'Houdini does Escape',
+          'The Levitation act is on Stage',
+          'Penn performs at Casinos',
+          'Teller does not perform on Street',
+          'The Escape act is in Theater',
+          'Copperfield does Levitation',
+          'Blaine performs on Street',
+          'The Illusion act is on TV'
+        ]
+      },
+      
+      // Template 49: Historians, Periods, Regions
+      {
+        categories: ['Historians', 'Periods', 'Regions'],
+        items: [
+          ['Prof. Adams', 'Prof. Baker', 'Prof. Clark', 'Prof. Davis', 'Prof. Evans'],
+          ['Ancient', 'Medieval', 'Renaissance', 'Modern', 'Contemporary'],
+          ['Egypt', 'Europe', 'Italy', 'Americas', 'Asia']
+        ],
+        solution: {
+          'Prof. Adams': {'Periods': 'Ancient', 'Regions': 'Egypt'},
+          'Prof. Baker': {'Periods': 'Medieval', 'Regions': 'Europe'},
+          'Prof. Clark': {'Periods': 'Renaissance', 'Regions': 'Italy'},
+          'Prof. Davis': {'Periods': 'Modern', 'Regions': 'Americas'},
+          'Prof. Evans': {'Periods': 'Contemporary', 'Regions': 'Asia'}
+        },
+        clues: [
+          'Prof. Adams studies Ancient',
+          'The Medieval scholar studies Europe',
+          'Prof. Clark studies Italy',
+          'Prof. Davis does not study Asia',
+          'The Ancient scholar studies Egypt',
+          'Prof. Baker studies Medieval',
+          'Prof. Evans studies Asia',
+          'The Modern scholar studies Americas'
+        ]
+      },
+      
+      // Template 50: Chefs, Techniques, Kitchens
+      {
+        categories: ['Chefs', 'Techniques', 'Kitchens'],
+        items: [
+          ['Gordon', 'Jamie', 'Nigella', 'Bobby', 'Emeril'],
+          ['Grilling', 'Baking', 'Sautéing', 'Roasting', 'Braising'],
+          ['Bistro', 'Bakery', 'Steakhouse', 'Tavern', 'Restaurant']
+        ],
+        solution: {
+          'Gordon': {'Techniques': 'Grilling', 'Kitchens': 'Steakhouse'},
+          'Jamie': {'Techniques': 'Baking', 'Kitchens': 'Bakery'},
+          'Nigella': {'Techniques': 'Sautéing', 'Kitchens': 'Restaurant'},
+          'Bobby': {'Techniques': 'Roasting', 'Kitchens': 'Tavern'},
+          'Emeril': {'Techniques': 'Braising', 'Kitchens': 'Bistro'}
+        },
+        clues: [
+          'Gordon specializes in Grilling',
+          'The Baking chef works at Bakery',
+          'Nigella works at Restaurant',
+          'Bobby does not work at Bistro',
+          'The Grilling chef works at Steakhouse',
+          'Jamie specializes in Baking',
+          'Emeril works at Bistro',
+          'The Roasting chef works at Tavern'
         ]
       }
     ];
