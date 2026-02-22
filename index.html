@@ -3440,6 +3440,8 @@ const OneMove = () => {
   const [dailyChallengeReward, setDailyChallengeReward] = useState(0); // Track reward for result screen
   const [dailyChallengeGemsAwarded, setDailyChallengeGemsAwarded] = useState(false);
   const [dailyChallengeReplayed, setDailyChallengeReplayed] = useState(false);
+  const [dailyChallengeInProgress, setDailyChallengeInProgress] = useState(false);
+  const [savedDailyChallengeState, setSavedDailyChallengeState] = useState(null);
   const [playStreak, setPlayStreak] = useState(0); // Track consecutive days played
   const [failCount, setFailCount] = useState(0);
   const [showAboutGems, setShowAboutGems] = useState(false);
@@ -3578,6 +3580,8 @@ const OneMove = () => {
       setDailyChallengeAttempted(dcData.attempted || false);
       setDailyChallengeGemsAwarded(dcData.gemsAwarded || false);
       setDailyChallengeReplayed(dcData.replayed || false);
+      setDailyChallengeInProgress(dcData.inProgress || false);
+      setSavedDailyChallengeState(dcData.savedState || null);
     }
     
     // Load and update play streak
@@ -3710,7 +3714,7 @@ const OneMove = () => {
     return data;
   };
 
-  const saveDailyChallengeData = (completed, failed, streak, gemsAwarded, replayed) => {
+  const saveDailyChallengeData = (completed, failed, streak, gemsAwarded, replayed, inProgress = false, savedState = null) => {
   localStorage.setItem('dailyChallenge', JSON.stringify({
     date: getTodayDateString(),
     completed,
@@ -3718,7 +3722,9 @@ const OneMove = () => {
     streak,
     gemsAwarded: gemsAwarded || false,
     replayed: replayed || false,
-    attempted: true
+    attempted: true,
+    inProgress: inProgress || false,
+    savedState: savedState || null
   }));
 };
 
@@ -6594,6 +6600,12 @@ const OneMove = () => {
   };
 
   const startDailyChallenge = () => {
+    // Check if there's a saved in-progress challenge to resume
+    if (dailyChallengeInProgress && savedDailyChallengeState) {
+      resumeDailyChallenge();
+      return;
+    }
+    
     // Don't allow if already completed or failed today
     if (dailyChallengeCompleted || dailyChallengeFailed) {
       return;
@@ -6602,6 +6614,7 @@ const OneMove = () => {
     const challenge = generateDailyChallenge();
     setIsDailyChallenge(true);
     setDailyChallengeAttempted(true);
+    setDailyChallengeInProgress(true);
     setCurrentPuzzle(challenge);
     
     if (challenge.type === PUZZLE_TYPES.TILE_FLIP) {
@@ -6637,6 +6650,94 @@ const OneMove = () => {
     
     setPuzzleFirstAttempt(true);
     setFailCount(0);
+  };
+  
+  const pauseAndSaveDailyChallenge = () => {
+    // Save current puzzle state
+    const savedState = {
+      puzzle: currentPuzzle,
+      puzzleType: currentPuzzle?.type,
+      // Logic Grid state
+      logicGridSelections,
+      // Memory Match state
+      memoryCards,
+      flippedCards,
+      matchedPairs,
+      seenCards,
+      explorationComplete,
+      wrongAttempts,
+      // Word Scramble state
+      scrambledWord,
+      userWord,
+      // Tile Flip state
+      grid,
+      currentTriviaQuestion,
+      highlightedArea,
+      // Math state
+      mathAnswer,
+      // Common state
+      hintLevel,
+      puzzleFirstAttempt,
+      failCount
+    };
+    
+    setSavedDailyChallengeState(savedState);
+    saveDailyChallengeData(
+      dailyChallengeCompleted,
+      dailyChallengeFailed,
+      dailyChallengeStreak,
+      dailyChallengeGemsAwarded,
+      dailyChallengeReplayed,
+      true, // inProgress
+      savedState
+    );
+    
+    // Return to home
+    setIsDailyChallenge(false);
+    setScreen('home');
+  };
+  
+  const resumeDailyChallenge = () => {
+    if (!savedDailyChallengeState) return;
+    
+    const state = savedDailyChallengeState;
+    setIsDailyChallenge(true);
+    setCurrentPuzzle(state.puzzle);
+    
+    // Restore state based on puzzle type
+    if (state.puzzleType === PUZZLE_TYPES.LOGIC_GRID) {
+      setLogicGridSelections(state.logicGridSelections || {});
+      setHintLevel(state.hintLevel || 0);
+      setScreen('puzzle_logic');
+    } else if (state.puzzleType === PUZZLE_TYPES.MEMORY_MATCH) {
+      setMemoryCards(state.memoryCards || []);
+      setFlippedCards(state.flippedCards || []);
+      setMatchedPairs(state.matchedPairs || []);
+      setSeenCards(state.seenCards || []);
+      setExplorationComplete(state.explorationComplete || false);
+      setWrongAttempts(state.wrongAttempts || 0);
+      setHintLevel(state.hintLevel || 0);
+      setMemoryResult(null);
+      setScreen('puzzle_memory');
+    } else if (state.puzzleType === PUZZLE_TYPES.WORD_SCRAMBLE) {
+      setScrambledWord(state.scrambledWord || '');
+      setUserWord(state.userWord || '');
+      setHintLevel(state.hintLevel || 0);
+      setScreen('puzzle_word');
+    } else if (state.puzzleType === PUZZLE_TYPES.TILE_FLIP) {
+      setCurrentTriviaQuestion(state.currentTriviaQuestion || null);
+      setGrid(state.grid || []);
+      setHintLevel(state.hintLevel || 0);
+      setHighlightedArea(state.highlightedArea || null);
+      setScreen('puzzle_tile');
+    } else if (state.puzzleType === PUZZLE_TYPES.QUICK_MATH) {
+      setMathAnswer(state.mathAnswer || '');
+      setHintLevel(state.hintLevel || 0);
+      setScreen('puzzle_math');
+    }
+    
+    setPuzzleFirstAttempt(state.puzzleFirstAttempt !== undefined ? state.puzzleFirstAttempt : true);
+    setFailCount(state.failCount || 0);
   };
 
   const playSound = (type) => {
@@ -7202,9 +7303,11 @@ const handleDailyChallengeSuccess = () => {
   const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
   setDailyChallengeStreak(newStreak);
   
-  // Save completion with gems awarded flag
-  saveDailyChallengeData(true, false, newStreak, true, dailyChallengeReplayed);
+  // Save completion with gems awarded flag - clear inProgress
+  saveDailyChallengeData(true, false, newStreak, true, dailyChallengeReplayed, false, null);
   setDailyChallengeCompleted(true);
+  setDailyChallengeInProgress(false);
+  setSavedDailyChallengeState(null);
   setIsDailyChallenge(false);
   
   // Show result screen
@@ -7317,8 +7420,10 @@ const handleDailyChallengeReplay = () => {
         
         if (newFailCount >= 1) {
           // Daily Challenge FAILED
-          saveDailyChallengeData(false, true, dailyChallengeStreak);
+          saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
           setDailyChallengeFailed(true);
+          setDailyChallengeInProgress(false);
+          setSavedDailyChallengeState(null);
           setIsDailyChallenge(false);
           
           setTimeout(() => {
@@ -7407,8 +7512,10 @@ const handleDailyChallengeReplay = () => {
       // Check if Daily Challenge
       if (isDailyChallenge) {
         // Daily Challenge FAILED - wrong answer
-        saveDailyChallengeData(false, true, dailyChallengeStreak);
+        saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
         setDailyChallengeFailed(true);
+          setDailyChallengeInProgress(false);
+          setSavedDailyChallengeState(null);
         setIsDailyChallenge(false);
         
         setTimeout(() => {
@@ -8487,7 +8594,7 @@ const handleDailyChallengeReplay = () => {
           </div>
           
           {/* Daily Challenge Banner */}
-          {!dailyChallengeCompleted && !dailyChallengeFailed && !dailyChallengeAttempted && (
+          {!dailyChallengeCompleted && !dailyChallengeFailed && (
             <button
               onClick={startDailyChallenge}
               className="w-full mb-3 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105"
@@ -8495,8 +8602,14 @@ const handleDailyChallengeReplay = () => {
               <div className="flex items-center justify-center gap-3">
                 <span className="text-2xl">🏆</span>
                 <div className="text-left">
-                  <p className="text-xl font-bold">DAILY CHALLENGE</p>
-                  <p className="text-sm text-red-100">Win 500 Gems!</p>
+                  <p className="text-xl font-bold">
+                    {dailyChallengeInProgress ? 'RESUME DAILY CHALLENGE' : 'DAILY CHALLENGE'}
+                  </p>
+                  <p className="text-sm text-red-100">
+                    {dailyChallengeInProgress 
+                      ? `${savedDailyChallengeState?.puzzleType?.replace('_', ' ') || 'Puzzle'} - Continue where you left off` 
+                      : 'Win 500 Gems!'}
+                  </p>
                 </div>
               </div>
             </button>
@@ -9457,6 +9570,22 @@ const handleDailyChallengeReplay = () => {
         </div>
         
         <div className="space-y-3 max-w-sm w-full mx-auto flex flex-col items-center">
+          {isDailyChallenge && (
+            <div className="w-full space-y-2 mb-2">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-2 text-center">
+                <p className="text-white font-bold text-sm">🏆 DAILY CHALLENGE</p>
+                <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+              </div>
+              <button
+                onClick={pauseAndSaveDailyChallenge}
+                className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <span>💾</span>
+                <span>Pause & Save for Later</span>
+              </button>
+            </div>
+          )}
+          
           <div className="text-center mb-2">
             <p className="text-white text-lg font-light">Tile Flip Challenge</p>
             <p className="text-slate-400 text-sm mt-1">Make all tiles match!</p>
@@ -9648,13 +9777,22 @@ const handleDailyChallengeReplay = () => {
         <div className="max-w-2xl w-full space-y-4 mt-20">
           {/* DAILY CHALLENGE BANNER */}
           {isDailyChallenge && (
-            <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-4 text-center shadow-xl border-2 border-purple-400 mb-6">
-              <p className="text-white text-xl font-bold">
-                🏆 DAILY CHALLENGE
-              </p>
-              <p className="text-purple-200 text-sm">
-                One attempt • Win 500 Gems!
-              </p>
+            <div className="space-y-2 mb-6">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-4 text-center shadow-xl border-2 border-purple-400">
+                <p className="text-white text-xl font-bold">
+                  🏆 DAILY CHALLENGE
+                </p>
+                <p className="text-purple-200 text-sm">
+                  One attempt • Win 500 Gems!
+                </p>
+              </div>
+              <button
+                onClick={pauseAndSaveDailyChallenge}
+                className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <span>💾</span>
+                <span>Pause & Save for Later</span>
+              </button>
             </div>
           )}
           
@@ -9832,8 +9970,10 @@ const handleDailyChallengeReplay = () => {
         // Check if Daily Challenge FIRST
         if (isDailyChallenge) {
           // Daily Challenge FAILED - one attempt only!
-          saveDailyChallengeData(false, true, dailyChallengeStreak);
+          saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
           setDailyChallengeFailed(true);
+          setDailyChallengeInProgress(false);
+          setSavedDailyChallengeState(null);
           setIsDailyChallenge(false);
           
           setTimeout(() => {
@@ -9883,9 +10023,18 @@ const handleDailyChallengeReplay = () => {
         
         <div className="space-y-6 max-w-md w-full">
           {isDailyChallenge && (
-            <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-2 text-center mb-2">
-              <p className="text-white font-bold text-sm">🏆 DAILY CHALLENGE</p>
-              <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+            <div className="space-y-2">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-2 text-center">
+                <p className="text-white font-bold text-sm">🏆 DAILY CHALLENGE</p>
+                <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+              </div>
+              <button
+                onClick={pauseAndSaveDailyChallenge}
+                className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <span>💾</span>
+                <span>Pause & Save for Later</span>
+              </button>
             </div>
           )}
           
@@ -10082,8 +10231,10 @@ const handleDailyChallengeReplay = () => {
                 // Check if Daily Challenge
                 if (isDailyChallenge) {
                   // Daily Challenge FAILED
-                  saveDailyChallengeData(false, true, dailyChallengeStreak);
+                  saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
                   setDailyChallengeFailed(true);
+          setDailyChallengeInProgress(false);
+          setSavedDailyChallengeState(null);
                   setIsDailyChallenge(false);
                   
                   setMemoryResult('failed');
@@ -10174,6 +10325,22 @@ const handleDailyChallengeReplay = () => {
                   <p className="text-slate-300 text-base mt-2">Keep practicing - you'll nail it next time!</p>
                 </div>
               )}
+            </div>
+          )}
+          
+          {isDailyChallenge && (
+            <div className="space-y-2 mb-4">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-2 text-center">
+                <p className="text-white font-bold text-sm">🏆 DAILY CHALLENGE</p>
+                <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+              </div>
+              <button
+                onClick={pauseAndSaveDailyChallenge}
+                className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                <span>💾</span>
+                <span>Pause & Save for Later</span>
+              </button>
             </div>
           )}
           
@@ -10374,12 +10541,21 @@ const handleDailyChallengeReplay = () => {
     return (
       <div className="h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 overflow-y-auto">
         {isDailyChallenge && (
-          <div className="sticky top-0 left-0 p-4 flex items-center gap-2 z-10 bg-gradient-to-r from-purple-950/90 to-blue-900/90">
-            <span className="text-4xl">🏆</span>
-            <div className="bg-gradient-to-r from-amber-500 to-yellow-600 rounded-xl px-4 py-2 border-2 border-amber-400 shadow-xl">
-              <p className="text-white font-bold text-sm">DAILY CHALLENGE</p>
-              <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+          <div className="sticky top-0 left-0 p-4 flex items-center justify-between gap-2 z-10 bg-gradient-to-r from-purple-950/90 to-blue-900/90">
+            <div className="flex items-center gap-2">
+              <span className="text-4xl">🏆</span>
+              <div className="bg-gradient-to-r from-amber-500 to-yellow-600 rounded-xl px-4 py-2 border-2 border-amber-400 shadow-xl">
+                <p className="text-white font-bold text-sm">DAILY CHALLENGE</p>
+                <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
+              </div>
             </div>
+            <button
+              onClick={pauseAndSaveDailyChallenge}
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center gap-2 shadow-lg"
+            >
+              <span>💾</span>
+              <span>Pause & Save</span>
+            </button>
           </div>
         )}
         
