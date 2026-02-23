@@ -14,6 +14,12 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
+    button:focus {
+      outline: none;
+    }
+    button:focus-visible {
+      outline: none;
+    }
     body {
       margin: 0;
       padding: 0;
@@ -6519,10 +6525,25 @@ const OneMove = () => {
       const hardWords = SCRAMBLE_BANK.filter(w => w.word.length >= 12);
       const selectedWord = hardWords[seed % hardWords.length];
       
+      // Handle multi-word phrases by scrambling each word separately and joining with underscore
+      const scrambleWithSpaces = (word) => {
+        if (word.includes(' ')) {
+          // Multi-word: scramble each word separately, join with underscore
+          const words = word.split(' ');
+          const scrambledWords = words.map(w => 
+            w.split('').sort(() => 0.5 - Math.random()).join('')
+          );
+          return scrambledWords.join(' _ ');
+        } else {
+          // Single word: scramble normally
+          return word.split('').sort(() => 0.5 - Math.random()).join('');
+        }
+      };
+      
       return {
         type: PUZZLE_TYPES.WORD_SCRAMBLE,
         word: selectedWord.word,
-        scrambled: selectedWord.word.split('').sort(() => 0.5 - Math.random()).join(''),
+        scrambled: scrambleWithSpaces(selectedWord.word),
         category: selectedWord.cat // This is already the string value from SCRAMBLE_CATEGORIES
       };
       
@@ -6892,7 +6913,7 @@ const OneMove = () => {
     do {
       scrambleItem = SCRAMBLE_BANK[Math.floor(Math.random() * SCRAMBLE_BANK.length)];
       attempts++;
-    } while ((usedWords.includes(scrambleItem.word) || scrambleItem.word.length < 5) && attempts < 100);
+    } while ((usedWords.includes(scrambleItem.word) || scrambleItem.word.replace(/\s/g, '').length < 5) && attempts < 100);
     
     // Add word to used list and maintain 500-word buffer
     const newUsedWords = [...usedWords, scrambleItem.word];
@@ -6903,14 +6924,34 @@ const OneMove = () => {
     saveProgress({ usedWords: newUsedWords });
     
     const word = scrambleItem.word;
-    const letters = word.split('');
-    for (let i = letters.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [letters[i], letters[j]] = [letters[j], letters[i]];
+    
+    // Handle multi-word phrases by scrambling each word separately and joining with underscore
+    let scrambledText;
+    if (word.includes(' ')) {
+      // Multi-word: scramble each word separately, join with underscore
+      const words = word.split(' ');
+      const scrambledWords = words.map(w => {
+        const letters = w.split('');
+        for (let i = letters.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [letters[i], letters[j]] = [letters[j], letters[i]];
+        }
+        return letters.join('');
+      });
+      scrambledText = scrambledWords.join(' _ ');
+    } else {
+      // Single word: scramble normally
+      const letters = word.split('');
+      for (let i = letters.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [letters[i], letters[j]] = [letters[j], letters[i]];
+      }
+      scrambledText = letters.join('');
     }
+    
     return {
       type: PUZZLE_TYPES.WORD_SCRAMBLE,
-      scrambled: letters.join(''),
+      scrambled: scrambledText,
       answer: word,
       category: scrambleItem.cat
     };
@@ -9508,7 +9549,7 @@ const handleDailyChallengeReplay = () => {
                 onClick={() => handleAnswerSelect(choice)}
                 disabled={showResult || eliminatedAnswers.includes(choice)}
                 className={`
-                  p-6 rounded-xl text-lg font-light transition-all duration-300
+                  p-6 rounded-xl text-lg font-light transition-all duration-300 focus:outline-none
                   ${eliminatedAnswers.includes(choice)
                     ? 'bg-slate-800/20 text-slate-600 line-through cursor-not-allowed opacity-50'
                     : showResult && choice === selectedAnswer && choice.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()
