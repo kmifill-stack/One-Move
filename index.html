@@ -9557,10 +9557,10 @@ const handleDailyChallengeReplay = () => {
                     : showResult && choice === selectedAnswer && choice.toLowerCase().trim() !== currentTriviaQuestion.a.toLowerCase().trim()
                     ? 'bg-red-600 text-white'
                     : showResult && choice.toLowerCase().trim() === currentTriviaQuestion.a.toLowerCase().trim()
-                    ? 'bg-green-600 text-white animate-pulse'
+                    ? 'bg-green-600 text-white'
                     : showResult
                     ? 'bg-slate-800/30 text-slate-500 cursor-not-allowed'
-                    : 'bg-slate-800/50 text-white hover:bg-slate-700/50 border border-slate-700 hover:border-blue-500'
+                    : 'bg-slate-800/50 text-white'
                   }
                 `}
               >
