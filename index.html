@@ -9860,6 +9860,13 @@ const handleDailyChallengeReplay = () => {
               {scrambledWord}
             </div>
             
+            {/* Two-word indicator */}
+            {currentPuzzle.word && currentPuzzle.word.includes(' ') && (
+              <div className="bg-amber-500/20 border border-amber-500/50 rounded-lg px-4 py-2">
+                <p className="text-amber-300 text-sm font-semibold">💡 This is a 2-word answer</p>
+              </div>
+            )}
+            
             <input
               type="text"
               value={userWord}
