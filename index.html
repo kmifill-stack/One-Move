@@ -3467,6 +3467,7 @@ const OneMove = () => {
   const [usedWords, setUsedWords] = useState([]);
   const [usedPatterns, setUsedPatterns] = useState([]);
   const [usedTrivia, setUsedTrivia] = useState([]);
+  const [recentCategories, setRecentCategories] = useState([]);
   const [showInstructionPopup, setShowInstructionPopup] = useState(null);
   const [username, setUsername] = useState('Player');
   const [showCorrectWord, setShowCorrectWord] = useState(false);
@@ -3512,6 +3513,7 @@ const OneMove = () => {
       setUsedWords(data.usedWords || []);
       setUsedPatterns(data.usedPatterns || []);
       setUsedTrivia(data.usedTrivia || []);
+      setRecentCategories(data.recentCategories || []);
       
       // ONE-TIME MIGRATION: Award past level bonuses
       const currentIndex = data.currentIndex || 0;
@@ -7130,23 +7132,40 @@ const OneMove = () => {
     setFiftyFiftyUsed(true);
   };
   const handleCategorySelect = (category) => {
-    const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === category);
+    // LAYER 1 - Category rotation: don't repeat a category until 5 others have been used
+    const allCategories = Object.values(CATEGORIES);
+    let selectedCategory = category;
     
-    // Pick question not recently used (500-question buffer)
+    // If this category was used too recently, pick a fresher one
+    if (recentCategories.slice(-5).includes(category)) {
+      const freshCategories = allCategories.filter(c => !recentCategories.slice(-5).includes(c));
+      if (freshCategories.length > 0) {
+        selectedCategory = freshCategories[Math.floor(Math.random() * freshCategories.length)];
+      }
+    }
+    
+    // Update category rotation buffer (keep last 5)
+    const newRecentCategories = [...recentCategories, selectedCategory];
+    if (newRecentCategories.length > 5) newRecentCategories.shift();
+    setRecentCategories(newRecentCategories);
+    
+    // LAYER 2 - Global 500-question buffer across ALL categories
+    const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === selectedCategory);
+    
     let question;
     let attempts = 0;
     do {
       question = categoryQuestions[Math.floor(Math.random() * categoryQuestions.length)];
       attempts++;
-    } while (usedTrivia.includes(question.q) && attempts < 50);
+    } while (usedTrivia.includes(question.q) && attempts < 100);
     
-    // Add to buffer
+    // Add to global buffer (500 max across all categories)
     const newUsedTrivia = [...usedTrivia, question.q];
     if (newUsedTrivia.length > 500) {
       newUsedTrivia.shift();
     }
     setUsedTrivia(newUsedTrivia);
-    saveProgress({ usedTrivia: newUsedTrivia });
+    saveProgress({ usedTrivia: newUsedTrivia, recentCategories: newRecentCategories });
     
     const choices = [...question.c];
     for (let i = choices.length - 1; i > 0; i--) {
@@ -7154,7 +7173,7 @@ const OneMove = () => {
       [choices[i], choices[j]] = [choices[j], choices[i]];
     }
     
-    setSelectedCategory(category);
+    setSelectedCategory(selectedCategory);
     setCurrentTriviaQuestion(question);
     setFiftyFiftyUsed(false);
     setEliminatedAnswers([]);
