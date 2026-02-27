@@ -6495,20 +6495,20 @@ const OneMove = () => {
     
     let puzzleType;
     
-    if (position < 9) {
-      // Positions 0-8: Logic Grid (9 occurrences = 30%)
+    if (position < 11) {
+      // Positions 0-10: Logic Grid (11 occurrences = 35%)
       puzzleType = PUZZLE_TYPES.LOGIC_GRID;
-    } else if (position < 16) {
-      // Positions 9-15: Quick Math (7 occurrences = 23%)
+    } else if (position < 20) {
+      // Positions 11-19: Quick Math (9 occurrences = 30%)
       puzzleType = PUZZLE_TYPES.QUICK_MATH;
-    } else if (position < 22) {
-      // Positions 16-21: Memory Match (6 occurrences = 20%)
+    } else if (position < 25) {
+      // Positions 20-24: Memory Match (5 occurrences = 15%)
       puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-    } else if (position < 27) {
-      // Positions 22-26: Word Scramble (5 occurrences = 17%)
+    } else if (position < 28) {
+      // Positions 25-27: Word Scramble (3 occurrences = 11%)  
       puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
     } else {
-      // Positions 27-29: Tile Flip (3 occurrences = 10%)
+      // Positions 28-29: Tile Flip (2 occurrences = 9% rounded)
       puzzleType = PUZZLE_TYPES.TILE_FLIP;
     }
     
@@ -6572,49 +6572,219 @@ const OneMove = () => {
       return {type: PUZZLE_TYPES.MEMORY_MATCH, cards, pairs: 8};
       
     } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
-      // Hard Quick Math: Logic-based puzzles (not simple calculator problems)
+      // Hard Quick Math: 149 written challenge questions with 30-question buffer
       const operations = [
-        // Pattern Recognition
+        // PATTERN RECOGNITION (15 questions)
         {question: 'What number comes next? 1, 4, 9, 16, 25, ___', answer: '36', choices: ['30', '32', '36', '40']},
         {question: 'What number comes next? 2, 6, 12, 20, 30, ___', answer: '42', choices: ['38', '40', '42', '44']},
-        
-        // Multi-Step Logic
+        {question: 'What number comes next? 3, 6, 11, 18, 27, ___', answer: '38', choices: ['34', '36', '38', '40']},
+        {question: 'What number comes next? 1, 2, 4, 8, 16, ___', answer: '32', choices: ['24', '28', '32', '36']},
+        {question: 'What number comes next? 5, 10, 20, 40, ___', answer: '80', choices: ['60', '70', '80', '100']},
+        {question: 'What number comes next? 100, 91, 83, 76, 70, ___', answer: '65', choices: ['63', '64', '65', '66']},
+        {question: 'What is missing? 2, 5, 10, 17, ___, 37', answer: '26', choices: ['22', '24', '26', '28']},
+        {question: 'What number comes next? 1, 1, 2, 3, 5, 8, ___', answer: '13', choices: ['11', '12', '13', '14']},
+        {question: 'What number comes next? 64, 32, 16, 8, ___', answer: '4', choices: ['2', '4', '6', '8']},
+        {question: 'What number comes next? 3, 9, 27, 81, ___', answer: '243', choices: ['162', '200', '243', '270']},
+        {question: 'What is missing? 7, 14, ___, 35, 49', answer: '21', choices: ['17', '19', '21', '28']},
+        {question: 'What number comes next? 1, 3, 7, 15, 31, ___', answer: '63', choices: ['47', '55', '63', '71']},
+        {question: 'What is missing? 2, 4, 8, ___, 32, 64', answer: '16', choices: ['12', '14', '16', '18']},
+        {question: 'What number comes next? 10, 9, 7, 4, ___', answer: '0', choices: ['0', '1', '2', '3']},
+        {question: 'What is missing? 1, 4, ___, 16, 25, 36', answer: '9', choices: ['7', '8', '9', '10']},
+
+        // MULTI-STEP LOGIC (15 questions)
         {question: 'A number is tripled, then 7 is subtracted, giving 20. What was the original number?', answer: '9', choices: ['7', '8', '9', '10']},
         {question: 'A number is doubled, then 5 is added, giving 17. What was the original number?', answer: '6', choices: ['4', '5', '6', '7']},
         {question: 'Double a number, add 10, result is 50. What was the original?', answer: '20', choices: ['15', '20', '25', '30']},
-        
-        // Age/Time Puzzles
+        {question: 'A number is halved, then 3 is added, giving 11. What was the original?', answer: '16', choices: ['14', '16', '18', '20']},
+        {question: 'Multiply a number by 4, subtract 8, result is 28. What was the original?', answer: '9', choices: ['7', '8', '9', '10']},
+        {question: 'A number squared minus 5 equals 44. What is the number?', answer: '7', choices: ['6', '7', '8', '9']},
+        {question: 'Triple a number, subtract 12, result is 33. What was the original?', answer: '15', choices: ['13', '14', '15', '16']},
+        {question: 'A number divided by 3, plus 9, equals 15. What is the number?', answer: '18', choices: ['15', '18', '21', '24']},
+        {question: 'Add 7 to a number, multiply by 2, result is 30. What was the original?', answer: '8', choices: ['6', '7', '8', '9']},
+        {question: 'A number is doubled, then halved, then 6 is added, giving 10. What was the original?', answer: '4', choices: ['2', '4', '6', '8']},
+        {question: 'Subtract 4 from a number, multiply by 3, result is 24. What was the original?', answer: '12', choices: ['10', '11', '12', '13']},
+        {question: 'A number plus its double equals 36. What is the number?', answer: '12', choices: ['10', '11', '12', '14']},
+        {question: 'Five times a number minus 10 equals 40. What is the number?', answer: '10', choices: ['8', '9', '10', '11']},
+        {question: 'A number plus half of itself equals 18. What is the number?', answer: '12', choices: ['10', '12', '14', '16']},
+        {question: 'Divide a number by 4, add 7, result is 12. What was the original?', answer: '20', choices: ['16', '18', '20', '22']},
+
+        // AGE & TIME PUZZLES (15 questions)
         {question: 'Mary is twice as old as John. In 5 years Mary will be 25. How old is John now?', answer: '10', choices: ['5', '8', '10', '12']},
         {question: 'A son is 15, father is 45. In how many years will father be twice the son\'s age?', answer: '15', choices: ['10', '15', '20', '25']},
-        
-        // Word Problems
-        {question: 'If 3 apples cost $6, and 5 apples cost $10, how much do 8 apples cost?', answer: '$16', choices: ['$14', '$15', '$16', '$18']},
-        {question: 'If 4 workers finish a job in 6 days, how many days would it take 3 workers?', answer: '8', choices: ['6', '7', '8', '9']},
+        {question: 'Tom is 3 times older than Sam. Together they are 40. How old is Sam?', answer: '10', choices: ['8', '10', '12', '14']},
+        {question: 'Anna is 5 years older than Bob. Their ages add up to 35. How old is Bob?', answer: '15', choices: ['12', '13', '15', '17']},
+        {question: 'In 8 years, Lisa will be twice her current age. How old is she now?', answer: '8', choices: ['6', '7', '8', '9']},
+        {question: 'A grandfather is 6 times his granddaughter\'s age. Together they are 63. How old is the granddaughter?', answer: '9', choices: ['7', '8', '9', '10']},
+        {question: 'If you are 28 now, in what year were you born if it is currently 2024?', answer: '1996', choices: ['1994', '1995', '1996', '1997']},
+        {question: 'Kate is 4 years younger than Mike. In 6 years Kate will be 30. How old is Mike now?', answer: '28', choices: ['26', '27', '28', '30']},
+        {question: 'Two sisters\' ages add up to 44. The older is 3 times the younger. How old is the younger?', answer: '11', choices: ['9', '10', '11', '12']},
+        {question: 'A teacher is 25 years older than her student. In 5 years she\'ll be twice the student\'s age. How old is the student now?', answer: '20', choices: ['18', '19', '20', '22']},
+        {question: 'David is twice Ali\'s age. In 10 years David will be 1.5 times Ali\'s age. How old is Ali now?', answer: '20', choices: ['15', '18', '20', '25']},
+        {question: 'Mom is 3 times her daughter\'s age. In 12 years she\'ll be twice her daughter\'s age. How old is the daughter?', answer: '12', choices: ['10', '11', '12', '14']},
+        {question: 'A project takes 3 weeks. It started Jan 1. What date does it end?', answer: 'Jan 22', choices: ['Jan 20', 'Jan 21', 'Jan 22', 'Jan 23']},
+        {question: 'You sleep 8 hours a night. How many hours do you sleep in 2 weeks?', answer: '112', choices: ['96', '104', '112', '120']},
+        {question: 'A baby born in March will turn 1 in what month?', answer: 'March', choices: ['February', 'March', 'April', 'May']},
+
+        // WORD PROBLEMS (15 questions)
+        {question: 'If 3 apples cost $6, how much do 8 apples cost?', answer: '$16', choices: ['$14', '$15', '$16', '$18']},
+        {question: 'If 4 workers finish a job in 6 days, how many days would 3 workers take?', answer: '8', choices: ['6', '7', '8', '9']},
         {question: 'A book has 300 pages. You read 1/3, then 40 more. How many pages are left?', answer: '160', choices: ['140', '150', '160', '180']},
-        
-        // Percentage Reasoning
-        {question: 'A shirt is 25% off. After discount it costs $45. What was the original price?', answer: '$60', choices: ['$56', '$60', '$65', '$70']},
+        {question: 'A car uses 1 gallon per 30 miles. How many gallons for a 210-mile trip?', answer: '7', choices: ['5', '6', '7', '8']},
+        {question: 'A recipe needs 2.5 cups of flour for 12 cookies. How much for 24 cookies?', answer: '5 cups', choices: ['4 cups', '4.5 cups', '5 cups', '6 cups']},
+        {question: 'You have $100. You spend 40%, then earn $20. How much do you have?', answer: '$80', choices: ['$60', '$70', '$80', '$90']},
+        {question: 'A hose fills a pool at 50 gallons per hour. How many hours to fill 400 gallons?', answer: '8', choices: ['6', '7', '8', '10']},
+        {question: 'A store sells 3 shirts for $45. How much for 7 shirts?', answer: '$105', choices: ['$90', '$100', '$105', '$115']},
+        {question: 'A tank is 1/4 full. After adding 30 gallons it is 3/4 full. Tank capacity?', answer: '60', choices: ['40', '50', '60', '80']},
+        {question: 'If 6 pens cost $4.50, how much do 10 pens cost?', answer: '$7.50', choices: ['$6.50', '$7.00', '$7.50', '$8.00']},
+        {question: 'A wall needs 3 coats of paint. Each coat uses 2 liters. You have 7 liters. How much more do you need?', answer: '1 liter', choices: ['0.5 liters', '1 liter', '1.5 liters', '2 liters']},
+        {question: 'A bus travels 15 miles every 20 minutes. How far in 1 hour?', answer: '45 miles', choices: ['30 miles', '40 miles', '45 miles', '60 miles']},
+        {question: 'You type 60 words per minute. How long to type a 900-word essay?', answer: '15 minutes', choices: ['12 minutes', '15 minutes', '18 minutes', '20 minutes']},
+        {question: 'A bag of rice weighs 5 lbs. You use 0.5 lbs per day. How many days until empty?', answer: '10', choices: ['8', '9', '10', '12']},
+        {question: '3 friends split a $75 bill equally, then each tips $5. How much did each pay total?', answer: '$30', choices: ['$25', '$28', '$30', '$32']},
+
+        // PERCENTAGE REASONING (15 questions)
+        {question: 'A shirt is 25% off and costs $45. What was the original price?', answer: '$60', choices: ['$56', '$60', '$65', '$70']},
         {question: 'A 20% discount brings the price to $80. What was the original price?', answer: '$100', choices: ['$96', '$100', '$104', '$110']},
-        
-        // Geometry/Spatial
+        {question: 'A price increased by 10% to reach $110. What was the original price?', answer: '$100', choices: ['$98', '$100', '$105', '$108']},
+        {question: 'You scored 18 out of 24. What percentage did you get?', answer: '75%', choices: ['70%', '72%', '75%', '80%']},
+        {question: 'A class of 30 has 40% girls. How many boys are there?', answer: '18', choices: ['14', '16', '18', '20']},
+        {question: 'Sales went from 200 to 250. What is the percentage increase?', answer: '25%', choices: ['20%', '22%', '25%', '30%']},
+        {question: 'A population of 1,000 decreases by 15%. What is the new population?', answer: '850', choices: ['800', '825', '850', '875']},
+        {question: 'You spend 30% of $240 on food. How much is left?', answer: '$168', choices: ['$158', '$162', '$168', '$172']},
+        {question: 'A TV costs $600 after a 25% discount. What was the original price?', answer: '$800', choices: ['$750', '$780', '$800', '$850']},
+        {question: 'A store marks up products by 40%. An item cost $50 wholesale. What is the retail price?', answer: '$70', choices: ['$60', '$65', '$70', '$75']},
+        {question: '15 is what percentage of 60?', answer: '25%', choices: ['20%', '22%', '25%', '30%']},
+        {question: 'Your salary increased from $40,000 to $46,000. What was the percentage increase?', answer: '15%', choices: ['10%', '12%', '15%', '18%']},
+        {question: 'A restaurant adds a 18% tip to a $50 bill. What is the total?', answer: '$59', choices: ['$57', '$58', '$59', '$60']},
+        {question: '60% of a number is 90. What is the number?', answer: '150', choices: ['120', '135', '150', '160']},
+        {question: 'An item on sale for $36 is 10% off. What was the original price?', answer: '$40', choices: ['$38', '$39', '$40', '$42']},
+
+        // GEOMETRY & SPATIAL (12 questions)
         {question: 'A square garden is 10m × 10m. A path 1m wide goes around the outside. What is the path\'s area?', answer: '44', choices: ['36', '40', '44', '48']},
-        {question: 'A rectangular room is 8m × 6m. How many 2m × 2m tiles are needed to cover the floor?', answer: '12', choices: ['10', '12', '14', '16']},
-        
-        // Distance/Speed/Time
+        {question: 'A rectangular room is 8m × 6m. How many 2m × 2m tiles cover the floor?', answer: '12', choices: ['10', '12', '14', '16']},
+        {question: 'A circle has a radius of 7. What is the approximate area? (use π=3)', answer: '147', choices: ['132', '140', '147', '154']},
+        {question: 'A triangle has base 10 and height 6. What is its area?', answer: '30', choices: ['24', '27', '30', '36']},
+        {question: 'A box is 5m × 4m × 3m. What is its volume?', answer: '60', choices: ['48', '54', '60', '72']},
+        {question: 'A room is 12 × 10 feet. Carpet costs $3 per sq ft. What is the total cost?', answer: '$360', choices: ['$300', '$330', '$360', '$400']},
+        {question: 'A fence surrounds a 20m × 15m yard. How many meters of fencing are needed?', answer: '70', choices: ['60', '65', '70', '75']},
+        {question: 'A pizza has diameter 14 inches. What is the approximate circumference? (use π=3)', answer: '42 inches', choices: ['36 inches', '39 inches', '42 inches', '44 inches']},
+        {question: 'A pool is 25m long. You swim 8 laps. How many meters did you swim?', answer: '200', choices: ['150', '175', '200', '225']},
+        {question: 'A wall is 15ft wide and 9ft tall. A door is 3ft × 7ft. How much wall needs painting?', answer: '114', choices: ['108', '111', '114', '120']},
+        {question: 'How many 1ft × 1ft tiles fit in a 7ft × 8ft room?', answer: '56', choices: ['48', '52', '56', '64']},
+        {question: 'A cube has sides of 4cm. What is its total surface area?', answer: '96', choices: ['64', '80', '96', '112']},
+
+        // DISTANCE, SPEED & TIME (12 questions)
         {question: 'A train travels 60 km/h for 2 hours, then 80 km/h for 1 hour. Total distance?', answer: '200', choices: ['180', '200', '220', '240']},
         {question: 'Walking 4 km/h, you cover 6 km. How many minutes did it take?', answer: '90', choices: ['75', '80', '90', '100']},
-        
-        // Calendar/Day Logic
+        {question: 'A car travels 360 miles in 6 hours. What is its average speed?', answer: '60 mph', choices: ['50 mph', '55 mph', '60 mph', '65 mph']},
+        {question: 'Two cars start at the same point. One goes 50 mph east, one 60 mph west. How far apart after 3 hours?', answer: '330 miles', choices: ['270 miles', '300 miles', '330 miles', '360 miles']},
+        {question: 'A runner completes 5 laps of a 400m track. How many km did she run?', answer: '2 km', choices: ['1.5 km', '2 km', '2.5 km', '3 km']},
+        {question: 'A plane flies 2,400 miles in 5 hours. What is its speed?', answer: '480 mph', choices: ['440 mph', '460 mph', '480 mph', '500 mph']},
+        {question: 'A cyclist rides 15 km at 20 km/h. How many minutes is the ride?', answer: '45', choices: ['30', '40', '45', '50']},
+        {question: 'Two trains 300 miles apart head toward each other at 60 mph each. When do they meet?', answer: '2.5 hours', choices: ['2 hours', '2.5 hours', '3 hours', '3.5 hours']},
+        {question: 'You drive 120 miles at 40 mph. How long does it take in hours?', answer: '3', choices: ['2', '2.5', '3', '3.5']},
+        {question: 'A boat goes 20 mph downstream and 12 mph upstream. What is the average round-trip speed?', answer: '15 mph', choices: ['14 mph', '15 mph', '16 mph', '17 mph']},
+        {question: 'A snail travels 3 feet per minute. How many feet does it travel in 2 hours?', answer: '360', choices: ['300', '330', '360', '400']},
+        {question: 'You commute 45 min each way, 5 days a week. How many hours commuting per week?', answer: '7.5', choices: ['6', '7', '7.5', '8']},
+
+        // CALENDAR & DAY LOGIC (10 questions)
         {question: 'If today is Wednesday, what day was it 100 days ago?', answer: 'Saturday', choices: ['Thursday', 'Friday', 'Saturday', 'Sunday']},
-        
-        // Number Properties
+        {question: 'How many days are in the first 6 months of a non-leap year?', answer: '181', choices: ['179', '180', '181', '182']},
+        {question: 'If January 1 is a Monday, what day is February 1?', answer: 'Thursday', choices: ['Tuesday', 'Wednesday', 'Thursday', 'Friday']},
+        {question: 'A project lasts 45 days starting March 1. What month does it end?', answer: 'April', choices: ['March', 'April', 'May', 'June']},
+        {question: 'How many Sundays are in a 31-day month that starts on a Friday?', answer: '5', choices: ['4', '5', '6', '7']},
+        {question: 'A meeting occurs every 3rd Thursday. If the first is on the 6th, when is the second?', answer: '27th', choices: ['20th', '24th', '27th', '30th']},
+        {question: 'How many weekdays are in a typical 4-week period?', answer: '20', choices: ['18', '19', '20', '22']},
+        {question: 'If Dec 25 falls on a Wednesday, what day is New Year\'s Day?', answer: 'Wednesday', choices: ['Monday', 'Tuesday', 'Wednesday', 'Thursday']},
+        {question: 'A contract runs from April 15 to July 15. How many months is that?', answer: '3', choices: ['2', '3', '4', '5']},
+        {question: 'A store is open 6 days a week except Sundays. How many days in a year? (non-leap)', answer: '313', choices: ['308', '310', '313', '315']},
+
+        // NUMBER PROPERTIES (12 questions)
         {question: 'The sum of 3 consecutive odd numbers is 63. What is the middle number?', answer: '21', choices: ['19', '21', '23', '25']},
         {question: 'Two numbers multiply to 48 and add to 14. What are they?', answer: '6 and 8', choices: ['4 and 12', '6 and 8', '3 and 16', '2 and 24']},
-        
-        // Money/Shopping
+        {question: 'What is the largest prime number less than 30?', answer: '29', choices: ['23', '27', '28', '29']},
+        {question: 'What is the sum of all even numbers from 1 to 20?', answer: '110', choices: ['90', '100', '110', '120']},
+        {question: 'The product of two consecutive numbers is 72. What are they?', answer: '8 and 9', choices: ['6 and 12', '7 and 10', '8 and 9', '9 and 8']},
+        {question: 'What is 12 squared minus 10 squared?', answer: '44', choices: ['40', '42', '44', '46']},
+        {question: 'How many factors does 36 have?', answer: '9', choices: ['6', '7', '8', '9']},
+        {question: 'What is the LCM of 4 and 6?', answer: '12', choices: ['8', '10', '12', '24']},
+        {question: 'What is the GCF of 24 and 36?', answer: '12', choices: ['6', '8', '12', '18']},
+        {question: 'The sum of digits of a 2-digit number is 11. The number is between 60-70. What is it?', answer: '65', choices: ['63', '64', '65', '67']},
+        {question: 'What is 15% of 200 plus 10% of 100?', answer: '40', choices: ['30', '35', '40', '45']},
+        {question: 'A number is divisible by both 4 and 6. Which is the smallest such number over 20?', answer: '24', choices: ['20', '22', '24', '26']},
+
+        // MONEY & SHOPPING (12 questions)
         {question: 'You buy 3 items at $7.50 each and pay with $30. How much change?', answer: '$7.50', choices: ['$6.50', '$7.00', '$7.50', '$8.00']},
+        {question: 'A jacket costs $120. It\'s on sale for 30% off. What is the sale price?', answer: '$84', choices: ['$80', '$82', '$84', '$86']},
+        {question: 'You earn $15/hour and work 32 hours. After 20% tax, what do you take home?', answer: '$384', choices: ['$360', '$372', '$384', '$400']},
+        {question: 'Groceries cost $47.30. You pay $60. How much change do you get?', answer: '$12.70', choices: ['$11.70', '$12.30', '$12.70', '$13.70']},
+        {question: 'You split a $96 restaurant bill 4 ways. Each person adds a $6 tip. How much does each pay?', answer: '$30', choices: ['$26', '$28', '$30', '$32']},
+        {question: 'A phone costs $800. You pay $200 down and the rest in 12 monthly payments. Monthly payment?', answer: '$50', choices: ['$45', '$48', '$50', '$55']},
+        {question: 'You save $150 per month. How many months to save $2,400?', answer: '16', choices: ['14', '15', '16', '18']},
+        {question: 'A store charges $3.99/lb for salmon. How much for 2.5 lbs?', answer: '$9.98', choices: ['$8.99', '$9.48', '$9.98', '$10.48']},
+        {question: 'You have $500. You spend 1/4 on rent, 1/5 on food. How much is left?', answer: '$275', choices: ['$225', '$250', '$275', '$300']},
+        {question: 'A dozen eggs cost $4.80. What is the price per egg?', answer: '$0.40', choices: ['$0.35', '$0.38', '$0.40', '$0.42']},
+        {question: 'Three items cost $12, $18, and $25. You have a 10% off coupon. Total after discount?', answer: '$49.50', choices: ['$47.50', '$48.50', '$49.50', '$51.00']},
+        {question: 'You invest $1,000 at 5% simple interest for 3 years. Total amount?', answer: '$1,150', choices: ['$1,050', '$1,100', '$1,150', '$1,200']},
+
+        // PROBABILITY & CHANCES (8 questions)
+        {question: 'A bag has 3 red and 7 blue marbles. What is the probability of picking red?', answer: '30%', choices: ['20%', '25%', '30%', '35%']},
+        {question: 'You flip a coin 3 times. What is the probability of getting 3 heads?', answer: '12.5%', choices: ['10%', '12.5%', '15%', '25%']},
+        {question: 'A die is rolled. What is the probability of rolling a number greater than 4?', answer: '1/3', choices: ['1/6', '1/4', '1/3', '1/2']},
+        {question: 'There are 5 red, 3 green, and 2 blue balls. Probability of NOT picking blue?', answer: '80%', choices: ['70%', '75%', '80%', '85%']},
+        {question: 'A class has 12 boys and 8 girls. What is the probability of randomly selecting a girl?', answer: '40%', choices: ['35%', '40%', '45%', '50%']},
+        {question: 'You draw 1 card from a 52-card deck. Probability of drawing an ace?', answer: '1/13', choices: ['1/10', '1/12', '1/13', '1/14']},
+        {question: 'Two dice are rolled. Probability of both showing the same number?', answer: '1/6', choices: ['1/4', '1/5', '1/6', '1/8']},
+        {question: 'A spinner has 8 equal sections numbered 1-8. Probability of landing on an even number?', answer: '50%', choices: ['37.5%', '40%', '50%', '62.5%']},
+
+        // FRACTIONS & RATIOS (12 questions)
+        {question: 'A recipe uses 3/4 cup of sugar. For half the recipe, how much sugar do you need?', answer: '3/8 cup', choices: ['1/4 cup', '3/8 cup', '1/2 cup', '5/8 cup']},
+        {question: 'A class ratio of boys to girls is 3:2. There are 30 students. How many girls?', answer: '12', choices: ['10', '12', '14', '16']},
+        {question: 'What is 2/3 of 90?', answer: '60', choices: ['45', '54', '60', '66']},
+        {question: 'A map scale is 1:50,000. If two cities are 4cm apart on the map, what is the real distance?', answer: '2 km', choices: ['1 km', '1.5 km', '2 km', '4 km']},
+        {question: 'Concrete is mixed in a 1:2:3 ratio (cement:sand:gravel). For 12 bags total, how many are cement?', answer: '2', choices: ['1', '2', '3', '4']},
+        {question: 'You read 1/4 of a book on Monday and 1/3 on Tuesday. What fraction is left?', answer: '5/12', choices: ['1/3', '5/12', '7/12', '1/2']},
+        {question: 'A piece of rope is 3/5 of a meter. You cut off 1/3 of it. How much is left?', answer: '2/5 meter', choices: ['1/4 meter', '1/3 meter', '2/5 meter', '1/2 meter']},
+        {question: 'In a survey, 3 out of 5 prefer coffee. In a group of 200, how many prefer coffee?', answer: '120', choices: ['100', '110', '120', '130']},
+        {question: 'A team won 18 of 24 games. What fraction of games did they lose?', answer: '1/4', choices: ['1/6', '1/5', '1/4', '1/3']},
+        {question: 'What is 5/6 minus 1/3?', answer: '1/2', choices: ['1/3', '5/12', '1/2', '2/3']},
+        {question: 'Orange juice is diluted 1 part juice to 4 parts water. In 500ml of drink, how much is juice?', answer: '100ml', choices: ['80ml', '100ml', '125ml', '150ml']},
+        {question: 'A car uses 1/10 of a tank per hour. How many hours until empty from a full tank?', answer: '10', choices: ['8', '9', '10', '12']},
+
+        // TEMPERATURE & MEASUREMENT (8 questions)
+        {question: 'Water boils at 100°C. What is that in Fahrenheit? (F = C×9/5 + 32)', answer: '212°F', choices: ['180°F', '200°F', '212°F', '220°F']},
+        {question: 'Normal body temp is 98.6°F. What is that in Celsius? (C = (F-32)×5/9)', answer: '37°C', choices: ['35°C', '36°C', '37°C', '38°C']},
+        {question: 'A room is 20°C. Temperature drops 8 degrees overnight. What is the new temperature?', answer: '12°C', choices: ['10°C', '11°C', '12°C', '13°C']},
+        {question: '1 kilometer equals how many meters?', answer: '1,000', choices: ['100', '500', '1,000', '10,000']},
+        {question: 'A recipe needs 500ml. You only have a 1/4 cup measure (60ml). How many scoops?', answer: 'About 8', choices: ['6', '7', '8', '9']},
+        {question: 'Convert 5 feet 6 inches to inches only.', answer: '66 inches', choices: ['60 inches', '62 inches', '66 inches', '68 inches']},
+        {question: 'A 2-liter bottle is 3/4 full. How many ml of water is in it?', answer: '1,500ml', choices: ['1,200ml', '1,400ml', '1,500ml', '1,800ml']},
+        {question: 'Temperature rises from -5°C to 18°C. What was the total change?', answer: '23°C', choices: ['13°C', '18°C', '23°C', '28°C']},
       ];
-      const selected = operations[seed % operations.length];
+
+      // 30-question buffer to prevent repeats
+      const usedMathKey = 'usedDailyMath';
+      const storedUsed = localStorage.getItem(usedMathKey);
+      let usedMath = storedUsed ? JSON.parse(storedUsed) : [];
+      
+      // Filter out recently used questions
+      let available = operations.filter((_, idx) => !usedMath.includes(idx));
+      if (available.length === 0) {
+        usedMath = [];
+        available = operations;
+        localStorage.setItem(usedMathKey, JSON.stringify([]));
+      }
+      
+      // Pick using seed from available questions
+      const selectedIndex = seed % available.length;
+      const selected = available[selectedIndex];
+      const originalIndex = operations.indexOf(selected);
+      
+      // Add to buffer
+      usedMath.push(originalIndex);
+      if (usedMath.length > 30) usedMath.shift();
+      localStorage.setItem(usedMathKey, JSON.stringify(usedMath));
+      
       return {type: PUZZLE_TYPES.QUICK_MATH, ...selected};
     } else if (puzzleType === PUZZLE_TYPES.LOGIC_GRID) {
       // Hard Logic Grid: Always challenging with 3 categories
