@@ -7129,6 +7129,296 @@ const OneMove = () => {
     };
   };
 
+  const QUICK_MATH_WRITTEN_POOL = [
+    // WORD PROBLEMS - MONEY & SHOPPING (40 questions)
+    {question: 'You buy 4 items at $3.25 each. How much do you spend?', answer: '$13.00', choices: ['$11.00', '$12.00', '$13.00', '$14.00']},
+    {question: 'A jacket costs $85. It\'s 20% off. What is the sale price?', answer: '$68', choices: ['$64', '$65', '$68', '$70']},
+    {question: 'You earn $12/hr and work 6.5 hours. How much do you earn?', answer: '$78', choices: ['$72', '$74', '$78', '$82']},
+    {question: 'You split a $56 bill 4 ways. Each person also tips $4. How much per person?', answer: '$18', choices: ['$14', '$16', '$18', '$20']},
+    {question: 'A phone costs $720. You pay $120 down and the rest in 6 payments. Monthly payment?', answer: '$100', choices: ['$90', '$95', '$100', '$110']},
+    {question: 'You save $75 per week. How many weeks to save $900?', answer: '12', choices: ['10', '11', '12', '14']},
+    {question: 'Groceries cost $34.50. You hand over $50. Change?', answer: '$15.50', choices: ['$14.50', '$15.00', '$15.50', '$16.50']},
+    {question: 'A store marks items up 35%. An item cost $40. Retail price?', answer: '$54', choices: ['$50', '$52', '$54', '$56']},
+    {question: '3 shirts cost $67.50 total. Price per shirt?', answer: '$22.50', choices: ['$20.00', '$21.50', '$22.50', '$23.50']},
+    {question: 'You have $200. You spend 15% on food and 25% on clothes. How much left?', answer: '$120', choices: ['$100', '$110', '$120', '$130']},
+    {question: 'A dozen donuts costs $7.20. Price per donut?', answer: '$0.60', choices: ['$0.50', '$0.55', '$0.60', '$0.65']},
+    {question: 'You earn $18/hr. After 22% tax, what is your hourly take-home?', answer: '$14.04', choices: ['$13.50', '$13.80', '$14.04', '$14.50']},
+    {question: 'An item on clearance is 60% off its $95 original price. Sale price?', answer: '$38', choices: ['$34', '$36', '$38', '$40']},
+    {question: 'You invest $500 at 6% simple interest for 2 years. Total amount?', answer: '$560', choices: ['$530', '$550', '$560', '$580']},
+    {question: 'Buy 5 lbs of apples at $1.80/lb and 3 lbs of grapes at $2.40/lb. Total?', answer: '$16.20', choices: ['$14.80', '$15.60', '$16.20', '$17.00']},
+    {question: 'A car payment is $285/month. How much in a year?', answer: '$3,420', choices: ['$3,120', '$3,300', '$3,420', '$3,600']},
+    {question: 'You get a 12% raise on a $42,000 salary. New salary?', answer: '$47,040', choices: ['$45,000', '$46,000', '$47,040', '$48,000']},
+    {question: 'Lunch for 6 people costs $9.50 each plus a shared $12 appetizer. Total?', answer: '$69', choices: ['$57', '$63', '$69', '$75']},
+    {question: 'A gym membership is $45/month. Annual cost?', answer: '$540', choices: ['$480', '$510', '$540', '$560']},
+    {question: 'You buy 8 gallons of gas at $3.75/gallon. Total?', answer: '$30.00', choices: ['$27.00', '$28.50', '$30.00', '$31.50']},
+    {question: 'A laptop is $1,200. You use a 15% coupon. Final price?', answer: '$1,020', choices: ['$960', '$990', '$1,020', '$1,050']},
+    {question: '4 friends split a $108 hotel bill equally. Each person\'s share?', answer: '$27', choices: ['$24', '$25', '$27', '$30']},
+    {question: 'You spend $3.50/day on coffee. Monthly cost (30 days)?', answer: '$105', choices: ['$90', '$95', '$105', '$110']},
+    {question: 'A TV is on sale for $420 after a 30% discount. Original price?', answer: '$600', choices: ['$540', '$560', '$600', '$650']},
+    {question: 'You earn $950/week. You save 20%. Monthly savings (4 weeks)?', answer: '$760', choices: ['$640', '$700', '$760', '$800']},
+    {question: 'Concert tickets are $65 each. You buy 3 and pay a $12 service fee. Total?', answer: '$207', choices: ['$195', '$199', '$207', '$215']},
+    {question: 'A recipe costs $2.40 per serving for 8 servings. Total cost?', answer: '$19.20', choices: ['$16.00', '$18.00', '$19.20', '$20.00']},
+    {question: 'You earn $200 in tips over 5 shifts equally. Tips per shift?', answer: '$40', choices: ['$35', '$38', '$40', '$45']},
+    {question: 'Rent is $1,350/month. What percentage of a $4,500 monthly income?', answer: '30%', choices: ['25%', '28%', '30%', '33%']},
+    {question: 'You buy 6 items averaging $8.50 each. Total bill?', answer: '$51', choices: ['$45', '$48', '$51', '$54']},
+    {question: 'A sale offers buy 2 get 1 free on $24 items. Cost of 3 items?', answer: '$48', choices: ['$36', '$42', '$48', '$72']},
+    {question: 'Your electricity bill averages $95/month. Annual total?', answer: '$1,140', choices: ['$1,080', '$1,100', '$1,140', '$1,200']},
+    {question: 'You pay $18.60 for 3 items. Average price per item?', answer: '$6.20', choices: ['$5.80', '$6.00', '$6.20', '$6.50']},
+    {question: 'A pair of shoes costs $110 but is 15% off. Sale price?', answer: '$93.50', choices: ['$88.00', '$91.00', '$93.50', '$95.00']},
+    {question: 'You tip 20% on a $65 meal. Total including tip?', answer: '$78', choices: ['$72', '$75', '$78', '$80']},
+    {question: '5 people each contribute $35 toward a gift. Total collected?', answer: '$175', choices: ['$150', '$165', '$175', '$185']},
+    {question: 'A car loses 15% of its $24,000 value per year. Value after 1 year?', answer: '$20,400', choices: ['$19,200', '$20,000', '$20,400', '$21,000']},
+    {question: 'You earn $22/hr and work 37.5 hours. Gross pay?', answer: '$825', choices: ['$780', '$800', '$825', '$850']},
+    {question: 'Bulk rice costs $1.20/lb. You buy 15 lbs. Total?', answer: '$18', choices: ['$15', '$16.50', '$18', '$19.50']},
+    {question: 'A streaming service costs $14.99/month. Yearly cost?', answer: '$179.88', choices: ['$169.88', '$174.88', '$179.88', '$184.88']},
+
+    // WORD PROBLEMS - DISTANCE, SPEED & TIME (30 questions)
+    {question: 'A car travels 55 mph for 3 hours. Total distance?', answer: '165 miles', choices: ['145 miles', '155 miles', '165 miles', '175 miles']},
+    {question: 'You jog 2.5 miles in 25 minutes. Speed in miles per hour?', answer: '6 mph', choices: ['4 mph', '5 mph', '6 mph', '7 mph']},
+    {question: 'A train covers 480 km in 4 hours. Average speed?', answer: '120 km/h', choices: ['100 km/h', '110 km/h', '120 km/h', '130 km/h']},
+    {question: 'Two runners start together. One runs 8 mph, one 6 mph. After 90 min, how far apart?', answer: '3 miles', choices: ['1.5 miles', '2 miles', '3 miles', '4 miles']},
+    {question: 'A cyclist rides 18 miles at 12 mph. How many minutes?', answer: '90', choices: ['75', '80', '90', '100']},
+    {question: 'You drive 240 miles on 8 gallons of gas. Miles per gallon?', answer: '30', choices: ['25', '28', '30', '32']},
+    {question: 'A plane flies 2,100 miles in 3.5 hours. Speed?', answer: '600 mph', choices: ['550 mph', '575 mph', '600 mph', '625 mph']},
+    {question: 'A runner completes a 10K (6.2 miles) in 62 minutes. Average pace per mile?', answer: '10 min/mile', choices: ['8 min/mile', '9 min/mile', '10 min/mile', '11 min/mile']},
+    {question: 'Two cities are 315 miles apart. You drive at 70 mph. Travel time?', answer: '4.5 hours', choices: ['3.5 hours', '4 hours', '4.5 hours', '5 hours']},
+    {question: 'A boat travels 45 miles downstream in 1.5 hours. Speed?', answer: '30 mph', choices: ['25 mph', '28 mph', '30 mph', '35 mph']},
+    {question: 'You walk 3.6 miles at 4 mph. How many minutes?', answer: '54', choices: ['45', '48', '54', '60']},
+    {question: 'A delivery driver covers 180 miles per day 5 days a week. Weekly mileage?', answer: '900 miles', choices: ['750 miles', '800 miles', '900 miles', '950 miles']},
+    {question: 'Light travels 186,000 miles/sec. How far in 5 seconds?', answer: '930,000 miles', choices: ['750,000 miles', '850,000 miles', '930,000 miles', '1,000,000 miles']},
+    {question: 'A swimmer does 50 laps of a 25-yard pool. Total distance in yards?', answer: '1,250', choices: ['1,000', '1,100', '1,250', '1,500']},
+    {question: 'A car going 60 mph needs 2.5 hours for a trip. If speed increases to 75 mph, new time?', answer: '2 hours', choices: ['1.5 hours', '2 hours', '2.25 hours', '2.5 hours']},
+    {question: 'A marathon is 26.2 miles. A runner finishes in 3 hours 16 minutes. Approx pace per mile?', answer: '7.5 min/mile', choices: ['6.5 min/mile', '7 min/mile', '7.5 min/mile', '8 min/mile']},
+    {question: 'A space shuttle orbits Earth at 17,500 mph. Distance in 3 hours?', answer: '52,500 miles', choices: ['45,000 miles', '50,000 miles', '52,500 miles', '55,000 miles']},
+    {question: 'A car needs 30 min to travel 25 miles. What speed in mph?', answer: '50 mph', choices: ['40 mph', '45 mph', '50 mph', '55 mph']},
+    {question: 'You commute 22 miles round trip, 5 days a week. Weekly miles?', answer: '110 miles', choices: ['90 miles', '100 miles', '110 miles', '120 miles']},
+    {question: 'Sound travels 343 m/s. How far in 10 seconds?', answer: '3,430 m', choices: ['2,800 m', '3,100 m', '3,430 m', '3,800 m']},
+    {question: 'A horse gallops at 30 mph. How far in 40 minutes?', answer: '20 miles', choices: ['15 miles', '18 miles', '20 miles', '25 miles']},
+    {question: 'A bullet train covers 320 km in 80 minutes. Speed in km/h?', answer: '240 km/h', choices: ['200 km/h', '220 km/h', '240 km/h', '260 km/h']},
+    {question: 'You drive 15 miles to work. If you work 22 days this month, total miles driven to work?', answer: '330 miles', choices: ['270 miles', '300 miles', '330 miles', '360 miles']},
+    {question: 'A rescue helicopter flies 150 miles at 200 mph. Flight time in minutes?', answer: '45 min', choices: ['30 min', '40 min', '45 min', '50 min']},
+    {question: 'Two cars drive toward each other from 360 miles apart at 70 mph each. When do they meet?', answer: '2.57 hours', choices: ['2 hours', '2.57 hours', '3 hours', '3.5 hours']},
+    {question: 'A drone flies 5 km in 10 minutes. Speed in km/h?', answer: '30 km/h', choices: ['20 km/h', '25 km/h', '30 km/h', '35 km/h']},
+    {question: 'You run 4 laps of a 400m track. Total in km?', answer: '1.6 km', choices: ['1.2 km', '1.4 km', '1.6 km', '2.0 km']},
+    {question: 'A submarine travels 200 miles in 8 hours underwater. Speed?', answer: '25 mph', choices: ['20 mph', '22 mph', '25 mph', '28 mph']},
+    {question: 'A cyclist travels 90 km at 18 km/h. Time in hours?', answer: '5 hours', choices: ['4 hours', '4.5 hours', '5 hours', '5.5 hours']},
+    {question: 'A rocket burns fuel for 8 minutes at 500 lbs/min. Total fuel burned?', answer: '4,000 lbs', choices: ['3,200 lbs', '3,600 lbs', '4,000 lbs', '4,500 lbs']},
+
+    // SCIENCE & APPLIED MATH (50 questions)
+    {question: 'Water boils at 100°C. Convert to Fahrenheit. (F = C×9/5 + 32)', answer: '212°F', choices: ['180°F', '200°F', '212°F', '220°F']},
+    {question: 'Normal body temp is 98.6°F. Convert to Celsius. (C = (F-32)×5/9)', answer: '37°C', choices: ['35°C', '36°C', '37°C', '38°C']},
+    {question: 'A room drops from 24°C to 16°C overnight. Total drop?', answer: '8°C', choices: ['6°C', '7°C', '8°C', '9°C']},
+    {question: 'Absolute zero is -273°C. What is that in Fahrenheit?', answer: '-459°F', choices: ['-400°F', '-430°F', '-459°F', '-490°F']},
+    {question: 'A 100-watt bulb runs 10 hours. Energy used in watt-hours?', answer: '1,000 Wh', choices: ['500 Wh', '800 Wh', '1,000 Wh', '1,200 Wh']},
+    {question: 'Electricity costs $0.12 per kWh. Running a 2,000W heater for 5 hours costs?', answer: '$1.20', choices: ['$0.80', '$1.00', '$1.20', '$1.50']},
+    {question: 'A car engine has 200 horsepower. 1 HP = 746 watts. Engine power in watts?', answer: '149,200 W', choices: ['120,000 W', '135,000 W', '149,200 W', '160,000 W']},
+    {question: 'A 60W solar panel runs 6 hours. Energy generated in kWh?', answer: '0.36 kWh', choices: ['0.24 kWh', '0.30 kWh', '0.36 kWh', '0.40 kWh']},
+    {question: 'Force = mass × acceleration. Mass is 10kg, acceleration is 5 m/s². Force?', answer: '50 N', choices: ['30 N', '40 N', '50 N', '60 N']},
+    {question: 'Speed = distance ÷ time. Distance 150m, time 30s. Speed?', answer: '5 m/s', choices: ['3 m/s', '4 m/s', '5 m/s', '6 m/s']},
+    {question: 'A pendulum swings 30 times per minute. How many swings in 4 minutes?', answer: '120', choices: ['90', '100', '120', '140']},
+    {question: 'The human heart beats ~72 times/min. How many beats in an hour?', answer: '4,320', choices: ['3,600', '4,000', '4,320', '4,800']},
+    {question: 'A human breathes ~15 times/min. Breaths in 24 hours?', answer: '21,600', choices: ['18,000', '19,800', '21,600', '24,000']},
+    {question: 'The Earth orbits the Sun in 365.25 days. Hours in a year?', answer: '8,766', choices: ['8,400', '8,600', '8,766', '9,000']},
+    {question: 'The Moon is ~384,400 km away. Light travels 300,000 km/s. Time for light to reach the Moon in seconds?', answer: '1.28 sec', choices: ['0.8 sec', '1.0 sec', '1.28 sec', '1.5 sec']},
+    {question: 'A bacterium divides every 20 minutes. Starting with 1, how many after 1 hour?', answer: '8', choices: ['4', '6', '8', '16']},
+    {question: 'DNA has 4 bases. A gene has 300 base pairs. How many individual bases?', answer: '600', choices: ['300', '450', '600', '900']},
+    {question: 'The human body is ~60% water. A 75kg person contains how many kg of water?', answer: '45 kg', choices: ['35 kg', '40 kg', '45 kg', '50 kg']},
+    {question: 'A neuron fires at 100 impulses/sec. Impulses in 1 minute?', answer: '6,000', choices: ['3,600', '5,000', '6,000', '7,200']},
+    {question: 'Calories burned jogging: 400 cal/hr. Jogging 45 min burns how many calories?', answer: '300 cal', choices: ['200 cal', '250 cal', '300 cal', '350 cal']},
+    {question: 'A wave has frequency 50 Hz and wavelength 4m. Wave speed?', answer: '200 m/s', choices: ['150 m/s', '175 m/s', '200 m/s', '225 m/s']},
+    {question: 'Pressure = Force ÷ Area. Force is 600N on 3m². Pressure?', answer: '200 Pa', choices: ['150 Pa', '175 Pa', '200 Pa', '250 Pa']},
+    {question: 'Density = mass ÷ volume. Mass 80g, volume 10 cm³. Density?', answer: '8 g/cm³', choices: ['4 g/cm³', '6 g/cm³', '8 g/cm³', '10 g/cm³']},
+    {question: 'An object falls 5m in 1 second (gravity ≈10 m/s²). Speed at impact?', answer: '10 m/s', choices: ['5 m/s', '8 m/s', '10 m/s', '12 m/s']},
+    {question: 'A 1,500 kg car accelerates at 3 m/s². Force applied?', answer: '4,500 N', choices: ['3,000 N', '3,500 N', '4,500 N', '5,000 N']},
+    {question: 'Work = Force × Distance. Force 200N over 15m. Work done?', answer: '3,000 J', choices: ['2,000 J', '2,500 J', '3,000 J', '3,500 J']},
+    {question: 'Power = Work ÷ Time. 6,000J done in 30s. Power?', answer: '200 W', choices: ['150 W', '175 W', '200 W', '250 W']},
+    {question: 'A telescope magnifies 40x. An object appears 1.2m. Actual size?', answer: '3 cm', choices: ['2 cm', '3 cm', '4 cm', '5 cm']},
+    {question: 'The Sun is 93 million miles away. At 186,000 miles/sec, light takes how long to reach Earth?', answer: '~8.3 minutes', choices: ['~5 minutes', '~6.5 minutes', '~8.3 minutes', '~10 minutes']},
+    {question: 'A chemical reaction doubles every 5 minutes. Starting at 2 units, how many after 15 min?', answer: '16', choices: ['8', '12', '16', '32']},
+    {question: 'Ohm\'s Law: V = I × R. Voltage 120V, resistance 40Ω. Current?', answer: '3 A', choices: ['2 A', '3 A', '4 A', '5 A']},
+    {question: 'A 9V battery powers a 3Ω resistor. Current in amps?', answer: '3 A', choices: ['2 A', '3 A', '4 A', '6 A']},
+    {question: 'A 100 ml solution is 20% salt. How many ml of salt?', answer: '20 ml', choices: ['10 ml', '15 ml', '20 ml', '25 ml']},
+    {question: 'PH scale goes 0-14. Neutral is 7. An acid at pH 4 is how many units below neutral?', answer: '3', choices: ['2', '3', '4', '5']},
+    {question: 'A volcano erupts 500 cubic meters of lava per minute. Volume after 2.5 hours?', answer: '75,000 m³', choices: ['60,000 m³', '70,000 m³', '75,000 m³', '80,000 m³']},
+    {question: 'A glacier moves 2 meters per day. How far in a year (365 days)?', answer: '730 m', choices: ['365 m', '500 m', '730 m', '1,000 m']},
+    {question: 'The ocean covers 71% of Earth. Earth\'s surface is 510 million km². Ocean area?', answer: '362 million km²', choices: ['300 million km²', '330 million km²', '362 million km²', '400 million km²']},
+    {question: 'Mount Everest is 8,849m tall. In feet (1m = 3.28 ft)?', answer: '29,025 ft', choices: ['26,000 ft', '27,500 ft', '29,025 ft', '31,000 ft']},
+    {question: 'A telescope collects 4x more light when you double its diameter. If diameter doubles from 5cm to 10cm, light collected multiplies by?', answer: '4x', choices: ['2x', '3x', '4x', '8x']},
+    {question: 'A cell is 0.01mm in diameter. How many cells fit in 1cm (10mm)?', answer: '1,000', choices: ['100', '500', '1,000', '10,000']},
+    {question: 'The ISS orbits Earth every 90 minutes. Orbits in 24 hours?', answer: '16', choices: ['12', '14', '16', '18']},
+    {question: 'Carbon-14 has a half-life of 5,730 years. After 11,460 years, what fraction remains?', answer: '1/4', choices: ['1/2', '1/4', '1/8', '1/16']},
+    {question: 'A 70kg person on Earth weighs 686N (gravity=9.8m/s²). Weight on Moon (1.6m/s²)?', answer: '112 N', choices: ['70 N', '98 N', '112 N', '140 N']},
+    {question: 'A star is 4 light-years away. Light travels 9.46 trillion km per year. Distance in km?', answer: '37.84 trillion km', choices: ['20 trillion km', '30 trillion km', '37.84 trillion km', '45 trillion km']},
+    {question: 'An earthquake 7.0 on the Richter scale is 10x more powerful than a 6.0. How much more powerful than a 5.0?', answer: '100x', choices: ['10x', '50x', '100x', '1,000x']},
+    {question: 'Photosynthesis: 6CO₂ + 6H₂O → glucose. How many total molecules of input per glucose?', answer: '12', choices: ['6', '10', '12', '18']},
+    {question: 'A 2,000 calorie diet has 40% from carbs. Calories from carbs?', answer: '800 cal', choices: ['600 cal', '700 cal', '800 cal', '900 cal']},
+    {question: 'The Mariana Trench is 11,034m deep. In km?', answer: '11.034 km', choices: ['9.5 km', '10.5 km', '11.034 km', '12.5 km']},
+    {question: 'Sound travels 343m/s. A thunder crack 3 seconds after lightning means how far away?', answer: '1,029 m', choices: ['686 m', '900 m', '1,029 m', '1,200 m']},
+    {question: 'A wind turbine generates 2 MW of power. Energy in 8 hours in MWh?', answer: '16 MWh', choices: ['10 MWh', '12 MWh', '16 MWh', '20 MWh']},
+    {question: 'A 500g object moving 4m/s has kinetic energy = ½mv². KE?', answer: '4 J', choices: ['2 J', '4 J', '8 J', '10 J']},
+
+    // LOGIC & REASONING (40 questions)
+    {question: 'A number plus its triple equals 48. What is the number?', answer: '12', choices: ['10', '11', '12', '14']},
+    {question: 'If 5 cats catch 5 mice in 5 minutes, how many cats to catch 100 mice in 100 minutes?', answer: '5', choices: ['5', '10', '20', '100']},
+    {question: 'A clock shows 3:15. What is the angle between the hands?', answer: '7.5°', choices: ['0°', '7.5°', '15°', '30°']},
+    {question: 'You have a 3L and 5L jug. How do you measure exactly 4L?', answer: '2 steps', choices: ['1 step', '2 steps', '3 steps', '4 steps']},
+    {question: 'What is the next prime after 23?', answer: '29', choices: ['25', '27', '28', '29']},
+    {question: 'A farmer has chickens and cows. 20 heads, 56 legs. How many cows?', answer: '8', choices: ['6', '7', '8', '10']},
+    {question: 'A square has perimeter 52cm. What is its area?', answer: '169 cm²', choices: ['144 cm²', '156 cm²', '169 cm²', '196 cm²']},
+    {question: 'If A=1, B=2... Z=26, what is the value of MATH?', answer: '42', choices: ['38', '40', '42', '44']},
+    {question: 'A snail doubles its height each day. After 10 days it is 512cm tall. How tall on day 8?', answer: '128 cm', choices: ['64 cm', '128 cm', '256 cm', '512 cm']},
+    {question: 'What is the sum of angles in a hexagon?', answer: '720°', choices: ['540°', '620°', '720°', '900°']},
+    {question: 'How many squares on a standard 8x8 chessboard?', answer: '204', choices: ['64', '100', '168', '204']},
+    {question: 'A number is divisible by both 6 and 9. Smallest such number over 50?', answer: '54', choices: ['48', '54', '60', '72']},
+    {question: 'What percentage of 24 hours is 6 hours?', answer: '25%', choices: ['20%', '22%', '25%', '30%']},
+    {question: 'The sum of interior angles of a triangle is 180°. Two angles are 45° and 75°. Third angle?', answer: '60°', choices: ['50°', '55°', '60°', '65°']},
+    {question: 'A rectangle has perimeter 38cm and width 8cm. Length?', answer: '11 cm', choices: ['9 cm', '10 cm', '11 cm', '12 cm']},
+    {question: 'What is 15% of 15% of 1,000?', answer: '22.5', choices: ['15', '20', '22.5', '30']},
+    {question: 'A number when divided by 4 leaves remainder 3. Which fits? 15, 17, 19, 23', answer: '19', choices: ['15', '17', '19', '23']},
+    {question: 'How many diagonals does a pentagon have?', answer: '5', choices: ['3', '4', '5', '6']},
+    {question: '4 people shake hands once with everyone. Total handshakes?', answer: '6', choices: ['4', '5', '6', '8']},
+    {question: 'If today is Tuesday, what day is it 100 days from now?', answer: 'Thursday', choices: ['Tuesday', 'Wednesday', 'Thursday', 'Friday']},
+    {question: 'A cistern fills in 3 hours and drains in 6 hours. Net fill time with both open?', answer: '6 hours', choices: ['4 hours', '5 hours', '6 hours', '9 hours']},
+    {question: 'What is the LCM of 8, 12, and 15?', answer: '120', choices: ['60', '90', '120', '240']},
+    {question: 'In a group of 30 people, 18 like coffee, 14 like tea, 8 like both. How many like neither?', answer: '6', choices: ['4', '5', '6', '8']},
+    {question: 'A square root of a number is 13. What is the number?', answer: '169', choices: ['119', '144', '169', '196']},
+    {question: 'What is the missing number? 3, 7, 13, 21, 31, ___', answer: '43', choices: ['38', '40', '43', '46']},
+    {question: 'How many seconds in a day?', answer: '86,400', choices: ['72,000', '80,000', '86,400', '90,000']},
+    {question: 'A triangle has sides 5, 12, and 13. What type?', answer: 'Right triangle', choices: ['Equilateral', 'Isosceles', 'Right triangle', 'Scalene']},
+    {question: 'What is 2 to the power of 10?', answer: '1,024', choices: ['512', '768', '1,024', '2,048']},
+    {question: 'The average of 5 numbers is 14. One number is removed. New average is 12. Removed number?', answer: '22', choices: ['18', '20', '22', '24']},
+    {question: 'A rope is cut into pieces in ratio 2:3:5. Rope is 60m. Longest piece?', answer: '30 m', choices: ['20 m', '24 m', '30 m', '36 m']},
+    {question: 'What is 0.375 as a fraction?', answer: '3/8', choices: ['1/3', '3/8', '2/5', '5/12']},
+    {question: '1 mile = 1.6 km. A 10K race is how many miles?', answer: '6.25 miles', choices: ['5.5 miles', '6.0 miles', '6.25 miles', '6.5 miles']},
+    {question: 'What is the product of the first 5 prime numbers?', answer: '2,310', choices: ['1,155', '2,310', '3,465', '4,620']},
+    {question: 'A cylinder has radius 3cm and height 7cm. Volume? (use π≈3)', answer: '189 cm³', choices: ['126 cm³', '153 cm³', '189 cm³', '207 cm³']},
+    {question: 'If a : b = 3 : 4 and b : c = 2 : 5, what is a : c?', answer: '3:10', choices: ['2:5', '3:8', '3:10', '6:20']},
+    {question: 'What is 30% of 30% of 300?', answer: '27', choices: ['18', '22', '27', '30']},
+    {question: 'A bus has 48 seats. 75% are filled. How many empty seats?', answer: '12', choices: ['8', '10', '12', '14']},
+    {question: 'The sum of 4 consecutive even numbers is 60. What are they?', answer: '12,14,16,18', choices: ['10,12,14,16', '12,14,16,18', '14,16,18,20', '16,18,20,22']},
+    {question: 'What is 1/2 + 1/3 + 1/6?', answer: '1', choices: ['2/3', '5/6', '1', '7/6']},
+    {question: 'If 8 workers build a wall in 10 days, how many days for 5 workers?', answer: '16 days', choices: ['12 days', '14 days', '16 days', '20 days']},
+
+    // WORD PROBLEMS - AGE, WORK & MIXED (40 questions)
+    {question: 'Tom is 3 times Sam\'s age. In 8 years Tom will be twice Sam\'s age. How old is Sam now?', answer: '8', choices: ['6', '8', '10', '12']},
+    {question: 'A mother is 4 times her son\'s age. In 20 years she\'ll be twice his age. Son\'s age now?', answer: '10', choices: ['8', '10', '12', '15']},
+    {question: 'Two pipes fill a pool. Pipe A in 4 hours, Pipe B in 6 hours. Together in how long?', answer: '2.4 hours', choices: ['2 hours', '2.4 hours', '3 hours', '3.5 hours']},
+    {question: 'A worker finishes a job in 12 days. After 4 days another worker joins. Together they finish in 4 more days. How long would the second worker take alone?', answer: '6 days', choices: ['4 days', '6 days', '8 days', '12 days']},
+    {question: 'A train leaves at 9am at 60 mph. Another leaves at 11am at 90 mph. When does the second catch the first?', answer: '1 pm', choices: ['12 pm', '1 pm', '2 pm', '3 pm']},
+    {question: 'Anna has $50 more than Bob. Together they have $130. How much does Bob have?', answer: '$40', choices: ['$30', '$35', '$40', '$45']},
+    {question: 'A pool is 3/4 full. After removing 500 gallons it is 1/2 full. Pool capacity?', answer: '2,000 gallons', choices: ['1,500 gallons', '2,000 gallons', '2,500 gallons', '3,000 gallons']},
+    {question: 'Three friends split a task. Alex does 1/3, Beth does 1/4. Casey does the rest. Casey\'s fraction?', answer: '5/12', choices: ['1/4', '1/3', '5/12', '7/12']},
+    {question: 'A car travels uphill at 30 mph and downhill at 60 mph. Average speed for round trip?', answer: '40 mph', choices: ['35 mph', '40 mph', '45 mph', '50 mph']},
+    {question: 'Emma scored 78, 85, and 91 on three tests. What score on the 4th test gives an average of 85?', answer: '86', choices: ['82', '84', '86', '88']},
+    {question: 'A box of 12 pens weighs 360g. The empty box weighs 60g. Weight per pen?', answer: '25g', choices: ['20g', '22g', '25g', '30g']},
+    {question: 'If 6 machines make 6 parts in 6 minutes, how many parts do 60 machines make in 60 minutes?', answer: '600', choices: ['60', '360', '600', '3,600']},
+    {question: 'A jar is 1/6 full. After adding 25 cookies it is 7/12 full. Jar capacity in cookies?', answer: '60', choices: ['45', '50', '60', '75']},
+    {question: 'Two numbers differ by 18 and their sum is 90. What is the smaller number?', answer: '36', choices: ['30', '33', '36', '40']},
+    {question: 'A student reads 40 pages/hr. A 320-page book takes how many hours?', answer: '8', choices: ['6', '7', '8', '10']},
+    {question: 'If 3/4 of a number is 45, what is 2/3 of that number?', answer: '40', choices: ['30', '35', '40', '45']},
+    {question: 'A mixture is 40% juice. You have 2.5 liters. How many liters of actual juice?', answer: '1 liter', choices: ['0.75 liters', '1 liter', '1.25 liters', '1.5 liters']},
+    {question: 'Ages of 5 students average 14. If oldest (18) leaves, new average?', answer: '13.25', choices: ['12.5', '13', '13.25', '13.75']},
+    {question: 'A 120cm candle burns 2cm per hour. How long until 40cm remain?', answer: '40 hours', choices: ['30 hours', '35 hours', '40 hours', '45 hours']},
+    {question: 'In a class 60% are girls. There are 18 girls. Total students?', answer: '30', choices: ['24', '27', '30', '36']},
+    {question: '5 painters paint 5 houses in 10 days. How many painters to paint 10 houses in 10 days?', answer: '10', choices: ['5', '8', '10', '15']},
+    {question: 'A train 200m long passes a 300m bridge at 25 m/s. Time to fully cross?', answer: '20 sec', choices: ['12 sec', '16 sec', '20 sec', '25 sec']},
+    {question: 'The ratio of men to women in a company is 3:2. There are 120 employees. How many women?', answer: '48', choices: ['36', '40', '48', '60']},
+    {question: 'A number increased by 20% then decreased by 20% gives what percent of the original?', answer: '96%', choices: ['90%', '94%', '96%', '100%']},
+    {question: 'Pipe fills a tank in 8 hrs, pipe drains in 12 hrs. Net time to fill?', answer: '24 hrs', choices: ['16 hrs', '20 hrs', '24 hrs', '32 hrs']},
+    {question: 'A recipe for 4 people uses 3 eggs. How many eggs for 10 people?', answer: '7.5', choices: ['6', '7', '7.5', '8']},
+    {question: 'Two numbers are in ratio 5:3. Their difference is 16. Larger number?', answer: '40', choices: ['30', '35', '40', '45']},
+    {question: 'A wall clock gains 5 minutes per hour. After 12 hours how many minutes fast?', answer: '60 min', choices: ['30 min', '45 min', '60 min', '90 min']},
+    {question: 'A swimmer can swim downstream (6km/h current) at 10 km/h. Upstream speed?', answer: '4 km/h', choices: ['2 km/h', '3 km/h', '4 km/h', '6 km/h']},
+    {question: 'If 20% of x equals 40% of y, and y = 30, find x.', answer: '60', choices: ['45', '50', '60', '75']},
+    {question: 'A ball dropped from 64m bounces to half its height each time. Height after 3 bounces?', answer: '8 m', choices: ['4 m', '8 m', '16 m', '32 m']},
+    {question: 'Alex is 6 years older than twice Maya\'s age. Alex is 28. How old is Maya?', answer: '11', choices: ['9', '10', '11', '12']},
+    {question: 'A printer prints 40 pages/min. How many pages in 2 hours 15 minutes?', answer: '5,400', choices: ['4,800', '5,000', '5,400', '5,800']},
+    {question: 'A rectangle\'s length is 3x its width. Perimeter is 96cm. Width?', answer: '12 cm', choices: ['8 cm', '10 cm', '12 cm', '14 cm']},
+    {question: 'Mixture: 2L of 30% salt solution + 3L of 50% salt solution. Concentration?', answer: '42%', choices: ['38%', '40%', '42%', '45%']},
+    {question: 'A train running at 72 km/h passes a pole in 15 seconds. Length of train?', answer: '300 m', choices: ['200 m', '250 m', '300 m', '360 m']},
+    {question: 'John does 40% of a job in 8 days. Rest done by John and Mike together in 3 days. How long would Mike take alone?', answer: '10 days', choices: ['8 days', '10 days', '12 days', '15 days']},
+    {question: 'The sum of three consecutive multiples of 7 is 126. Smallest number?', answer: '35', choices: ['28', '35', '42', '49']},
+    {question: 'A pipe leaks at 0.5L per minute. Tank holds 180L. How many hours until empty?', answer: '6 hours', choices: ['4 hours', '5 hours', '6 hours', '7 hours']},
+    {question: 'A student scores 68 on 5 tests averaging 72. What score raises average to 74?', answer: '84', choices: ['78', '80', '84', '88']},
+    {question: '65% of students passed. 91 students passed. Total students?', answer: '140', choices: ['120', '130', '140', '150']},
+
+    // PERCENTAGE, FRACTIONS & RATIOS (30 questions)
+    {question: 'A price rose from $80 to $100. Percentage increase?', answer: '25%', choices: ['15%', '20%', '25%', '30%']},
+    {question: 'Sales dropped from 500 to 400 units. Percentage decrease?', answer: '20%', choices: ['15%', '20%', '25%', '30%']},
+    {question: '40% of 40% of 500?', answer: '80', choices: ['60', '70', '80', '100']},
+    {question: 'A test has 80 questions. You get 68 correct. Score as percentage?', answer: '85%', choices: ['80%', '82.5%', '85%', '87.5%']},
+    {question: '7/8 minus 3/8 equals?', answer: '1/2', choices: ['1/4', '3/8', '1/2', '5/8']},
+    {question: 'What is 2/3 of 3/4?', answer: '1/2', choices: ['1/3', '5/12', '1/2', '2/3']},
+    {question: 'A bag has red and blue balls in ratio 3:5. 24 red balls. How many blue?', answer: '40', choices: ['32', '36', '40', '48']},
+    {question: 'Convert 0.875 to a fraction.', answer: '7/8', choices: ['3/4', '7/8', '5/6', '9/10']},
+    {question: 'A recipe calls for 2.5 cups flour. You want to make 1.5x the recipe. Flour needed?', answer: '3.75 cups', choices: ['3 cups', '3.5 cups', '3.75 cups', '4 cups']},
+    {question: '18 is 45% of what number?', answer: '40', choices: ['30', '36', '40', '45']},
+    {question: 'A map has scale 1:25,000. Two points 8cm apart on map. Real distance in km?', answer: '2 km', choices: ['1 km', '1.5 km', '2 km', '2.5 km']},
+    {question: 'Simplify 48/72.', answer: '2/3', choices: ['1/2', '3/5', '2/3', '3/4']},
+    {question: 'A company grew revenue 30% then 20%. Total growth over 2 years?', answer: '56%', choices: ['50%', '52%', '56%', '60%']},
+    {question: '3/5 of a number is 75. What is 4/5 of that number?', answer: '100', choices: ['75', '90', '100', '125']},
+    {question: 'Students: 40% boys, 60% girls. 15 more girls than boys. Total students?', answer: '75', choices: ['50', '60', '75', '90']},
+    {question: 'What fraction of 2 hours is 40 minutes?', answer: '1/3', choices: ['1/4', '1/3', '2/5', '1/2']},
+    {question: 'An item costs $45 after a 10% discount. Original price?', answer: '$50', choices: ['$48', '$49', '$50', '$55']},
+    {question: 'A tank is 3/7 full. It contains 210 liters. Full capacity?', answer: '490 liters', choices: ['350 liters', '420 liters', '490 liters', '560 liters']},
+    {question: '4.5% of $2,000?', answer: '$90', choices: ['$70', '$80', '$90', '$100']},
+    {question: 'Ratio of A:B:C = 2:3:4. Total is 180. Value of B?', answer: '60', choices: ['40', '54', '60', '72']},
+    {question: 'A shirt is marked up 45% from a $40 cost. Selling price?', answer: '$58', choices: ['$52', '$55', '$58', '$62']},
+    {question: 'Convert 5/6 to a decimal (rounded to 2 places).', answer: '0.83', choices: ['0.75', '0.80', '0.83', '0.88']},
+    {question: 'What percent is 17 of 85?', answer: '20%', choices: ['15%', '17%', '20%', '25%']},
+    {question: 'A square\'s side is increased by 20%. Area increase percentage?', answer: '44%', choices: ['20%', '36%', '40%', '44%']},
+    {question: 'A class of 40 has 16 girls. Ratio of boys to girls?', answer: '3:2', choices: ['2:1', '5:2', '3:2', '4:3']},
+    {question: 'If 7/x = 14/20, what is x?', answer: '10', choices: ['7', '8', '10', '14']},
+    {question: 'A profit of $45 on a $180 cost. Profit percentage?', answer: '25%', choices: ['20%', '22%', '25%', '30%']},
+    {question: '2.4 ÷ 0.06 = ?', answer: '40', choices: ['4', '24', '40', '400']},
+    {question: 'A library has 1,200 books. 35% are fiction. Non-fiction count?', answer: '780', choices: ['420', '600', '780', '840']},
+    {question: 'An investment loses 25% then gains 25%. Net result?', answer: '-6.25%', choices: ['-10%', '-6.25%', '0%', '+6.25%']},
+
+    // CALENDAR, TIME & MEASUREMENT (20 questions)
+    {question: 'A project starts March 15 and lasts 75 days. End date?', answer: 'May 29', choices: ['May 25', 'May 27', 'May 29', 'June 1']},
+    {question: 'How many minutes in a week?', answer: '10,080', choices: ['7,200', '8,640', '10,080', '12,600']},
+    {question: 'Convert 3 yards 2 feet to inches. (1 yd=3 ft, 1 ft=12 in)', answer: '132 inches', choices: ['108 inches', '120 inches', '132 inches', '144 inches']},
+    {question: 'A flight departs 11:45 PM and lands 6:20 AM next day. Duration?', answer: '6h 35min', choices: ['5h 45min', '6h 15min', '6h 35min', '7h 15min']},
+    {question: 'Convert 2.5 gallons to liters (1 gallon = 3.785L).', answer: '9.46 L', choices: ['7.57 L', '8.50 L', '9.46 L', '10.25 L']},
+    {question: 'If January 1 is Wednesday, what day is March 1 (non-leap year)?', answer: 'Wednesday', choices: ['Monday', 'Tuesday', 'Wednesday', 'Thursday']},
+    {question: 'A meeting runs from 9:45 AM to 1:15 PM. Duration?', answer: '3.5 hours', choices: ['2.5 hours', '3 hours', '3.5 hours', '4 hours']},
+    {question: 'Convert 5 feet 9 inches to centimeters (1 inch = 2.54cm).', answer: '175.26 cm', choices: ['168 cm', '172 cm', '175.26 cm', '180 cm']},
+    {question: 'A contract starts Sept 1 and runs 18 months. End date?', answer: 'March 1', choices: ['February 1', 'March 1', 'April 1', 'May 1']},
+    {question: 'How many days between April 10 and August 25?', answer: '137', choices: ['120', '128', '137', '145']},
+    {question: 'Convert 250 grams to ounces (1 oz = 28.35g).', answer: '8.82 oz', choices: ['7.5 oz', '8.0 oz', '8.82 oz', '9.5 oz']},
+    {question: 'A medication is taken every 8 hours. First dose at 7 AM. What time is the 4th dose?', answer: '11 PM', choices: ['9 PM', '10 PM', '11 PM', 'Midnight']},
+    {question: 'How many hours in February of a leap year?', answer: '696', choices: ['672', '680', '696', '720']},
+    {question: 'A recipe in Celsius says bake at 180°C. What Fahrenheit setting?', answer: '356°F', choices: ['325°F', '340°F', '356°F', '375°F']},
+    {question: '1 acre = 43,560 sq ft. A 5-acre lot in sq feet?', answer: '217,800', choices: ['175,000', '200,000', '217,800', '240,000']},
+    {question: 'A shift starts 6:30 PM and ends 2:15 AM. Hours worked?', answer: '7h 45min', choices: ['7h 15min', '7h 30min', '7h 45min', '8h 00min']},
+    {question: 'How many seconds are in 2.5 hours?', answer: '9,000', choices: ['7,200', '8,100', '9,000', '10,800']},
+    {question: 'Convert 50 km to miles (1 mile = 1.609 km).', answer: '31.1 miles', choices: ['28 miles', '30 miles', '31.1 miles', '33 miles']},
+    {question: 'A plane departs New York (EST) at 3 PM and lands in London (5 hrs ahead) after a 7-hour flight. Local arrival time?', answer: '1 AM', choices: ['10 PM', '11 PM', 'Midnight', '1 AM']},
+    {question: 'How many leap years between 2000 and 2024 inclusive?', answer: '7', choices: ['5', '6', '7', '8']},
+
+    // PATTERN & NUMBER THEORY (20 questions)
+    {question: 'What comes next? 1, 8, 27, 64, ___', answer: '125', choices: ['100', '112', '125', '144']},
+    {question: 'What comes next? 2, 3, 5, 8, 12, 17, ___', answer: '23', choices: ['20', '21', '23', '25']},
+    {question: 'What is missing? 100, 91, 83, 76, 70, ___', answer: '65', choices: ['63', '64', '65', '66']},
+    {question: 'What comes next? 1, 4, 10, 20, 35, ___', answer: '56', choices: ['46', '50', '56', '63']},
+    {question: 'Sum of first 10 odd numbers?', answer: '100', choices: ['55', '81', '100', '121']},
+    {question: 'What is the 8th term of the sequence 3, 6, 12, 24...?', answer: '384', choices: ['192', '256', '384', '768']},
+    {question: 'What is missing? 2, 6, 12, 20, 30, ___, 56', answer: '42', choices: ['36', '38', '42', '48']},
+    {question: 'Sum of all digits of numbers 1 through 10?', answer: '46', choices: ['40', '43', '46', '55']},
+    {question: 'What is the 7th Fibonacci number? (1,1,2,3,5...)', answer: '13', choices: ['8', '11', '13', '21']},
+    {question: 'Pattern: A1, B3, C5, D7, ___', answer: 'E9', choices: ['E8', 'E9', 'F9', 'F11']},
+    {question: 'What number is both a perfect square and a perfect cube below 100?', answer: '64', choices: ['16', '36', '64', '81']},
+    {question: 'What is the sum of all even numbers from 2 to 20?', answer: '110', choices: ['90', '100', '110', '120']},
+    {question: 'How many 3-digit numbers are divisible by 7?', answer: '128', choices: ['112', '120', '128', '142']},
+    {question: 'What comes next? 0.5, 1.5, 4.5, 13.5, ___', answer: '40.5', choices: ['27', '36', '40.5', '54']},
+    {question: 'What is the 6th triangular number? (1,3,6,10...)', answer: '21', choices: ['15', '18', '21', '28']},
+    {question: 'What comes next? 1, 2, 6, 24, 120, ___', answer: '720', choices: ['360', '480', '600', '720']},
+    {question: 'What is the sum of prime numbers between 1 and 20?', answer: '77', choices: ['58', '67', '77', '84']},
+    {question: 'Sequence: 1, 1, 2, 6, 24, ___ (each multiplied by its position)', answer: '120', choices: ['48', '60', '96', '120']},
+    {question: 'What comes next? 81, 27, 9, 3, ___', answer: '1', choices: ['0', '1', '1.5', '2']},
+    {question: 'Which is the next perfect square after 169?', answer: '196', choices: ['180', '184', '196', '225']},
+  ];
+
   const generateQuickMath = (isDaily = false) => {
     // Difficulty based on puzzle index OR if it's Daily Challenge
     let num1, num2, operation, answer, choices;
@@ -7160,71 +7450,111 @@ const OneMove = () => {
         num1 = answer * num2;
       }
     }
-    // REGULAR PLAY: Scaled difficulty
-    else if (currentPuzzleIndex < 50) {
-      // Easy: Addition & Subtraction (single digit)
-      operation = Math.random() < 0.5 ? '+' : '-';
-      num1 = Math.floor(Math.random() * 10) + 1;
-      num2 = Math.floor(Math.random() * 10) + 1;
-      if (operation === '-' && num2 > num1) [num1, num2] = [num2, num1]; // Keep positive
-      answer = operation === '+' ? num1 + num2 : num1 - num2;
-    } else if (currentPuzzleIndex < 150) {
-      // Medium: Multiplication & Division (tables up to 10)
-      operation = Math.random() < 0.5 ? '×' : '÷';
-      if (operation === '×') {
+    // REGULAR PLAY: 70% procedural fast-calc, 30% written/word/science questions
+    // Written questions use a 50-question repeat-prevention buffer
+    else {
+      const useWritten = Math.random() < 0.30;
+
+      if (useWritten) {
+        // Pull from written pool with 50-question buffer
+        const usedWrittenRaw = localStorage.getItem('usedRegularMath');
+        const usedWritten = usedWrittenRaw ? JSON.parse(usedWrittenRaw) : [];
+        
+        // Filter out recently used questions
+        const available = QUICK_MATH_WRITTEN_POOL.filter((_, idx) => !usedWritten.includes(idx));
+        const pool = available.length > 0 ? available : QUICK_MATH_WRITTEN_POOL;
+        
+        // Pick a random question from available pool
+        const allIndices = pool === QUICK_MATH_WRITTEN_POOL 
+          ? QUICK_MATH_WRITTEN_POOL.map((_, i) => i)
+          : QUICK_MATH_WRITTEN_POOL.map((_, i) => i).filter(i => !usedWritten.includes(i));
+        
+        const randomIndex = allIndices[Math.floor(Math.random() * allIndices.length)];
+        const selected = QUICK_MATH_WRITTEN_POOL[randomIndex];
+        
+        // Update buffer (keep last 50)
+        const newUsed = [...usedWritten, randomIndex].slice(-50);
+        localStorage.setItem('usedRegularMath', JSON.stringify(newUsed));
+        
+        // Shuffle choices
+        const shuffled = [...selected.choices];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        return {
+          type: PUZZLE_TYPES.QUICK_MATH,
+          question: selected.question,
+          answer: selected.answer,
+          choices: shuffled
+        };
+      }
+
+      // Procedural fast-calc (70%) — scaled difficulty
+      if (currentPuzzleIndex < 50) {
+        // Easy: Addition & Subtraction (single digit)
+        operation = Math.random() < 0.5 ? '+' : '-';
         num1 = Math.floor(Math.random() * 10) + 1;
         num2 = Math.floor(Math.random() * 10) + 1;
-        answer = num1 * num2;
+        if (operation === '-' && num2 > num1) [num1, num2] = [num2, num1];
+        answer = operation === '+' ? num1 + num2 : num1 - num2;
+      } else if (currentPuzzleIndex < 150) {
+        // Medium: Multiplication & Division (tables up to 10)
+        operation = Math.random() < 0.5 ? '×' : '÷';
+        if (operation === '×') {
+          num1 = Math.floor(Math.random() * 10) + 1;
+          num2 = Math.floor(Math.random() * 10) + 1;
+          answer = num1 * num2;
+        } else {
+          answer = Math.floor(Math.random() * 10) + 1;
+          num2 = Math.floor(Math.random() * 10) + 1;
+          num1 = answer * num2;
+        }
       } else {
-        answer = Math.floor(Math.random() * 10) + 1;
-        num2 = Math.floor(Math.random() * 10) + 1;
-        num1 = answer * num2; // Ensure clean division
+        // Hard: Mixed operations, larger numbers
+        const ops = ['+', '-', '×', '÷'];
+        operation = ops[Math.floor(Math.random() * ops.length)];
+        if (operation === '+') {
+          num1 = Math.floor(Math.random() * 50) + 10;
+          num2 = Math.floor(Math.random() * 50) + 10;
+          answer = num1 + num2;
+        } else if (operation === '-') {
+          num1 = Math.floor(Math.random() * 80) + 20;
+          num2 = Math.floor(Math.random() * (num1 - 10)) + 1;
+          answer = num1 - num2;
+        } else if (operation === '×') {
+          num1 = Math.floor(Math.random() * 12) + 2;
+          num2 = Math.floor(Math.random() * 12) + 2;
+          answer = num1 * num2;
+        } else {
+          answer = Math.floor(Math.random() * 15) + 2;
+          num2 = Math.floor(Math.random() * 12) + 2;
+          num1 = answer * num2;
+        }
       }
-    } else {
-      // Hard: Mixed operations, larger numbers
-      const ops = ['+', '-', '×', '÷'];
-      operation = ops[Math.floor(Math.random() * ops.length)];
+
+      // Generate 3 wrong answers for procedural questions
+      choices = [answer];
+      while (choices.length < 4) {
+        let wrong = answer + Math.floor(Math.random() * 20) - 10;
+        if (wrong > 0 && !choices.includes(wrong)) {
+          choices.push(wrong);
+        }
+      }
+      // Shuffle
+      for (let i = choices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
       
-      if (operation === '+') {
-        num1 = Math.floor(Math.random() * 50) + 10;
-        num2 = Math.floor(Math.random() * 50) + 10;
-        answer = num1 + num2;
-      } else if (operation === '-') {
-        num1 = Math.floor(Math.random() * 80) + 20;
-        num2 = Math.floor(Math.random() * (num1 - 10)) + 1;
-        answer = num1 - num2;
-      } else if (operation === '×') {
-        num1 = Math.floor(Math.random() * 12) + 2;
-        num2 = Math.floor(Math.random() * 12) + 2;
-        answer = num1 * num2;
-      } else {
-        answer = Math.floor(Math.random() * 15) + 2;
-        num2 = Math.floor(Math.random() * 12) + 2;
-        num1 = answer * num2;
-      }
+      return {
+        type: PUZZLE_TYPES.QUICK_MATH,
+        question: `${num1} ${operation} ${num2} = ?`,
+        answer: answer.toString(),
+        choices: choices.map(c => c.toString())
+      };
     }
-    
-    // Generate 3 wrong answers
-    choices = [answer];
-    while (choices.length < 4) {
-      let wrong = answer + Math.floor(Math.random() * 20) - 10;
-      if (wrong > 0 && !choices.includes(wrong)) {
-        choices.push(wrong);
-      }
-    }
-    
-    // Shuffle choices
-    for (let i = choices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [choices[i], choices[j]] = [choices[j], choices[i]];
-    }
-    
-    return {
-      type: PUZZLE_TYPES.QUICK_MATH,
-      question: `${num1} ${operation} ${num2} = ?`,
-      answer: answer.toString(),
-      choices: choices.map(c => c.toString())
-    };
   };
 
   const generateMemoryMatch = () => {
