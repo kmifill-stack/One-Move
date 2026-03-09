@@ -3462,6 +3462,7 @@ const OneMove = () => {
   const [gemsSpentOnHints, setGemsSpentOnHints] = useState(0);
   const [puzzlesSkipped, setPuzzlesSkipped] = useState(0);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const [showSkipTriviaConfirm, setShowSkipTriviaConfirm] = useState(false);
   const [hintLevel, setHintLevel] = useState(0);
   const [highlightedArea, setHighlightedArea] = useState(null);
   const [usedWords, setUsedWords] = useState([]);
@@ -8258,6 +8259,52 @@ const handleDailyChallengeReplay = () => {
     }
   };
 
+  const handleSkipTrivia = () => {
+    const skipCost = 200;
+    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+    if (totalGems < skipCost) {
+      alert('Not enough gems! You need 200 gems to skip trivia.');
+      setShowSkipTriviaConfirm(false);
+      return;
+    }
+    const newGemsSpent = gemsSpent + skipCost;
+    setGemsSpent(newGemsSpent);
+    const newSkipsSpent = gemsSpentOnSkips + skipCost;
+    setGemsSpentOnSkips(newSkipsSpent);
+    const newSkipped = puzzlesSkipped + 1;
+    setPuzzlesSkipped(newSkipped);
+    setShowSkipTriviaConfirm(false);
+    const newIndex = currentPuzzleIndex + 1;
+    setCurrentPuzzleIndex(newIndex);
+    saveProgress({ currentIndex: newIndex, puzzlesSkipped: newSkipped, gemsSpent: newGemsSpent, gemsSpentOnSkips: newSkipsSpent });
+    if (newIndex >= 500) {
+      setScreen('complete');
+    } else {
+      // Skip trivia → go directly to a puzzle (not trivia again)
+      const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH, PUZZLE_TYPES.LOGIC_GRID];
+      const pt = types[Math.floor(Math.random() * types.length)];
+      if (pt === PUZZLE_TYPES.TILE_FLIP) {
+        const puzzle = generateTileFlipPuzzle({q:'',a:'',cat:''});
+        setCurrentPuzzle(puzzle); setGrid(puzzle.grid); setHintLevel(0); setHighlightedArea(null); setScreen('puzzle_tile');
+      } else if (pt === PUZZLE_TYPES.WORD_SCRAMBLE) {
+        const puzzle = generateWordScramble();
+        setCurrentPuzzle(puzzle); setScrambledWord(puzzle.scrambled); setUserWord(''); setHintLevel(0); setScreen('puzzle_word');
+      } else if (pt === PUZZLE_TYPES.QUICK_MATH) {
+        const puzzle = generateQuickMath();
+        setCurrentPuzzle(puzzle); setMathAnswer(''); setHintLevel(0); setScreen('puzzle_math');
+      } else if (pt === PUZZLE_TYPES.MEMORY_MATCH) {
+        const puzzle = generateMemoryMatch();
+        setCurrentPuzzle(puzzle); setMemoryCards(puzzle.cards); setSeenCards([]); setExplorationComplete(false);
+        setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
+      } else {
+        const puzzle = generateLogicGrid(newIndex);
+        setCurrentPuzzle(puzzle); setLogicGrid(Array(puzzle.items.length).fill(null).map(() => Array(puzzle.items.length).fill(null))); setHintLevel(0); setScreen('puzzle_logic');
+      }
+      setPuzzleFirstAttempt(true);
+      setFailCount(0);
+    }
+  };
+
   const renderGemBreakdown = () => {
     if (!showGemBreakdown) return null;
     
@@ -8558,7 +8605,7 @@ const handleDailyChallengeReplay = () => {
                   <div>
                     <p className="text-amber-300 font-semibold mb-2">EARN GEMS:</p>
                     <div className="space-y-1 ml-3">
-                      <p>✓ Trivia correct (first try): <span className="text-white font-bold">+100</span></p>
+                      <p>⭐ Bonus Round — Trivia (first try): <span className="text-white font-bold">+150</span></p>
                       <p>✓ Puzzle solved (first try): <span className="text-white font-bold">+100</span></p>
                       <p>✓ Daily Challenge complete: <span className="text-white font-bold">+500</span></p>
                     </div>
@@ -8579,9 +8626,10 @@ const handleDailyChallengeReplay = () => {
                   </div>
                   
                   <div>
-                    <p className="text-blue-400 font-semibold mb-2">SKIP PUZZLES:</p>
-                    <div className="ml-3 text-xs">
-                      <p>⏭️ Skip Puzzle: -200 gems</p>
+                    <p className="text-blue-400 font-semibold mb-2">SKIP:</p>
+                    <div className="ml-3 text-xs space-y-1">
+                      <p>⏭️ Skip Puzzle: <span className="text-white font-bold">-200 gems</span></p>
+                      <p>⏭️ Skip Trivia (Bonus Round): <span className="text-white font-bold">-200 gems</span></p>
                     </div>
                   </div>
                   
@@ -9325,45 +9373,26 @@ const handleDailyChallengeReplay = () => {
             <h2 className="text-lg font-semibold text-amber-400 text-center mb-3">🎮 Game Flow</h2>
             
             <div className="space-y-2">
-              {/* Step 1: Answer Trivia */}
-              <div className="bg-gradient-to-r from-blue-600/20 to-blue-700/20 rounded-lg p-2 border border-blue-500/30">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-lg">📝</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-white font-semibold text-sm">Answer Trivia Question</p>
-                    <p className="text-slate-400 text-xs">Get it correct → <span className="text-green-300 font-semibold">+100 💎</span></p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Arrow */}
-              <div className="text-center">
-                <span className="text-2xl text-slate-500">↓</span>
-              </div>
-              
-              {/* Step 2: Random Puzzle */}
+              {/* Step 1: Random Puzzle */}
               <div className="bg-gradient-to-r from-purple-600/20 to-purple-700/20 rounded-lg p-2 border border-purple-500/30">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-lg">🎲</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-white font-semibold text-sm">Get Random Puzzle</p>
-                    <p className="text-slate-400 text-xs">One of 4 types - you can't choose!</p>
+                    <p className="text-white font-semibold text-sm">Get a Random Puzzle</p>
+                    <p className="text-slate-400 text-xs">One of 5 types — Tile Flip, Word Scramble, Quick Math, Memory Match, or Logic Grid</p>
                   </div>
                 </div>
               </div>
-              
-              {/* Arrow with split */}
+
+              {/* Arrow */}
               <div className="text-center">
                 <span className="text-2xl text-slate-500">↓</span>
               </div>
-              
-              {/* Step 3: Your Options */}
+
+              {/* Step 2: Solve or Skip */}
               <div className="grid grid-cols-2 gap-2">
-                {/* Solve Option */}
                 <div className="bg-gradient-to-r from-green-600/20 to-green-700/20 rounded-lg p-2 border border-green-500/30">
                   <div className="text-center">
                     <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-1">
@@ -9373,8 +9402,6 @@ const handleDailyChallengeReplay = () => {
                     <p className="text-green-300 text-xs font-semibold">+100 💎</p>
                   </div>
                 </div>
-                
-                {/* Skip Option */}
                 <div className="bg-gradient-to-r from-orange-600/20 to-orange-700/20 rounded-lg p-2 border border-orange-500/30">
                   <div className="text-center">
                     <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-1">
@@ -9385,7 +9412,26 @@ const handleDailyChallengeReplay = () => {
                   </div>
                 </div>
               </div>
-              
+
+              {/* Arrow */}
+              <div className="text-center">
+                <span className="text-2xl text-slate-500">↓</span>
+              </div>
+
+              {/* Step 3: Every 5th — Bonus Round */}
+              <div className="bg-gradient-to-r from-amber-600/25 to-orange-600/25 rounded-lg p-3 border border-amber-500/50">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg">⭐</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-amber-300 font-bold text-sm">Bonus Round!</p>
+                    <p className="text-slate-300 text-xs">A Trivia question appears. Answer correctly for <span className="text-amber-300 font-bold">+150 💎</span> — 50% more than a regular puzzle.</p>
+                    <p className="text-slate-400 text-xs mt-1">Skip it for -200 💎 if you'd rather keep playing puzzles.</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Hints Info */}
               <div className="bg-gradient-to-r from-yellow-600/20 to-yellow-700/20 rounded-lg p-2 border border-yellow-500/30">
                 <div className="flex items-center gap-2">
@@ -9393,7 +9439,7 @@ const handleDailyChallengeReplay = () => {
                     <span className="text-lg">💡</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-white font-semibold text-sm">Hints Available</p>
+                    <p className="text-white font-semibold text-sm">Hints Available on Every Puzzle</p>
                     <p className="text-slate-400 text-xs">50/100/150/200 💎 per hint</p>
                   </div>
                 </div>
@@ -10170,6 +10216,42 @@ const handleDailyChallengeReplay = () => {
             <div className="text-center space-y-2">
               <div className="text-2xl font-light text-red-400 animate-pulse">
                 Incorrect!
+              </div>
+            </div>
+          )}
+
+          {/* Skip Trivia Button */}
+          {!showResult && (
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setShowSkipTriviaConfirm(true)}
+                className="px-6 py-2 bg-slate-700/60 hover:bg-slate-600/60 text-slate-300 text-sm rounded-lg transition-all border border-slate-600/40"
+              >
+                ⏭️ Skip Trivia (-200 💎)
+              </button>
+            </div>
+          )}
+
+          {/* Skip Trivia Confirm Dialog */}
+          {showSkipTriviaConfirm && (
+            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
+              <div className="bg-slate-800 rounded-2xl p-6 max-w-sm w-full border-2 border-orange-500/50 text-center space-y-4">
+                <p className="text-white font-semibold text-lg">Skip this Bonus Round?</p>
+                <p className="text-slate-400 text-sm">This costs <span className="text-orange-300 font-bold">200 gems</span> and you'll miss the <span className="text-amber-300 font-bold">+150 gem</span> reward.</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setShowSkipTriviaConfirm(false)}
+                    className="py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSkipTrivia}
+                    className="py-3 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-500 hover:to-orange-600 text-white rounded-lg font-semibold transition-all"
+                  >
+                    Skip (-200 💎)
+                  </button>
+                </div>
               </div>
             </div>
           )}
