@@ -7746,7 +7746,7 @@ const OneMove = () => {
       // Logic Grid
       const puzzle = generateLogicGrid(nextIndex);
       setCurrentPuzzle(puzzle);
-      setLogicGrid(Array(puzzle.items.length).fill(null).map(() => Array(puzzle.items.length).fill(null)));
+      setLogicGridSelections({});
       setHintLevel(0);
       setScreen('puzzle_logic');
     }
@@ -7797,7 +7797,7 @@ const OneMove = () => {
           setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
         } else {
           const puzzle = generateLogicGrid(newIndex);
-          setCurrentPuzzle(puzzle); setLogicGrid(Array(puzzle.items.length).fill(null).map(() => Array(puzzle.items.length).fill(null))); setHintLevel(0); setScreen('puzzle_logic');
+          setCurrentPuzzle(puzzle); setLogicGridSelections({}); setHintLevel(0); setScreen('puzzle_logic');
         }
         setPuzzleFirstAttempt(true);
         setFailCount(0);
@@ -7830,7 +7830,7 @@ const OneMove = () => {
           setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
         } else {
           const puzzle = generateLogicGrid(newIndex);
-          setCurrentPuzzle(puzzle); setLogicGrid(Array(puzzle.items.length).fill(null).map(() => Array(puzzle.items.length).fill(null))); setHintLevel(0); setScreen('puzzle_logic');
+          setCurrentPuzzle(puzzle); setLogicGridSelections({}); setHintLevel(0); setScreen('puzzle_logic');
         }
         setPuzzleFirstAttempt(true);
         setFailCount(0);
@@ -8298,7 +8298,7 @@ const handleDailyChallengeReplay = () => {
         setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
       } else {
         const puzzle = generateLogicGrid(newIndex);
-        setCurrentPuzzle(puzzle); setLogicGrid(Array(puzzle.items.length).fill(null).map(() => Array(puzzle.items.length).fill(null))); setHintLevel(0); setScreen('puzzle_logic');
+        setCurrentPuzzle(puzzle); setLogicGridSelections({}); setHintLevel(0); setScreen('puzzle_logic');
       }
       setPuzzleFirstAttempt(true);
       setFailCount(0);
