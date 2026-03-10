@@ -6478,40 +6478,37 @@ const OneMove = () => {
     const dateStr = getTodayDateString();
     const seed = dateStr.split('-').reduce((acc, val) => acc + parseInt(val), 0);
     
-    // NEW DISTRIBUTION - Logic Grid prioritized:
-    // Logic Grid: 30% (~9 days) - MOST PROMINENT!
-    // Quick Math: 25% (~7-8 days)
-    // Memory Match: 20% (~6 days)
-    // Word Scramble: 15% (~4-5 days)
-    // Tile Flip: 10% (~3 days)
+    // DISTRIBUTION:
+    // Logic Grid: 30% (9/30 slots)
+    // Quick Math: 30% (9/30 slots)
+    // Memory Match: 20% (6/30 slots)
+    // Word Scramble: 11% (3/30 slots)
+    // Tile Flip: 9% (3/30 slots)
     
-    // Improved randomization to avoid consecutive repeats
-    // Use day of year instead of just day of month for better distribution
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
     const diff = now - start;
     const oneDay = 1000 * 60 * 60 * 24;
     const dayOfYear = Math.floor(diff / oneDay);
     
-    // Combine dayOfYear with seed for better pseudo-randomness
     const position = (dayOfYear * 7 + seed * 3) % 30;
     
     let puzzleType;
     
-    if (position < 11) {
-      // Positions 0-10: Logic Grid (11 occurrences = 35%)
+    if (position < 9) {
+      // Positions 0-8: Logic Grid (9 occurrences = 30%)
       puzzleType = PUZZLE_TYPES.LOGIC_GRID;
-    } else if (position < 20) {
-      // Positions 11-19: Quick Math (9 occurrences = 30%)
+    } else if (position < 18) {
+      // Positions 9-17: Quick Math (9 occurrences = 30%)
       puzzleType = PUZZLE_TYPES.QUICK_MATH;
-    } else if (position < 25) {
-      // Positions 20-24: Memory Match (5 occurrences = 15%)
+    } else if (position < 24) {
+      // Positions 18-23: Memory Match (6 occurrences = 20%)
       puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-    } else if (position < 28) {
-      // Positions 25-27: Word Scramble (3 occurrences = 11%)  
+    } else if (position < 27) {
+      // Positions 24-26: Word Scramble (3 occurrences = 10% ~11%)
       puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
     } else {
-      // Positions 28-29: Tile Flip (2 occurrences = 9% rounded)
+      // Positions 27-29: Tile Flip (3 occurrences = 10% ~9%)
       puzzleType = PUZZLE_TYPES.TILE_FLIP;
     }
     
@@ -7698,16 +7695,14 @@ const OneMove = () => {
     // All other puzzles → random from the 5 puzzle types (equal 20% weight each)
     const rand = Math.random();
     let puzzleType;
-    if (rand < 0.20) {
+    if (rand < 0.25) {
       puzzleType = PUZZLE_TYPES.TILE_FLIP;
-    } else if (rand < 0.40) {
+    } else if (rand < 0.50) {
       puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
-    } else if (rand < 0.60) {
+    } else if (rand < 0.75) {
       puzzleType = PUZZLE_TYPES.QUICK_MATH;
-    } else if (rand < 0.80) {
-      puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
     } else {
-      puzzleType = PUZZLE_TYPES.LOGIC_GRID;
+      puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
     }
     if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
       const dummyTrivia = {q: '', a: '', cat: ''};
@@ -7742,13 +7737,6 @@ const OneMove = () => {
       setMemoryResult(null);
       setHintLevel(0);
       setScreen('puzzle_memory');
-    } else {
-      // Logic Grid
-      const puzzle = generateLogicGrid(nextIndex);
-      setCurrentPuzzle(puzzle);
-      setLogicGridSelections({});
-      setHintLevel(0);
-      setScreen('puzzle_logic');
     }
     setPuzzleFirstAttempt(true);
     setFailCount(0);
@@ -7780,7 +7768,7 @@ const OneMove = () => {
         setTimeout(() => checkLevelUp(), 100);
         // Force a non-trivia puzzle by passing an index that won't trigger trivia
         // We pick a random puzzle type directly here since we're already past trivia
-        const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH, PUZZLE_TYPES.LOGIC_GRID];
+        const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH];
         const pt = types[Math.floor(Math.random() * types.length)];
         if (pt === PUZZLE_TYPES.TILE_FLIP) {
           const puzzle = generateTileFlipPuzzle({q:'',a:'',cat:''});
@@ -7795,9 +7783,6 @@ const OneMove = () => {
           const puzzle = generateMemoryMatch();
           setCurrentPuzzle(puzzle); setMemoryCards(puzzle.cards); setSeenCards([]); setExplorationComplete(false);
           setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
-        } else {
-          const puzzle = generateLogicGrid(newIndex);
-          setCurrentPuzzle(puzzle); setLogicGridSelections({}); setHintLevel(0); setScreen('puzzle_logic');
         }
         setPuzzleFirstAttempt(true);
         setFailCount(0);
@@ -7813,7 +7798,7 @@ const OneMove = () => {
         setCurrentPuzzleIndex(newIndex);
         saveProgress({ currentIndex: newIndex });
         setTimeout(() => checkLevelUp(), 100);
-        const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH, PUZZLE_TYPES.LOGIC_GRID];
+        const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH];
         const pt = types[Math.floor(Math.random() * types.length)];
         if (pt === PUZZLE_TYPES.TILE_FLIP) {
           const puzzle = generateTileFlipPuzzle({q:'',a:'',cat:''});
@@ -7828,9 +7813,6 @@ const OneMove = () => {
           const puzzle = generateMemoryMatch();
           setCurrentPuzzle(puzzle); setMemoryCards(puzzle.cards); setSeenCards([]); setExplorationComplete(false);
           setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
-        } else {
-          const puzzle = generateLogicGrid(newIndex);
-          setCurrentPuzzle(puzzle); setLogicGridSelections({}); setHintLevel(0); setScreen('puzzle_logic');
         }
         setPuzzleFirstAttempt(true);
         setFailCount(0);
@@ -8224,6 +8206,7 @@ const handleDailyChallengeReplay = () => {
   };
 
   const handleHomeClick = () => {
+    setIsDailyChallenge(false);
     setScreen('home');
   };
 
@@ -8252,6 +8235,7 @@ const handleDailyChallengeReplay = () => {
     setCurrentPuzzleIndex(newIndex);
     saveProgress({ currentIndex: newIndex, puzzlesSkipped: newSkipped, gemsSpent: newGemsSpent, gemsSpentOnSkips: newSkipsSpent });
     
+    setIsDailyChallenge(false);
     if (newIndex >= 500) {
       setScreen('complete');
     } else {
@@ -8281,7 +8265,7 @@ const handleDailyChallengeReplay = () => {
       setScreen('complete');
     } else {
       // Skip trivia → go directly to a puzzle (not trivia again)
-      const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH, PUZZLE_TYPES.LOGIC_GRID];
+      const types = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH];
       const pt = types[Math.floor(Math.random() * types.length)];
       if (pt === PUZZLE_TYPES.TILE_FLIP) {
         const puzzle = generateTileFlipPuzzle({q:'',a:'',cat:''});
@@ -8296,9 +8280,6 @@ const handleDailyChallengeReplay = () => {
         const puzzle = generateMemoryMatch();
         setCurrentPuzzle(puzzle); setMemoryCards(puzzle.cards); setSeenCards([]); setExplorationComplete(false);
         setWrongAttempts(0); setFlippedCards([]); setMatchedPairs([]); setMemoryResult(null); setHintLevel(0); setScreen('puzzle_memory');
-      } else {
-        const puzzle = generateLogicGrid(newIndex);
-        setCurrentPuzzle(puzzle); setLogicGridSelections({}); setHintLevel(0); setScreen('puzzle_logic');
       }
       setPuzzleFirstAttempt(true);
       setFailCount(0);
@@ -11251,6 +11232,14 @@ const handleDailyChallengeReplay = () => {
     
     return (
       <div className="h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 overflow-y-auto">
+        {!isDailyChallenge && (
+          <button
+            onClick={handleHomeClick}
+            className="absolute top-4 left-4 z-20 p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+          >
+            <Home className="w-6 h-6 text-white" />
+          </button>
+        )}
         {isDailyChallenge && (
           <div className="sticky top-0 left-0 p-4 flex items-center justify-between gap-2 z-10 bg-gradient-to-r from-purple-950/90 to-blue-900/90">
             <div className="flex items-center gap-2">
@@ -11475,7 +11464,14 @@ const handleDailyChallengeReplay = () => {
     );
   }
 
-  return null;
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-5xl mb-4 animate-spin">⚙️</div>
+        <p className="text-slate-400 text-sm">Loading...</p>
+      </div>
+    </div>
+  );
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
