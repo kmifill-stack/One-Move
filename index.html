@@ -2957,6 +2957,12 @@ const OneMove = () => {
   const [screen, setScreen] = useState('splash');
   const [currentPuzzleIndex, setCurrentPuzzleIndex] = useState(0);
   const [puzzleDeck, setPuzzleDeck] = useState([]);
+  const [correctStreak, setCorrectStreak] = useState(0);
+  const [showDailyChallengeNudge, setShowDailyChallengeNudge] = useState(false);
+  const [flashPhase, setFlashPhase] = useState(false); // true = cards visible during countdown
+  const [flashCountdown, setFlashCountdown] = useState(3);
+  const [wrongFlashes, setWrongFlashes] = useState([]); // card ids that flashed red
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false);
   const [deckPosition, setDeckPosition] = useState(0);
   const [triviaScore, setTriviaScore] = useState(0);
   const [puzzleScore, setPuzzleScore] = useState(0);
@@ -3025,6 +3031,7 @@ const OneMove = () => {
   const [showTileFailure, setShowTileFailure] = useState(false);
   const [showTileSuccess, setShowTileSuccess] = useState(false);
   const [showMathResult, setShowMathResult] = useState(null);
+  const [mathSelectedAnswer, setMathSelectedAnswer] = useState(null);
   const [bonusGems, setBonusGems] = useState(0);
   const [lastAwardedLevel, setLastAwardedLevel] = useState('');
   
@@ -6382,12 +6389,22 @@ const OneMove = () => {
       setMemoryCards(challenge.cards);
       setFlippedCards([]);
       setMatchedPairs([]);
-          setMemoryResult(null);  // CLEAR OLD RESULT - BUG FIX
+      setMemoryResult(null);
       setSeenCards([]);
       setExplorationComplete(false);
       setWrongAttempts(0);
+      setWrongFlashes([]);
       setHintLevel(0);
+      const dcFlashSeconds = (challenge.pairs || 3) <= 3 ? 4 : (challenge.pairs || 3) <= 6 ? 6 : 9;
+      setFlashPhase(true);
+      setFlashCountdown(dcFlashSeconds);
       setScreen('puzzle_memory');
+      let count = dcFlashSeconds;
+      const ticker = setInterval(() => {
+        count--;
+        setFlashCountdown(count);
+        if (count <= 0) { clearInterval(ticker); setFlashPhase(false); }
+      }, 1000);
     } else if (challenge.type === PUZZLE_TYPES.LOGIC_GRID) {
       setLogicGridSelections({});
       setHintLevel(0);
@@ -7242,6 +7259,18 @@ const OneMove = () => {
   };
 
   // Routes to trivia every 5th puzzle (index % 5 === 4), otherwise picks a random puzzle type directly
+  // Streak celebration helper
+  const handleCorrectStreak = () => {
+    const newStreak = correctStreak + 1;
+    setCorrectStreak(newStreak);
+    if (newStreak > 0 && newStreak % 3 === 0) {
+      setShowStreakCelebration(newStreak);
+      setTimeout(() => setShowStreakCelebration(false), 2500);
+    }
+  };
+
+  const resetStreak = () => setCorrectStreak(0);
+
   // Shuffle helper
   const shuffleArray = (arr) => {
     const a = [...arr];
@@ -7253,6 +7282,11 @@ const OneMove = () => {
   };
 
   const launchPuzzleType = (puzzleType) => {
+    // Show Daily Challenge nudge after puzzle 10 (once only)
+    if (currentPuzzleIndex === 10 && !dailyChallengeAttempted && !isDailyChallenge) {
+      setShowDailyChallengeNudge(true);
+      setTimeout(() => setShowDailyChallengeNudge(false), 5000);
+    }
     if (puzzleType === PUZZLE_TYPES.TILE_FLIP) {
       const puzzle = generateTileFlipPuzzle({q: '', a: '', cat: ''});
       setCurrentPuzzle(puzzle);
@@ -7284,8 +7318,22 @@ const OneMove = () => {
       setFlippedCards([]);
       setMatchedPairs([]);
       setMemoryResult(null);
+      setWrongFlashes([]);
       setHintLevel(0);
+      // Scale flash time and taps by board size
+      const flashSeconds = puzzle.pairs <= 3 ? 4 : puzzle.pairs <= 6 ? 6 : 9;
+      setFlashPhase(true);
+      setFlashCountdown(flashSeconds);
       setScreen('puzzle_memory');
+      let count = flashSeconds;
+      const ticker = setInterval(() => {
+        count--;
+        setFlashCountdown(count);
+        if (count <= 0) {
+          clearInterval(ticker);
+          setFlashPhase(false);
+        }
+      }, 1000);
     }
     setPuzzleFirstAttempt(true);
     setFailCount(0);
@@ -8077,6 +8125,27 @@ const handleDailyChallengeReplay = () => {
   if (screen === 'home') {
     return (
       <div className={`min-h-screen ${getThemeColors()} flex items-center justify-center p-6`}>
+        {/* Daily Challenge Discovery Nudge */}
+        {showDailyChallengeNudge && (
+          <div className="fixed inset-0 flex items-end justify-center z-50 p-6 pb-32 pointer-events-none">
+            <div className="bg-gradient-to-br from-purple-700 to-purple-900 rounded-2xl px-6 py-4 text-center shadow-2xl border-2 border-purple-400 max-w-sm w-full animate-bounce">
+              <p className="text-white text-lg font-bold mb-1">🏆 Did you know?</p>
+              <p className="text-purple-200 text-sm">A new Daily Challenge is waiting for you — tap the trophy button on the home screen to play!</p>
+            </div>
+          </div>
+        )}
+
+        {/* Streak Celebration Overlay */}
+        {showStreakCelebration && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+            <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl px-10 py-8 text-center shadow-2xl animate-bounce">
+              <p className="text-white text-5xl mb-2">🔥</p>
+              <p className="text-white text-3xl font-bold">{showStreakCelebration} IN A ROW!</p>
+              <p className="text-orange-100 text-sm mt-1">You're on fire! Keep it up!</p>
+            </div>
+          </div>
+        )}
+
         {showAboutGems && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowAboutGems(false)}>
             <div className="bg-slate-800 rounded-xl w-full max-w-xs border-2 border-purple-500" onClick={(e) => e.stopPropagation()}>
@@ -9830,12 +9899,18 @@ const handleDailyChallengeReplay = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         {!isDailyChallenge && (
-          <button 
-            onClick={handleHomeClick}
-            className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50"
-          >
-            <Home className="w-5 h-5" />
-          </button>
+          <>
+            <button 
+              onClick={handleHomeClick}
+              className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+            <div className="absolute top-4 right-4 z-50 flex items-center gap-1 bg-slate-800/70 rounded-full px-3 py-1">
+              <span className="text-amber-400 text-sm">💎</span>
+              <span className="text-white text-sm font-bold">{totalGems}</span>
+            </div>
+          </>
         )}
         
         <div className="space-y-3 max-w-sm w-full mx-auto flex flex-col items-center">
@@ -10049,9 +10124,15 @@ const handleDailyChallengeReplay = () => {
     return (
       <div className="h-screen overflow-y-auto bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex flex-col items-center p-4 pt-16">
         {!isDailyChallenge && (
-          <button onClick={handleHomeClick} className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50">
-            <Home className="w-5 h-5" />
-          </button>
+          <>
+            <button onClick={handleHomeClick} className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50">
+              <Home className="w-5 h-5" />
+            </button>
+            <div className="absolute top-4 right-4 z-50 flex items-center gap-1 bg-slate-800/70 rounded-full px-3 py-1">
+              <span className="text-amber-400 text-sm">💎</span>
+              <span className="text-white text-sm font-bold">{totalGems}</span>
+            </div>
+          </>
         )}
 
         <div className="max-w-md w-full flex flex-col gap-4 mt-4">
@@ -10078,10 +10159,16 @@ const handleDailyChallengeReplay = () => {
           )}
           {showWordWrong && (
             <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-              <div className="bg-red-500/90 rounded-3xl px-10 py-8 text-center shadow-2xl animate-pulse">
-                <p className="text-white text-6xl font-bold mb-2">✗</p>
+              <div className="bg-red-500/90 rounded-3xl px-10 py-8 text-center shadow-2xl">
+                <p className="text-white text-5xl font-bold mb-2">✗</p>
                 <p className="text-white text-xl font-bold">Incorrect!</p>
-                <p className="text-red-100 text-sm mt-2">Moving to next puzzle...</p>
+                <p className="text-red-100 text-sm mt-2 mb-3">The answer was:</p>
+                <div className="bg-white rounded-xl px-6 py-3 inline-block mt-1">
+                  <p className="text-red-600 text-2xl font-bold tracking-widest uppercase">
+                    {(currentPuzzle.answer || currentPuzzle.word || '').toUpperCase()}
+                  </p>
+                </div>
+                <p className="text-red-100 text-xs mt-3">Moving to next puzzle...</p>
               </div>
             </div>
           )}
@@ -10163,6 +10250,9 @@ const handleDailyChallengeReplay = () => {
                   const newScore = puzzleScore + 100;
                   setPuzzleScore(newScore);
                   saveProgress({ puzzleScore: newScore });
+                  handleCorrectStreak();
+                } else if (!isDailyChallenge) {
+                  resetStreak();
                 }
                 setTimeout(() => {
                   setShowCorrectWord(false);
@@ -10186,6 +10276,7 @@ const handleDailyChallengeReplay = () => {
                 setPuzzleFirstAttempt(false);
                 setFailCount(prev => prev + 1);
                 setShowWordWrong(true);
+                resetStreak();
                 setTimeout(() => {
                   setShowWordWrong(false);
                   const newIndex = currentPuzzleIndex + 1;
@@ -10254,6 +10345,8 @@ const handleDailyChallengeReplay = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     const handleMathAnswer = (selected) => {
+      if (showMathResult) return; // Prevent double tap
+      setMathSelectedAnswer(selected);
       if (selected === currentPuzzle.answer) {
         // CORRECT!
         playSound('success');  // ADD SUCCESS SOUND
@@ -10266,18 +10359,23 @@ const handleDailyChallengeReplay = () => {
 		}        
         if (puzzleFirstAttempt) {
           setPuzzleScore(puzzleScore + 100);
+          handleCorrectStreak();
+        } else {
+          resetStreak();
         }
         
         // Check level up
         setTimeout(() => checkLevelUp(), 100);
         
-        // Advance to next trivia
-        setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-        saveProgress();
+        // Advance to next puzzle
+        const mathNextIndex = currentPuzzleIndex + 1;
+        setCurrentPuzzleIndex(mathNextIndex);
+        saveProgress({ currentIndex: mathNextIndex });
         
         setTimeout(() => {
           setShowMathResult(null);
-          handleNextPuzzle(currentPuzzleIndex + 1);
+          setMathSelectedAnswer(null);
+          if (mathNextIndex >= 500) { setScreen('complete'); } else { handleNextPuzzle(mathNextIndex); }
         }, 1500);
       } else {
         // WRONG! - Auto-advance immediately (one attempt only)
@@ -10304,16 +10402,17 @@ const handleDailyChallengeReplay = () => {
         // Regular game - wrong answer means auto-advance
         setPuzzleFirstAttempt(false);
         setFailCount(failCount + 1);
+        resetStreak();
+        const mathWrongIndex = currentPuzzleIndex + 1;
+        setCurrentPuzzleIndex(mathWrongIndex);
+        saveProgress({ currentIndex: mathWrongIndex });
         
         // Advance to next puzzle after showing wrong feedback
         setTimeout(() => {
           setShowMathResult(null);
-          setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-          saveProgress();
-          
+          setMathSelectedAnswer(null);
           setTimeout(() => checkLevelUp(), 100);
-          
-          handleNextPuzzle(currentPuzzleIndex + 1);
+          if (mathWrongIndex >= 500) { setScreen('complete'); } else { handleNextPuzzle(mathWrongIndex); }
         }, 1500);
       }
     };
@@ -10321,12 +10420,18 @@ const handleDailyChallengeReplay = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         {!isDailyChallenge && (
-          <button 
-            onClick={handleHomeClick}
-            className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50"
-          >
-            <Home className="w-5 h-5" />
-          </button>
+          <>
+            <button 
+              onClick={handleHomeClick}
+              className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+            <div className="absolute top-4 right-4 z-50 flex items-center gap-1 bg-slate-800/70 rounded-full px-3 py-1">
+              <span className="text-amber-400 text-sm">💎</span>
+              <span className="text-white text-sm font-bold">{totalGems}</span>
+            </div>
+          </>
         )}
         
         <div className="space-y-6 max-w-md w-full">
@@ -10380,7 +10485,16 @@ const handleDailyChallengeReplay = () => {
               <button
                 key={idx}
                 onClick={() => handleMathAnswer(choice)}
-                className="bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl p-6 text-3xl font-bold transition-all duration-300 shadow-lg"
+                disabled={!!showMathResult}
+                className={`rounded-xl p-6 text-3xl font-bold transition-all duration-300 shadow-lg
+                  ${showMathResult && choice === currentPuzzle.answer
+                    ? 'bg-gradient-to-br from-green-500 to-green-600 text-white scale-105'
+                    : showMathResult && choice === mathSelectedAnswer
+                    ? 'bg-gradient-to-br from-red-500 to-red-600 text-white'
+                    : showMathResult
+                    ? 'bg-slate-700 text-slate-400 opacity-50'
+                    : 'bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white active:scale-95'
+                  }`}
               >
                 {choice}
               </button>
@@ -10429,293 +10543,190 @@ const handleDailyChallengeReplay = () => {
   // Memory Match Puzzle Screen
   if (screen === 'puzzle_memory' && currentPuzzle) {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
-    const gridCols = currentPuzzle.pairs === 3 ? 3 : 4;
-    
+    const gridCols = currentPuzzle.pairs <= 3 ? 3 : 4;
+    const maxTaps = currentPuzzle.pairs <= 3 ? 4 : currentPuzzle.pairs <= 6 ? 5 : 6;
+    const tapsRemaining = maxTaps - wrongAttempts;
+
     const handleCardClick = (cardId) => {
-      // Ignore if already flipped or matched
+      if (flashPhase || memoryResult) return; // No taps during flash or result
       const card = memoryCards.find(c => c.id === cardId);
-      if (card.isMatched || flippedCards.includes(cardId)) return;
-      
-      // Prevent clicking if 2 cards already flipped
+      if (!card || card.isMatched || flippedCards.includes(cardId)) return;
       if (flippedCards.length >= 2) return;
-      
-      // Track which unique emojis have been seen
-      if (!seenCards.includes(card.emoji)) {
-        const newSeen = [...seenCards, card.emoji];
-        setSeenCards(newSeen);
-        
-        // Check if exploration is complete (all unique emojis seen)
-        if (newSeen.length === currentPuzzle.pairs) {
-          setExplorationComplete(true);
-        }
-      }
-      
-      // Flip card
+
       const newFlipped = [...flippedCards, cardId];
       setFlippedCards(newFlipped);
-      
-      // Check if we have 2 cards flipped
+
       if (newFlipped.length === 2) {
         const card1 = memoryCards.find(c => c.id === newFlipped[0]);
         const card2 = memoryCards.find(c => c.id === newFlipped[1]);
-        
+
         if (card1.emoji === card2.emoji) {
           // MATCH!
           const newMatched = [...matchedPairs, card1.emoji];
           setMatchedPairs(newMatched);
-          
-          // Update cards to matched
-          const updatedCards = memoryCards.map(c => 
+          const updatedCards = memoryCards.map(c =>
             c.id === card1.id || c.id === card2.id ? {...c, isMatched: true} : c
           );
           setMemoryCards(updatedCards);
           setFlippedCards([]);
-          
-          // Check if all matched
+
           if (newMatched.length === currentPuzzle.pairs) {
-            // PUZZLE COMPLETE!
-            playSound('success');  // ADD SUCCESS SOUND
-            
-            // Determine tier based on wrong attempts
-            let resultTier;
-            if (wrongAttempts === 0) {
-              resultTier = 'perfect'; // YOU ARE A PRO! +100 gems
-              
-              // Check if this is Daily Challenge
-              // Award 100 gems for perfect score
-              const newPuzzleScore = puzzleScore + 100;
-              setPuzzleScore(newPuzzleScore);
-              saveProgress({ puzzleScore: newPuzzleScore });
-            } else if (wrongAttempts <= 2) {
-              resultTier = 'excellent'; // ALMOST PERFECT! +50 gems
-              // Award 50 gems for excellent score (1-2 wrong)
-              const newPuzzleScore = puzzleScore + 50;
-              setPuzzleScore(newPuzzleScore);
-              saveProgress({ puzzleScore: newPuzzleScore });
-            } else if (wrongAttempts <= 4) {
-              resultTier = 'good'; // NICE WORK! +25 gems
-              // Award 25 gems for good score (3-4 wrong)
-              const newPuzzleScore = puzzleScore + 25;
-              setPuzzleScore(newPuzzleScore);
-              saveProgress({ puzzleScore: newPuzzleScore });
-            } else {
-              resultTier = 'almost'; // KEEP TRYING! (No gems)
-            }
-            
-            setMemoryResult(resultTier);
-            
-            // Check if this is Daily Challenge - handle it BEFORE continuing to next puzzle
-            if (isDailyChallenge) {
-              handleDailyChallengeSuccess();
-              return;
-            }
-            
-            // Advance to next trivia
-            setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-            saveProgress();
-            
-            // Check level up
+            // ALL MATCHED — WIN!
+            playSound('success');
+            const newPuzzleScore = puzzleScore + 100;
+            setPuzzleScore(newPuzzleScore);
+            handleCorrectStreak();
+            saveProgress({ puzzleScore: newPuzzleScore });
+            setMemoryResult('perfect');
+            if (isDailyChallenge) { handleDailyChallengeSuccess(); return; }
+            const newIndex = currentPuzzleIndex + 1;
+            setCurrentPuzzleIndex(newIndex);
+            saveProgress({ currentIndex: newIndex });
             setTimeout(() => checkLevelUp(), 100);
-            
-            // Slower transition - 3 seconds to see result
-            setTimeout(() => {
-              setMemoryResult(null);
-              handleNextPuzzle(currentPuzzleIndex + 1);
-            }, 5000);
+            setTimeout(() => { setMemoryResult(null); handleNextPuzzle(newIndex); }, 3000);
           }
         } else {
-          // NO MATCH - flip back after delay
+          // WRONG PAIR — flash red then flip back
+          setWrongFlashes([card1.id, card2.id]);
           setTimeout(() => {
+            setWrongFlashes([]);
             setFlippedCards([]);
-            
-            // Only count as wrong attempt if exploration is complete
-            if (explorationComplete) {
-              const newWrongAttempts = wrongAttempts + 1;
-              setWrongAttempts(newWrongAttempts);
-              
-              if (newWrongAttempts >= 6) {
-                // Check if Daily Challenge
-                if (isDailyChallenge) {
-                  // Daily Challenge FAILED
-                  saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
-                  setDailyChallengeFailed(true);
-          setDailyChallengeInProgress(false);
-          setSavedDailyChallengeState(null);
-                  setIsDailyChallenge(false);
-                  
-                  setMemoryResult('failed');
-                  
-                  setTimeout(() => {
-                    setMemoryResult(null);
-                    setShowDailyChallengeResult(true);
-                    setDailyChallengeReward(0);
-                  }, 5000);
-                  
-                  return;
-                }
-                
-                // Failed 6 attempts - show encouraging message
+            const newWrong = wrongAttempts + 1;
+            setWrongAttempts(newWrong);
+            resetStreak();
+
+            if (newWrong >= maxTaps) {
+              // Out of taps
+              if (isDailyChallenge) {
+                saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
+                setDailyChallengeFailed(true);
+                setDailyChallengeInProgress(false);
+                setSavedDailyChallengeState(null);
+                setIsDailyChallenge(false);
                 setMemoryResult('failed');
-                
-                setCurrentPuzzleIndex(currentPuzzleIndex + 1);
-                saveProgress();
-                
-                setTimeout(() => checkLevelUp(), 100);
-                
-                // 3 second pause to see the "Almost!" message
-                setTimeout(() => {
-                  setMemoryResult(null);
-                  handleNextPuzzle(currentPuzzleIndex + 1);
-                }, 5000);
+                setTimeout(() => { setMemoryResult(null); setShowDailyChallengeResult(true); setDailyChallengeReward(0); }, 3000);
+                return;
               }
+              setMemoryResult('failed');
+              const newIndex = currentPuzzleIndex + 1;
+              setCurrentPuzzleIndex(newIndex);
+              saveProgress({ currentIndex: newIndex });
+              setTimeout(() => checkLevelUp(), 100);
+              setTimeout(() => { setMemoryResult(null); handleNextPuzzle(newIndex); }, 3000);
             }
-          }, 1000);
+          }, 800);
         }
       }
     };
-    
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center p-4">
         {!isDailyChallenge && (
-          <button 
-            onClick={handleHomeClick}
-            className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50"
-          >
-            <Home className="w-5 h-5" />
-          </button>
+          <>
+            <button onClick={handleHomeClick} className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white transition-all duration-200 z-50">
+              <Home className="w-5 h-5" />
+            </button>
+            <div className="absolute top-4 right-4 z-50 flex items-center gap-1 bg-slate-800/70 rounded-full px-3 py-1">
+              <span className="text-amber-400 text-sm">💎</span>
+              <span className="text-white text-sm font-bold">{totalGems}</span>
+            </div>
+          </>
         )}
-        
-        <div className="space-y-6 max-w-md w-full mx-auto">
-          {/* Success/Result Messages */}
+
+        <div className="space-y-5 max-w-md w-full mx-auto">
+
+          {/* Result overlay */}
           {memoryResult && (
-            <div className="text-center mb-6 animate-pulse">
-              {memoryResult === 'perfect' && (
-                <div>
-                  <p className="text-yellow-400 text-6xl font-bold mb-2">🏆</p>
-                  <p className="text-yellow-400 text-5xl font-bold">YOU ARE A PRO!</p>
-                  <p className="text-green-400 text-lg mt-2">+100 gems earned!</p>
-                </div>
-              )}
-              {memoryResult === 'excellent' && (
-                <div>
-                  <p className="text-blue-400 text-6xl font-bold mb-2">⭐</p>
-                  <p className="text-blue-400 text-5xl font-bold">ALMOST PERFECT!</p>
-                  <p className="text-green-400 text-lg mt-2">+50 gems earned!</p>
-                </div>
-              )}
-              {memoryResult === 'good' && (
-                <div>
-                  <p className="text-green-400 text-6xl font-bold mb-2">👍</p>
-                  <p className="text-green-400 text-5xl font-bold">NICE WORK!</p>
-                  <p className="text-green-400 text-lg mt-2">+25 gems earned!</p>
-                </div>
-              )}
-              {memoryResult === 'almost' && (
-                <div>
-                  <p className="text-purple-400 text-6xl font-bold mb-2">💪</p>
-                  <p className="text-purple-400 text-5xl font-bold">KEEP TRYING!</p>
-                  <p className="text-slate-300 text-base mt-2">No gems this time - try for fewer mistakes!</p>
-                </div>
-              )}
-              {memoryResult === 'failed' && (
-                <div>
-                  <p className="text-amber-400 text-6xl font-bold mb-2">💪</p>
-                  <p className="text-amber-400 text-5xl font-bold">ALMOST!</p>
-                  <p className="text-slate-300 text-base mt-2">Keep practicing - you'll nail it next time!</p>
-                </div>
-              )}
+            <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+              <div className={`rounded-3xl px-10 py-8 text-center shadow-2xl ${memoryResult === 'perfect' ? 'bg-green-600/95' : 'bg-red-500/90'}`}>
+                <p className="text-white text-6xl mb-2">{memoryResult === 'perfect' ? '🏆' : '💪'}</p>
+                <p className="text-white text-3xl font-bold">{memoryResult === 'perfect' ? 'PERFECT MATCH!' : 'ALMOST!'}</p>
+                {memoryResult === 'perfect' && <p className="text-green-200 text-lg mt-1">+100 gems!</p>}
+                {memoryResult === 'failed' && <p className="text-red-100 text-sm mt-1">Moving to next puzzle...</p>}
+              </div>
             </div>
           )}
-          
+
           {isDailyChallenge && (
-            <div className="space-y-2 mb-4">
+            <div className="space-y-2">
               <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-lg p-2 text-center">
                 <p className="text-white font-bold text-sm">🏆 DAILY CHALLENGE</p>
                 <p className="text-amber-100 text-xs">One attempt • Win 500 Gems!</p>
               </div>
-              <button
-                onClick={pauseAndSaveDailyChallenge}
-                className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center justify-center gap-2"
-              >
-                <span>💾</span>
-                <span>Pause & Save for Later</span>
+              <button onClick={pauseAndSaveDailyChallenge} className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all text-sm font-semibold flex items-center justify-center gap-2">
+                <span>💾</span><span>Pause & Save for Later</span>
               </button>
             </div>
           )}
-          
-          <div className="text-center mb-4">
-            <p className="text-white text-lg font-light">Memory Match</p>
-            
-            {!explorationComplete ? (
-              <p className="text-blue-400 text-sm mt-1">👀 Exploring... ({seenCards.length}/{currentPuzzle.pairs} cards seen)</p>
+
+          {/* Header */}
+          <div className="text-center">
+            <p className="text-white text-lg font-light">Match Flash</p>
+            {flashPhase ? (
+              <div className="mt-1">
+                <p className="text-yellow-300 text-sm font-bold">⚡ Memorize! Hiding in {flashCountdown}...</p>
+              </div>
             ) : (
-              <>
-                <p className="text-green-400 text-sm mt-1">🧠 Matching Phase!</p>
-                {wrongAttempts > 0 && (
-                  <p className="text-amber-400 text-sm mt-1">Attempts: {wrongAttempts}/6</p>
-                )}
-              </>
+              <div className="flex items-center justify-center gap-2 mt-1">
+                {[...Array(maxTaps)].map((_, i) => (
+                  <div key={i} className={`w-3 h-3 rounded-full ${i < tapsRemaining ? 'bg-green-400' : 'bg-red-500'}`} />
+                ))}
+                <p className="text-slate-300 text-xs ml-1">{tapsRemaining} tap{tapsRemaining !== 1 ? 's' : ''} left</p>
+              </div>
             )}
           </div>
-          
-          {/* Memory Grid */}
+
+          {/* Card Grid */}
           <div className={`grid gap-3 ${gridCols === 3 ? 'grid-cols-3' : 'grid-cols-4'} max-w-sm mx-auto`}>
             {memoryCards.map((card) => {
-              const isFlipped = flippedCards.includes(card.id) || card.isMatched;
+              const isVisible = flashPhase || flippedCards.includes(card.id) || card.isMatched;
+              const isWrongFlash = wrongFlashes.includes(card.id);
               return (
                 <button
                   key={card.id}
                   onClick={() => handleCardClick(card.id)}
-                  className={`aspect-square rounded-xl text-4xl font-bold transition-all duration-300 transform ${
-                    isFlipped
-                      ? card.isMatched
-                        ? 'bg-gradient-to-br from-green-500 to-green-600 scale-95'
-                        : 'bg-gradient-to-br from-blue-500 to-blue-600'
-                      : 'bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600'
-                  } shadow-lg flex items-center justify-center`}
+                  disabled={flashPhase || !!memoryResult}
+                  className={`aspect-square rounded-xl text-5xl font-bold transition-all duration-300 shadow-lg flex items-center justify-center
+                    ${card.isMatched
+                      ? 'bg-gradient-to-br from-green-500 to-green-600 scale-95'
+                      : isWrongFlash
+                      ? 'bg-gradient-to-br from-red-500 to-red-600 scale-95'
+                      : isVisible
+                      ? 'bg-gradient-to-br from-blue-500 to-blue-600'
+                      : 'bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-500 hover:to-purple-600 active:scale-95'
+                    }`}
                 >
-                  {isFlipped ? card.emoji : '?'}
+                  {isVisible ? card.emoji : '?'}
                 </button>
               );
             })}
           </div>
-          
+
           {/* Progress */}
-          <div className="text-center">
-            <p className="text-slate-400 text-sm">
-              Matched: {matchedPairs.length} / {currentPuzzle.pairs}
-            </p>
-          </div>
-          
-          {/* Skip Button */}
-          <button
-            onClick={() => setShowSkipConfirm(true)}
-            className="w-full mt-4 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all duration-300 text-sm"
-          >
-            ⏭️ Skip Puzzle (-200 💎)
-          </button>
+          {!flashPhase && (
+            <div className="text-center">
+              <p className="text-slate-400 text-sm">Matched: {matchedPairs.length} / {currentPuzzle.pairs}</p>
+            </div>
+          )}
+
+          {/* Skip */}
+          {!flashPhase && (
+            <button onClick={() => setShowSkipConfirm(true)}
+              className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all text-sm">
+              ⏭️ Skip Puzzle (-200 💎)
+            </button>
+          )}
         </div>
-        
+
         {/* Skip Confirmation */}
         {showSkipConfirm && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6">
             <div className="bg-slate-800 rounded-2xl p-8 max-w-sm border-2 border-red-500">
               <h3 className="text-2xl font-light text-white text-center mb-4">Skip Puzzle?</h3>
               <p className="text-slate-300 text-center mb-6">This will cost 200 gems and you won't earn puzzle completion gems.</p>
-              
               <div className="flex gap-4">
-                <button
-                  onClick={() => setShowSkipConfirm(false)}
-                  className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSkipPuzzle}
-                  className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300"
-                >
-                  Skip
-                </button>
+                <button onClick={() => setShowSkipConfirm(false)} className="flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg">Cancel</button>
+                <button onClick={handleSkipPuzzle} className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg">Skip</button>
               </div>
             </div>
           </div>
