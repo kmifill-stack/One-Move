@@ -9134,8 +9134,8 @@ const handleDailyChallengeReplay = () => {
                   <span className="text-3xl">🧠</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">MEMORY MATCH</h3>
-                  <p className="text-pink-200 text-sm">Match all the pairs</p>
+                  <h3 className="text-xl font-semibold text-white">MATCH FLASH</h3>
+                  <p className="text-pink-200 text-sm">Memorize fast. Match the pairs.</p>
                 </div>
               </div>
             </button>
@@ -9492,47 +9492,71 @@ const handleDailyChallengeReplay = () => {
         {showInstructionPopup === 'memory_match' && (
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
             <div className="bg-slate-800 rounded-2xl p-8 max-w-md border-2 border-pink-500 max-h-[90vh] overflow-y-auto">
-              <h2 className="text-3xl font-light text-white text-center mb-6">🧠 MEMORY MATCH</h2>
-              
+              <h2 className="text-3xl font-light text-white text-center mb-2">⚡ MATCH FLASH</h2>
+              <p className="text-pink-300 text-center text-sm mb-6">Can you memorize the board before it disappears?</p>
+
               <div className="space-y-4 text-slate-300 text-sm">
-                <div className="bg-pink-900/30 rounded-lg p-4 border border-pink-500/50">
-                  <p className="font-semibold text-pink-300 mb-2">How to Play:</p>
-                  <ol className="space-y-2 ml-4 list-decimal">
-                    <li>Cards are face down showing "?"</li>
-                    <li>Flip cards to explore - no penalties!</li>
-                    <li>Once you've seen all emojis, matching begins</li>
-                    <li>Match all pairs before 6 wrong attempts!</li>
-                  </ol>
-                </div>
-                
-                <div className="bg-slate-700/50 rounded-lg p-4">
-                  <p className="font-semibold text-white mb-2">Two Phases:</p>
-                  <ul className="space-y-1 ml-4 list-disc">
-                    <li><span className="text-blue-400">Exploration:</span> See all cards penalty-free</li>
-                    <li><span className="text-green-400">Matching:</span> 6 attempts to match all pairs</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
-                  <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
-                  <div className="space-y-1 text-sm">
-                    <p>0 wrong attempts = <span className="text-white font-bold">+100 gems</span></p>
-                    <p>1-2 wrong attempts = <span className="text-white font-bold">+50 gems</span></p>
-                    <p>3-4 wrong attempts = <span className="text-white font-bold">+25 gems</span></p>
-                    <p>5-6 wrong attempts = <span className="text-slate-400">No gems</span></p>
+
+                {/* Phase 1 */}
+                <div className="bg-yellow-900/30 rounded-lg p-4 border border-yellow-500/50">
+                  <p className="font-semibold text-yellow-300 mb-2">⚡ Phase 1 — Memorize!</p>
+                  <p className="text-slate-300 text-sm">All cards are shown face up. Study the board fast — it hides when the countdown hits zero.</p>
+                  <div className="mt-3 space-y-1 text-xs text-slate-400">
+                    <p>• Small board (3 pairs) → <span className="text-white">4 seconds</span></p>
+                    <p>• Medium board (6 pairs) → <span className="text-white">6 seconds</span></p>
+                    <p>• Large board (8 pairs) → <span className="text-white">9 seconds</span></p>
                   </div>
                 </div>
-                
-                <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/50">
-                  <p className="font-semibold text-blue-300 mb-2">💡 Pro Tips:</p>
-                  <ul className="space-y-1 ml-4 list-disc text-xs">
-                    <li>Take your time during exploration</li>
-                    <li>Build a mental map of positions</li>
-                    <li>Start matching from corners or edges</li>
-                  </ul>
+
+                {/* Phase 2 */}
+                <div className="bg-pink-900/30 rounded-lg p-4 border border-pink-500/50">
+                  <p className="font-semibold text-pink-300 mb-2">🎯 Phase 2 — Match!</p>
+                  <p className="text-slate-300 text-sm">Cards flip face down. Tap pairs from memory. Each wrong pair costs you a tap.</p>
+                  <div className="mt-3 space-y-1 text-xs text-slate-400">
+                    <p>• Small board → <span className="text-white">4 taps</span></p>
+                    <p>• Medium board → <span className="text-white">5 taps</span></p>
+                    <p>• Large board → <span className="text-white">6 taps</span></p>
+                  </div>
                 </div>
+
+                {/* Feedback */}
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="font-semibold text-white mb-2">Visual Feedback:</p>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center text-lg">✓</div>
+                      <p className="text-green-400">Correct pair — stays green</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center text-lg">✗</div>
+                      <p className="text-red-400">Wrong pair — flashes red, flips back</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      </div>
+                      <p className="text-slate-300">Dots show taps remaining</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gems */}
+                <div className="bg-amber-900/30 rounded-lg p-4 border border-amber-500/50">
+                  <p className="font-semibold text-amber-300 mb-2">💎 Earning Gems:</p>
+                  <p className="text-sm text-slate-300">Match all pairs without using any wrong taps and earn <span className="text-white font-bold">+100 gems</span>. Use any wrong taps and no gems are awarded — but you still move on!</p>
+                </div>
+
+                {/* Pro tip */}
+                <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-500/50">
+                  <p className="font-semibold text-blue-300 mb-1">💡 Pro Tip:</p>
+                  <p className="text-xs text-slate-300">Don't just memorize the emoji — memorize the <span className="text-white">position</span>. Scan top-left to bottom-right during the flash phase and lock in locations, not just shapes.</p>
+                </div>
+
               </div>
-              
+
               <button
                 onClick={() => setShowInstructionPopup(null)}
                 className="w-full mt-6 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-lg transition-all duration-300 text-lg font-light"
