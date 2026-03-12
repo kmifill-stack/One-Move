@@ -6041,12 +6041,12 @@ const OneMove = () => {
     const dateStr = getTodayDateString();
     const seed = dateStr.split('-').reduce((acc, val) => acc + parseInt(val), 0);
     
-    // DISTRIBUTION:
-    // Logic Grid: 30% (9/30 slots)
-    // Quick Math: 30% (9/30 slots)
-    // Memory Match: 20% (6/30 slots)
-    // Word Scramble: 11% (3/30 slots)
-    // Tile Flip: 9% (3/30 slots)
+    // DISTRIBUTION (100 slots):
+    // Logic Grid:    22% (22/100 slots) — positions 0-21
+    // Quick Math:    25% (25/100 slots) — positions 22-46
+    // Match Flash:   24% (24/100 slots) — positions 47-70
+    // Word Scramble: 20% (20/100 slots) — positions 71-90
+    // Tile Flip:      9%  (9/100 slots) — positions 91-99
     
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
@@ -6054,24 +6054,24 @@ const OneMove = () => {
     const oneDay = 1000 * 60 * 60 * 24;
     const dayOfYear = Math.floor(diff / oneDay);
     
-    const position = (dayOfYear * 7 + seed * 3) % 30;
+    const position = (dayOfYear * 7 + seed * 3) % 100;
     
     let puzzleType;
     
-    if (position < 9) {
-      // Positions 0-8: Logic Grid (9 occurrences = 30%)
+    if (position < 22) {
+      // Positions 0-21: Logic Grid (22%)
       puzzleType = PUZZLE_TYPES.LOGIC_GRID;
-    } else if (position < 18) {
-      // Positions 9-17: Quick Math (9 occurrences = 30%)
+    } else if (position < 47) {
+      // Positions 22-46: Quick Math (25%)
       puzzleType = PUZZLE_TYPES.QUICK_MATH;
-    } else if (position < 24) {
-      // Positions 18-23: Memory Match (6 occurrences = 20%)
+    } else if (position < 71) {
+      // Positions 47-70: Match Flash (24%)
       puzzleType = PUZZLE_TYPES.MEMORY_MATCH;
-    } else if (position < 27) {
-      // Positions 24-26: Word Scramble (3 occurrences = 10% ~11%)
+    } else if (position < 91) {
+      // Positions 71-90: Word Scramble (20%)
       puzzleType = PUZZLE_TYPES.WORD_SCRAMBLE;
     } else {
-      // Positions 27-29: Tile Flip (3 occurrences = 10% ~9%)
+      // Positions 91-99: Tile Flip (9%)
       puzzleType = PUZZLE_TYPES.TILE_FLIP;
     }
     
