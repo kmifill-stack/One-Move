@@ -10470,9 +10470,16 @@ const handleDailyChallengeReplay = () => {
             <div className="mb-2">
               <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold uppercase px-3 py-1 rounded-full tracking-widest">⭐ Bonus Round — 150 Gems</span>
             </div>
-            <div className="mb-4 mt-3">
+            <div className="mb-2 mt-3">
               <span className="text-amber-400 text-2xl font-bold uppercase">{selectedCategory}</span>
             </div>
+            {!isDailyChallenge && (
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                <span className="text-white font-bold text-sm">{correctStreak}</span>
+                <span className="text-slate-400 text-xs">streak</span>
+              </div>
+            )}
             <h2 className="text-2xl font-light text-white mb-4">
               {currentTriviaQuestion.q}
             </h2>
@@ -10631,6 +10638,13 @@ const handleDailyChallengeReplay = () => {
           )}
           
           <div className="text-center mb-2">
+            {!isDailyChallenge && (
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+              <span className="text-white font-bold text-sm">{correctStreak}</span>
+              <span className="text-slate-400 text-xs">streak</span>
+            </div>
+          )}
             <p className="text-white text-lg font-light">Tile Flip Challenge</p>
             <p className="text-slate-400 text-sm mt-1">Make all tiles match!</p>
           </div>
@@ -10887,6 +10901,13 @@ const handleDailyChallengeReplay = () => {
           <div className="text-center">
             <div className="inline-block bg-amber-500/30 border-2 border-amber-400 rounded-full px-5 py-2 mb-2">
               <p className="text-amber-200 text-base font-bold tracking-widest uppercase">{currentPuzzle.category || 'Word Scramble'}</p>
+              {!isDailyChallenge && (
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+              <span className="text-white font-bold text-sm">{correctStreak}</span>
+              <span className="text-slate-400 text-xs">streak</span>
+            </div>
+          )}
             </div>
             <h2 className="text-white text-xl font-light">Unscramble the Word</h2>
             {isMultiWord && <p className="text-blue-300 text-xs mt-1">💡 Two-word answer — {wordLengths.join(' + ')} letters</p>}
@@ -11165,6 +11186,13 @@ const handleDailyChallengeReplay = () => {
           )}
           
           <div className="text-center mb-4">
+            {!isDailyChallenge && (
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+              <span className="text-white font-bold text-sm">{correctStreak}</span>
+              <span className="text-slate-400 text-xs">streak</span>
+            </div>
+          )}
             <p className="text-white text-lg font-light">Quick Math</p>
             <p className="text-slate-400 text-sm mt-1">Solve the problem!</p>
             {failCount > 0 && !showMathResult && !isDailyChallenge && (
@@ -11397,6 +11425,13 @@ const handleDailyChallengeReplay = () => {
 
           {/* Header */}
           <div className="text-center">
+            {!isDailyChallenge && (
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+              <span className="text-white font-bold text-sm">{correctStreak}</span>
+              <span className="text-slate-400 text-xs">streak</span>
+            </div>
+          )}
             <p className="text-white text-lg font-light">Match Flash</p>
             {flashPhase ? (
               <div className="mt-1">
