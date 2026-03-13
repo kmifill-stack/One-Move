@@ -10805,8 +10805,8 @@ const handleDailyChallengeReplay = () => {
                   if (newIndex >= 100000) { setScreen('complete'); } else { handleNextPuzzle(newIndex); }
                 }, 3000);
               }
-            }} disabled={!allPlaced}
-              className={`flex-grow py-3 rounded-xl text-base font-bold transition-all duration-200 ${allPlaced ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white shadow-lg active:scale-95' : 'bg-slate-700 text-slate-500 cursor-not-allowed'}`}>
+            }} disabled={!allPlaced || showCorrectWord || showWordWrong}
+              className={`flex-grow py-3 rounded-xl text-base font-bold transition-all duration-200 ${allPlaced && !showCorrectWord && !showWordWrong ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white shadow-lg active:scale-95' : 'bg-slate-700 text-slate-500 cursor-not-allowed'}`}>
               {allPlaced ? '✓ Submit' : `${placedTiles.length} / ${totalLetters}`}
             </button>
           </div>
