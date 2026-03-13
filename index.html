@@ -11120,11 +11120,12 @@ const handleDailyChallengeReplay = () => {
             setPuzzleScore(newPuzzleScore);
             handleCorrectStreak();
             saveProgress({ puzzleScore: newPuzzleScore });
-            const newIndex = currentPuzzleIndex + 1;
-            setCurrentPuzzleIndex(newIndex);
-            saveProgress({ currentIndex: newIndex });
+            // Capture index before any async state update to avoid stale closure
+            const mfNextIndex = currentPuzzleIndex + 1;
+            setCurrentPuzzleIndex(mfNextIndex);
+            saveProgress({ currentIndex: mfNextIndex });
             setTimeout(() => checkLevelUp(), 100);
-            setTimeout(() => { setMemoryResult(null); handleNextPuzzle(newIndex); }, 3000);
+            setTimeout(() => { setMemoryResult(null); handleNextPuzzle(mfNextIndex); }, 3000);
           }
         } else {
           // WRONG PAIR — flash red then flip back
@@ -11258,7 +11259,7 @@ const handleDailyChallengeReplay = () => {
           )}
 
           {/* Peek Hint Button — regular play only, after flash phase */}
-          {!flashPhase && !isDailyChallenge && !memoryResult && (
+          {!flashPhase && !isDailyChallenge && !memoryResult && matchedPairs.length < currentPuzzle.pairs && (
             <button
               onClick={() => {
                 if (peekMode) {
@@ -11286,7 +11287,7 @@ const handleDailyChallengeReplay = () => {
           )}
 
           {/* Skip */}
-          {!flashPhase && (
+          {!flashPhase && matchedPairs.length < currentPuzzle.pairs && (
             <button onClick={() => setShowSkipConfirm(true)}
               className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg transition-all text-sm">
               ⏭️ Skip Puzzle (-200 💎)
