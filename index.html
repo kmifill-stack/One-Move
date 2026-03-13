@@ -2966,6 +2966,8 @@ const OneMove = () => {
   const [flashPhase, setFlashPhase] = useState(false); // true = cards visible during countdown
   const [streakShieldActive, setStreakShieldActive] = useState(false);
   const [showPowerUps, setShowPowerUps] = useState(false);
+  const [showStreakRestoreOffer, setShowStreakRestoreOffer] = useState(false);
+  const [brokenStreakValue, setBrokenStreakValue] = useState(0);
   const [displayedGems, setDisplayedGems] = useState(0);
   const gemAnimRef = React.useRef(null);
   const [showStreakShieldPrompt, setShowStreakShieldPrompt] = useState(false);
@@ -3008,6 +3010,7 @@ const OneMove = () => {
   const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false);
   const [dailyChallengeFailed, setDailyChallengeFailed] = useState(false);
   const [dailyChallengeStreak, setDailyChallengeStreak] = useState(0);
+  const [totalDcDaysCompleted, setTotalDcDaysCompleted] = useState(0);
   const [isDailyChallenge, setIsDailyChallenge] = useState(false);
   const [showDailyChallengeResult, setShowDailyChallengeResult] = useState(false);
   const [dailyChallengeAttempted, setDailyChallengeAttempted] = useState(false);
@@ -3163,6 +3166,7 @@ const OneMove = () => {
       setDailyChallengeCompleted(dcData.completed);
       setDailyChallengeFailed(dcData.failed);
       setDailyChallengeStreak(dcData.streak || 0);
+      setTotalDcDaysCompleted(dcData.totalDays || 0);
       setDailyChallengeAttempted(dcData.attempted || false);
       setDailyChallengeGemsAwarded(dcData.gemsAwarded || false);
       setDailyChallengeReplayed(dcData.replayed || false);
@@ -7383,7 +7387,15 @@ const OneMove = () => {
     }
   };
 
-  const resetStreak = () => setCorrectStreak(0);
+  const resetStreak = () => {
+    if (correctStreak >= 3) {
+      // Worth offering a restore if streak was meaningful
+      setBrokenStreakValue(correctStreak);
+      setShowStreakRestoreOffer(true);
+      setTimeout(() => setShowStreakRestoreOffer(false), 6000); // auto-dismiss after 6s
+    }
+    setCorrectStreak(0);
+  };
 
   // Shuffle helper
   const shuffleArray = (arr) => {
@@ -7580,6 +7592,10 @@ const handleDailyChallengeSuccess = () => {
   const dcData = getDailyChallengeData();
   const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
   setDailyChallengeStreak(newStreak);
+  // Save last known streak value for DC Streak Restore
+  localStorage.setItem('dcLastStreak', String(newStreak));
+  const newTotalDays = totalDcDaysCompleted + 1;
+  setTotalDcDaysCompleted(newTotalDays);
   
   // Save completion with gems awarded flag - clear inProgress
   saveDailyChallengeData(true, false, newStreak, true, dailyChallengeReplayed, false, null);
@@ -8057,9 +8073,7 @@ const handleDailyChallengeReplay = () => {
                       <span>🏆 Daily Challenge:</span>
                       <span className="text-white font-bold">{dailyChallengeGems}</span>
                     </p>
-                    {dailyChallengeStreak > 1 && (
-                      <p className="text-xs text-amber-300 ml-4">🔥 {dailyChallengeStreak} day streak!</p>
-                    )}
+
                   </>
                 )}
                 {bonusGems > 0 && (
@@ -8379,9 +8393,12 @@ const handleDailyChallengeReplay = () => {
                     <p className="text-green-400 font-semibold mb-2">POWER-UPS (see below):</p>
                     <div className="ml-3 text-xs space-y-1">
                       <p>👁️ Match Flash Peek: <span className="text-white font-bold">-75 gems</span></p>
-                      <p>🔄 Extra Daily Attempt: <span className="text-white font-bold">-300 gems</span></p>
-                      <p>🛡️ Streak Shield: <span className="text-white font-bold">-250 gems</span></p>
                       <p>⚡ Gem Doubler (3 puzzles): <span className="text-white font-bold">-200 gems</span></p>
+                      <p>🔥 Streak Restore: <span className="text-white font-bold">-200 gems</span></p>
+                      <p>🛡️ Streak Shield: <span className="text-white font-bold">-250 gems</span></p>
+                      <p>📅 Missed Day Restore: <span className="text-white font-bold">-350 gems</span></p>
+                      <p>🔄 Extra Daily Attempt: <span className="text-white font-bold">-400 gems</span></p>
+                      <p>🏆 DC Streak Restore: <span className="text-white font-bold">-400 gems</span></p>
                     </div>
                   </div>
                   
@@ -8683,11 +8700,11 @@ const handleDailyChallengeReplay = () => {
         {/* Power-Ups Modal */}
         {showPowerUps && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowPowerUps(false)}>
-            <div className="bg-slate-800 rounded-2xl px-5 py-6 max-w-sm w-full border-2 border-amber-500" onClick={e => e.stopPropagation()}>
+            <div className="bg-slate-800 rounded-2xl px-5 py-6 max-w-sm w-full border-2 border-amber-500 flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
               <h2 className="text-2xl font-bold text-white text-center mb-1">⚡ Power-Ups</h2>
               <p className="text-slate-400 text-xs text-center mb-5">Spend gems to get an edge</p>
 
-              <div className="space-y-3">
+              <div className="space-y-3 overflow-y-auto flex-1 pr-1 pb-1" style={{scrollbarWidth:"thin",scrollbarColor:"#475569 transparent"}}>
 
                 {/* Gem Doubler */}
                 <div className="bg-slate-700/60 rounded-xl p-4 border border-amber-500/30">
@@ -8798,11 +8815,167 @@ const handleDailyChallengeReplay = () => {
                   </button>
                 </div>
 
+
+                {/* Streak Restore */}
+                <div className="bg-slate-700/60 rounded-xl p-4 border border-orange-500/30">
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <p className="text-white font-bold text-sm">🔥 Streak Restore</p>
+                      <p className="text-slate-400 text-xs">Restore your puzzle win streak after it breaks</p>
+                      <p className="text-slate-500 text-xs">Current streak: {correctStreak}</p>
+                    </div>
+                    <span className="text-yellow-400 font-bold text-sm">200 💎</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      if (totalGems < 200) { alert('Not enough gems! Need 200 💎'); return; }
+                      if (correctStreak > 0) { alert('Your streak is still active! Use this after your streak breaks.'); return; }
+                      if (brokenStreakValue === 0) { alert('No recent streak to restore.'); return; }
+                      const newSpent = gemsSpent + 200;
+                      setGemsSpent(newSpent);
+                      saveProgress({ gemsSpent: newSpent });
+                      setCorrectStreak(brokenStreakValue);
+                      setBrokenStreakValue(0);
+                      setShowStreakRestoreOffer(false);
+                      setShowPowerUps(false);
+                    }}
+                    disabled={correctStreak > 0 || brokenStreakValue === 0}
+                    className={`w-full py-2 rounded-lg text-sm font-semibold transition-all ${
+                      correctStreak > 0 ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                      : brokenStreakValue === 0 ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                      : 'bg-orange-500 hover:bg-orange-600 text-white'
+                    }`}
+                  >
+                    {correctStreak > 0 ? 'Streak still active' : brokenStreakValue === 0 ? 'No streak to restore' : `Restore ${brokenStreakValue} streak — 200 💎`}
+                  </button>
+                </div>
+
+                {/* DC Streak Restore */}
+                <div className="bg-slate-700/60 rounded-xl p-4 border border-amber-500/30">
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <p className="text-white font-bold text-sm">🏆 DC Streak Restore</p>
+                      <p className="text-slate-400 text-xs">Restore your Daily Challenge day streak</p>
+                      <p className="text-slate-500 text-xs">Current DC streak: {dailyChallengeStreak} days</p>
+                    </div>
+                    <span className="text-yellow-400 font-bold text-sm">400 💎</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      if (totalGems < 400) { alert('Not enough gems! Need 400 💎'); return; }
+                      if (dailyChallengeStreak > 0) { alert('Your DC streak is still active!'); return; }
+                      const newSpent = gemsSpent + 400;
+                      setGemsSpent(newSpent);
+                      saveProgress({ gemsSpent: newSpent });
+                      // Restore streak to last known value from localStorage
+                      const dcRaw = localStorage.getItem('dcLastStreak');
+                      const restored = dcRaw ? parseInt(dcRaw) : 1;
+                      setDailyChallengeStreak(restored);
+                      const dcStored = localStorage.getItem('dailyChallenge');
+                      if (dcStored) {
+                        const dc = JSON.parse(dcStored);
+                        dc.streak = restored;
+                        localStorage.setItem('dailyChallenge', JSON.stringify(dc));
+                      }
+                      setShowPowerUps(false);
+                    }}
+                    disabled={dailyChallengeStreak > 0}
+                    className={`w-full py-2 rounded-lg text-sm font-semibold transition-all ${
+                      dailyChallengeStreak > 0 ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                      : 'bg-amber-500 hover:bg-amber-600 text-white'
+                    }`}
+                  >
+                    {dailyChallengeStreak > 0 ? 'DC streak still active' : 'Restore DC Streak — 400 💎'}
+                  </button>
+                </div>
+
+                {/* Missed Day Restore */}
+                <div className="bg-slate-700/60 rounded-xl p-4 border border-purple-500/30">
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <p className="text-white font-bold text-sm">📅 Missed DC Day Restore</p>
+                      <p className="text-slate-400 text-xs">Recover a missed Daily Challenge day</p>
+                      <p className="text-slate-500 text-xs">Keeps your streak alive after missing</p>
+                    </div>
+                    <span className="text-yellow-400 font-bold text-sm">350 💎</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      if (totalGems < 350) { alert('Not enough gems! Need 350 💎'); return; }
+                      const missedKey = localStorage.getItem('dcMissedDay');
+                      const today = getTodayDateString();
+                      if (!missedKey || missedKey === today) { alert('No missed day to restore. Use this the day after you miss a challenge.'); return; }
+                      // Check if missed day is within 3 days
+                      const missedDate = new Date(missedKey);
+                      const todayDate = new Date(today);
+                      const daysDiff = Math.round((todayDate - missedDate) / (1000 * 60 * 60 * 24));
+                      if (daysDiff > 3) { alert('Missed day restore is only available within 3 days of missing. This missed day has expired.'); return; }
+                      const newSpent = gemsSpent + 350;
+                      setGemsSpent(newSpent);
+                      saveProgress({ gemsSpent: newSpent });
+                      // Restore streak by incrementing
+                      const newStreak = dailyChallengeStreak + 1;
+                      setDailyChallengeStreak(newStreak);
+                      const dcStored = localStorage.getItem('dailyChallenge');
+                      if (dcStored) {
+                        const dc = JSON.parse(dcStored);
+                        dc.streak = newStreak;
+                        localStorage.setItem('dailyChallenge', JSON.stringify(dc));
+                      }
+                      localStorage.removeItem('dcMissedDay');
+                      setShowPowerUps(false);
+                    }}
+                    className="w-full py-2 rounded-lg text-sm font-semibold transition-all bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    Restore Missed Day — 350 💎
+                  </button>
+                </div>
+
               </div>
 
-              <button onClick={() => setShowPowerUps(false)} className="w-full mt-5 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm font-semibold">
+              <button onClick={() => setShowPowerUps(false)} className="w-full mt-4 py-3 bg-slate-600 hover:bg-slate-500 text-white rounded-lg text-sm font-semibold flex-shrink-0">
                 Close
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Streak Restore Toast — shows during gameplay after streak breaks */}
+        {showStreakRestoreOffer && correctStreak === 0 && brokenStreakValue >= 3 && (
+          <div className="fixed bottom-24 left-0 right-0 flex justify-center z-[998] px-4 pointer-events-none">
+            <div className="bg-slate-900 border-2 border-orange-500 rounded-2xl px-5 py-4 shadow-2xl pointer-events-auto max-w-sm w-full">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-orange-400 font-bold text-sm">🔥 Streak broken! ({brokenStreakValue} in a row)</p>
+                  <p className="text-slate-300 text-xs mt-0.5">Restore it for 200 💎?</p>
+                </div>
+                <div className="flex gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => {
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      if (totalGems < 200) { alert('Not enough gems!'); setShowStreakRestoreOffer(false); return; }
+                      const newSpent = gemsSpent + 200;
+                      setGemsSpent(newSpent);
+                      saveProgress({ gemsSpent: newSpent });
+                      setCorrectStreak(brokenStreakValue);
+                      setBrokenStreakValue(0);
+                      setShowStreakRestoreOffer(false);
+                    }}
+                    className="px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-bold"
+                  >
+                    Restore
+                  </button>
+                  <button
+                    onClick={() => { setBrokenStreakValue(0); setShowStreakRestoreOffer(false); }}
+                    className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-xs font-bold"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -9334,6 +9507,31 @@ const handleDailyChallengeReplay = () => {
                 )}
               </div>
             )}
+            {/* ── STREAKS CARD ── */}
+            <div className="w-full bg-slate-800/70 border border-slate-600/50 rounded-2xl px-4 py-3">
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest text-center mb-3">Your Streaks</p>
+              <div className="grid grid-cols-3 gap-2">
+                {/* Puzzle Win Streak */}
+                <div className="flex flex-col items-center bg-slate-900/60 rounded-xl py-2 px-1 border border-orange-500/20">
+                  <span className="text-2xl mb-0.5">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                  <span className="text-white font-extrabold text-xl leading-none">{correctStreak}</span>
+                  <span className="text-slate-400 text-xs mt-0.5 text-center leading-tight">Puzzle<br/>Streak</span>
+                </div>
+                {/* Days in a Row — consecutive days app opened/played */}
+                <div className="flex flex-col items-center bg-slate-900/60 rounded-xl py-2 px-1 border border-green-500/20">
+                  <span className="text-2xl mb-0.5">{playStreak >= 30 ? '👑' : playStreak >= 14 ? '🌟' : playStreak >= 7 ? '🔥' : '📆'}</span>
+                  <span className="text-white font-extrabold text-xl leading-none">{playStreak}</span>
+                  <span className="text-slate-400 text-xs mt-0.5 text-center leading-tight">Days<br/>in a Row</span>
+                </div>
+                {/* Daily Challenge Streak */}
+                <div className="flex flex-col items-center bg-slate-900/60 rounded-xl py-2 px-1 border border-amber-500/20">
+                  <span className="text-2xl mb-0.5">{dailyChallengeStreak >= 30 ? '👑' : dailyChallengeStreak >= 14 ? '🏆' : dailyChallengeStreak >= 7 ? '🌟' : '🏅'}</span>
+                  <span className="text-white font-extrabold text-xl leading-none">{dailyChallengeStreak}</span>
+                  <span className="text-slate-400 text-xs mt-0.5 text-center leading-tight">Daily<br/>Challenge</span>
+                </div>
+              </div>
+            </div>
+
             <button
               onClick={handlePlay}
               className="w-full px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-xl font-light tracking-wide shadow-lg"
