@@ -6676,7 +6676,7 @@ const OneMove = () => {
 
   const getLevelInfo = (levelName) => {
     const levels = {
-      "Beginner": { icon: "", reward: 0, threshold: 0 },
+      "Beginner": { icon: "🎮", reward: 0, threshold: 0 },
       "Pattern Seeker": { icon: "📜", reward: 75, threshold: 76 },
       "Logic Master": { icon: "🥉", reward: 250, threshold: 250 },
       "Mind Bender": { icon: "🥈", reward: 400, threshold: 400 },
@@ -9424,10 +9424,10 @@ const handleDailyChallengeReplay = () => {
             <div className="flex items-center justify-center gap-3 text-base">
               <button
                 onClick={() => { setShowGemsAndRewards(true); setGemsRewardsTab('rewards'); }}
-                className="text-3xl active:scale-90 transition-transform flex-shrink-0"
-                title="View your level & rewards"
+                className="flex flex-col items-center active:scale-90 transition-transform flex-shrink-0"
               >
-                {getLevelInfo(getUserLevel()).icon || '🎮'}
+                <span className="text-2xl leading-none">{getLevelInfo(getUserLevel()).icon}</span>
+                <span className="text-slate-500 text-xs leading-none mt-0.5">{getUserLevel().split(' ')[0]}</span>
               </button>
               <span className="text-slate-400">•</span>
               <button
