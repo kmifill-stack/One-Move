@@ -9044,6 +9044,34 @@ const handleDailyChallengeReplay = () => {
 
 
         
+        {/* TOP BAR */}
+        {!showGemsAndRewards && (
+        <div className="sticky top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-50 bg-gradient-to-b from-slate-900/80 to-transparent backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setScreen('home')}
+              className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
+            >
+              <Home className="w-6 h-6 text-white" />
+            </button>
+            <button 
+              onClick={() => setShowUsernameEdit(true)}
+              className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 hover:bg-slate-700/80 transition-all duration-300"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">{SHOP_ICONS.find(i => i.id === selectedIcon)?.emoji || '👤'}</span>
+                <div className="text-left">
+                  <span className="text-white font-medium text-sm block">{username}</span>
+                  {selectedTitle && (
+                    <span className="text-slate-400 text-xs block">{SHOP_TITLES.find(t => t.id === selectedTitle)?.name}</span>
+                  )}
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+        )}
+
         {renderGemBreakdown()}
         
         {/* PROFILE POPUP - Username Always Visible + 3 Customization Tabs */}
@@ -9394,15 +9422,13 @@ const handleDailyChallengeReplay = () => {
           
           <div className="bg-slate-800/50 rounded-xl px-6 py-3 border border-slate-700">
             <div className="flex items-center justify-center gap-3 text-base">
-              {getLevelInfo(getUserLevel()).icon && (
-                <button
-                  onClick={() => { setShowGemsAndRewards(true); setGemsRewardsTab('rewards'); }}
-                  className="text-3xl active:scale-90 transition-transform"
-                  title="View your level & rewards"
-                >
-                  {getLevelInfo(getUserLevel()).icon}
-                </button>
-              )}
+              <button
+                onClick={() => { setShowGemsAndRewards(true); setGemsRewardsTab('rewards'); }}
+                className="text-3xl active:scale-90 transition-transform flex-shrink-0"
+                title="View your level & rewards"
+              >
+                {getLevelInfo(getUserLevel()).icon || '🎮'}
+              </button>
               <span className="text-slate-400">•</span>
               <button
                 onClick={() => setShowGemBreakdown(true)}
