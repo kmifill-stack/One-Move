@@ -3009,6 +3009,7 @@ const OneMove = () => {
   const [explorationComplete, setExplorationComplete] = useState(false);
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [memoryResult, setMemoryResult] = useState(null);
+  const [pendingMFAdvance, setPendingMFAdvance] = useState(null); // {index, delay} to advance after MF win
   const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false);
   const [dailyChallengeFailed, setDailyChallengeFailed] = useState(false);
   const [dailyChallengeStreak, setDailyChallengeStreak] = useState(0);
@@ -3240,6 +3241,18 @@ const OneMove = () => {
       }));
     }
   }, []);
+
+  // Match Flash advance — useEffect fires with fresh closure, no stale state
+  useEffect(() => {
+    if (!pendingMFAdvance) return;
+    const { index, delay } = pendingMFAdvance;
+    const timer = setTimeout(() => {
+      setMemoryResult(null);
+      setPendingMFAdvance(null);
+      if (index >= 100000) { setScreen('complete'); } else { handleNextPuzzle(index); }
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [pendingMFAdvance]);
 
   // Splash screen timer
   useEffect(() => {
@@ -9029,36 +9042,7 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
 
-        {/* TOP BAR - Hidden when Gems & Rewards popup is open */}
-        {!showGemsAndRewards && (
-        <div className="sticky top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-50 bg-gradient-to-b from-slate-900/80 to-transparent backdrop-blur-sm">
-          {/* Left side: Home + Username with Icon/Title */}
-          <div className="flex items-center gap-3">
-            <button 
-              onClick={() => setScreen('home')}
-              className="p-3 bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 rounded-lg transition-all duration-300 shadow-lg"
-            >
-              <Home className="w-6 h-6 text-white" />
-            </button>
-            
-            <button 
-              onClick={() => setShowUsernameEdit(true)}
-              className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 hover:bg-slate-700/80 transition-all duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{SHOP_ICONS.find(i => i.id === selectedIcon)?.emoji || '👤'}</span>
-                <div className="text-left">
-                  <span className="text-white font-medium text-sm block">{username}</span>
-                  {selectedTitle && (
-                    <span className="text-slate-400 text-xs block">{SHOP_TITLES.find(t => t.id === selectedTitle)?.name}</span>
-                  )}
-                </div>
-              </div>
-            </button>
-          </div>
-          
-        </div>
-        )}
+
         
         {renderGemBreakdown()}
         
@@ -9411,7 +9395,13 @@ const handleDailyChallengeReplay = () => {
           <div className="bg-slate-800/50 rounded-xl px-6 py-3 border border-slate-700">
             <div className="flex items-center justify-center gap-3 text-base">
               {getLevelInfo(getUserLevel()).icon && (
-                <span className="text-3xl">{getLevelInfo(getUserLevel()).icon}</span>
+                <button
+                  onClick={() => { setShowGemsAndRewards(true); setGemsRewardsTab('rewards'); }}
+                  className="text-3xl active:scale-90 transition-transform"
+                  title="View your level & rewards"
+                >
+                  {getLevelInfo(getUserLevel()).icon}
+                </button>
               )}
               <span className="text-slate-400">•</span>
               <button
@@ -11341,12 +11331,12 @@ const handleDailyChallengeReplay = () => {
             setPuzzleScore(newPuzzleScore);
             handleCorrectStreak();
             saveProgress({ puzzleScore: newPuzzleScore });
-            // Capture index before any async state update to avoid stale closure
             const mfNextIndex = currentPuzzleIndex + 1;
             setCurrentPuzzleIndex(mfNextIndex);
             saveProgress({ currentIndex: mfNextIndex });
             setTimeout(() => checkLevelUp(), 100);
-            setTimeout(() => { setMemoryResult(null); handleNextPuzzle(mfNextIndex); }, 3000);
+            // Use state-driven advance to avoid stale closure in setTimeout
+            setPendingMFAdvance({ index: mfNextIndex, delay: 3000 });
           }
         } else {
           // WRONG PAIR — flash red then flip back
@@ -11372,11 +11362,11 @@ const handleDailyChallengeReplay = () => {
                 return;
               }
               setMemoryResult('failed');
-              const newIndex = currentPuzzleIndex + 1;
-              setCurrentPuzzleIndex(newIndex);
-              saveProgress({ currentIndex: newIndex });
+              const mfFailIndex = currentPuzzleIndex + 1;
+              setCurrentPuzzleIndex(mfFailIndex);
+              saveProgress({ currentIndex: mfFailIndex });
               setTimeout(() => checkLevelUp(), 100);
-              setTimeout(() => { setMemoryResult(null); handleNextPuzzle(newIndex); }, 3000);
+              setPendingMFAdvance({ index: mfFailIndex, delay: 3000 });
             }
           }, 800);
         }
