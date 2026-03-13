@@ -8266,7 +8266,7 @@ const handleDailyChallengeReplay = () => {
   // Home Screen
   if (screen === 'home') {
     return (
-      <div className={`min-h-screen ${getThemeColors()} flex items-center justify-center p-6`}>
+      <div className={`min-h-screen ${getThemeColors()} overflow-y-auto`}>
         {/* Daily Challenge Discovery Nudge */}
         {showDailyChallengeNudge && (
           <div className="fixed inset-0 flex items-end justify-center z-50 p-6 pb-32 pointer-events-none">
@@ -9029,7 +9029,7 @@ const handleDailyChallengeReplay = () => {
 
         {/* TOP BAR - Hidden when Gems & Rewards popup is open */}
         {!showGemsAndRewards && (
-        <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 z-50">
+        <div className="sticky top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-50 bg-gradient-to-b from-slate-900/80 to-transparent backdrop-blur-sm">
           {/* Left side: Home + Username with Icon/Title */}
           <div className="flex items-center gap-3">
             <button 
@@ -9055,17 +9055,6 @@ const handleDailyChallengeReplay = () => {
             </button>
           </div>
           
-          {/* Right side: Gem Economy Details Button */}
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowGemBreakdown(true);
-            }}
-            className="bg-gradient-to-br from-yellow-500 to-amber-600 px-4 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
-          >
-            <span className="text-white text-lg font-bold">💎</span>
-            <span className="text-white text-base font-semibold">Gem Economy Details</span>
-          </button>
         </div>
         )}
         
@@ -9411,8 +9400,8 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
         
-        <div className="text-center space-y-4 max-w-md">
-          <h1 className="text-6xl font-extralight text-white tracking-wider mb-4">
+        <div className="text-center space-y-3 max-w-md mx-auto px-6 pt-4 pb-10">
+          <h1 className="text-5xl font-extralight text-white tracking-wider mb-2">
             ONE MOVE
           </h1>
           
@@ -9423,13 +9412,17 @@ const handleDailyChallengeReplay = () => {
                 <span className="text-3xl">{getLevelInfo(getUserLevel()).icon}</span>
               )}
               <span className="text-slate-400">•</span>
-              <div className="flex items-center gap-1">
+              <button
+                onClick={() => setShowGemBreakdown(true)}
+                className="flex items-center gap-1 active:scale-95 transition-transform"
+              >
                 <span className="text-lg">💎</span>
                 <span
                   className="text-yellow-300 font-extrabold text-lg tracking-wide px-2 py-0.5 rounded-full bg-slate-900/70 border border-yellow-500/50 shadow-inner"
                   style={{animation: 'gemPulse 2.8s ease-in-out infinite'}}
                 >{displayedGems}</span>
-              </div>
+                <span className="text-yellow-500/60 text-xs">▼</span>
+              </button>
               <span className="text-slate-400">•</span>
               <div className="flex items-center gap-1">
                 <span className="text-blue-400">🧩</span>
@@ -9509,7 +9502,7 @@ const handleDailyChallengeReplay = () => {
             )}
             {/* ── STREAKS CARD ── */}
             <div className="w-full bg-slate-800/70 border border-slate-600/50 rounded-2xl px-4 py-3">
-              <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest text-center mb-3">Your Streaks</p>
+              <p className="text-slate-400 text-xs font-semibold uppercase tracking-widest text-center mb-2">Your Streaks</p>
               <div className="grid grid-cols-3 gap-2">
                 {/* Puzzle Win Streak */}
                 <div className="flex flex-col items-center bg-slate-900/60 rounded-xl py-2 px-1 border border-orange-500/20">
