@@ -23,11 +23,13 @@
     body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      position: fixed;
       width: 100%;
       height: 100%;
       background: #1e293b;
+    }
+    #root {
+      width: 100%;
+      height: 100%;
     }
     @keyframes gemPulse {
       0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(253,224,71,0); }
@@ -8173,7 +8175,7 @@ const handleDailyChallengeReplay = () => {
   if (screen === 'splash') {
     return (
       <div 
-        className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center cursor-pointer"
+        className="min-h-screen bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex items-center justify-center cursor-pointer overflow-hidden"
         onClick={() => setScreen('home')}
       >
         <div className="text-center space-y-8">
