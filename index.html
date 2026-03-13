@@ -10839,6 +10839,15 @@ const handleDailyChallengeReplay = () => {
       return result;
     })();
 
+    // Dynamic tile sizing based on letter count
+    const getTileSize = (count) => {
+      if (count <= 6)  return { tile: 'w-11 h-11', font: 'text-xl', gap: 'gap-2' };
+      if (count <= 8)  return { tile: 'w-10 h-10', font: 'text-lg', gap: 'gap-1.5' };
+      if (count <= 10) return { tile: 'w-9 h-9',   font: 'text-base', gap: 'gap-1' };
+      return             { tile: 'w-8 h-8',   font: 'text-sm',  gap: 'gap-1' };
+    };
+    const tileSize = getTileSize(totalLetters);
+
     return (
       <div className="h-screen overflow-y-auto bg-gradient-to-br from-purple-950 via-blue-900 to-slate-900 flex flex-col items-center p-4 pt-16">
         {!isDailyChallenge && (
@@ -10934,12 +10943,12 @@ const handleDailyChallengeReplay = () => {
                 {wordLengths.map((len, wi) => {
                   const offset = wordLengths.slice(0, wi).reduce((a, b) => a + b, 0);
                   return (
-                    <div key={wi} className="flex gap-1 flex-wrap justify-center">
+                    <div key={wi} className={`flex flex-wrap justify-center ${tileSize.gap}`}>
                       {Array.from({length: len}).map((_, li) => {
                         const tile = placedTiles[offset + li];
                         return (
                           <div key={li} onClick={() => tile && handlePlacedTileTap(tile, offset + li)}
-                            className={`w-10 h-10 rounded-lg border-2 flex items-center justify-center text-lg font-bold transition-all duration-150 select-none ${tile ? 'bg-blue-600 border-blue-400 text-white cursor-pointer hover:bg-red-500 hover:border-red-400' : 'bg-slate-700/50 border-slate-500 border-dashed'}`}>
+                            className={`${tileSize.tile} rounded-lg border-2 flex items-center justify-center ${tileSize.font} font-bold transition-all duration-150 select-none ${tile ? 'bg-blue-600 border-blue-400 text-white cursor-pointer hover:bg-red-500 hover:border-red-400' : 'bg-slate-700/50 border-slate-500 border-dashed'}`}>
                             {tile ? tile.letter : ''}
                           </div>
                         );
@@ -10949,12 +10958,12 @@ const handleDailyChallengeReplay = () => {
                 })}
               </div>
             ) : (
-              <div className="flex gap-1 flex-wrap justify-center">
+              <div className={`flex flex-wrap justify-center ${tileSize.gap}`}>
                 {Array.from({length: totalLetters}).map((_, i) => {
                   const tile = placedTiles[i];
                   return (
                     <div key={i} onClick={() => tile && handlePlacedTileTap(tile, i)}
-                      className={`w-10 h-10 rounded-lg border-2 flex items-center justify-center text-lg font-bold transition-all duration-150 select-none ${tile ? 'bg-blue-600 border-blue-400 text-white cursor-pointer hover:bg-red-500 hover:border-red-400' : 'bg-slate-700/50 border-slate-500 border-dashed'}`}>
+                      className={`${tileSize.tile} rounded-lg border-2 flex items-center justify-center ${tileSize.font} font-bold transition-all duration-150 select-none ${tile ? 'bg-blue-600 border-blue-400 text-white cursor-pointer hover:bg-red-500 hover:border-red-400' : 'bg-slate-700/50 border-slate-500 border-dashed'}`}>
                       {tile ? tile.letter : ''}
                     </div>
                   );
@@ -10966,10 +10975,10 @@ const handleDailyChallengeReplay = () => {
           {/* LETTER TILES */}
           <div className="bg-slate-900/50 rounded-2xl p-4 border border-slate-700">
             <p className="text-slate-400 text-xs text-center mb-3 tracking-widest uppercase">Tap a Letter</p>
-            <div className="flex gap-2 flex-wrap justify-center">
+            <div className={`flex flex-wrap justify-center ${tileSize.gap}`}>
               {tileLetters.map((tile) => (
                 <button key={tile.id} onClick={() => handleLetterTileTap(tile)} disabled={tile.used}
-                  className={`w-11 h-11 rounded-xl text-xl font-bold transition-all duration-150 select-none ${tile.used ? 'bg-slate-700/20 text-transparent border-2 border-slate-700/20 cursor-not-allowed' : 'bg-gradient-to-b from-blue-500 to-blue-700 text-white border-2 border-blue-400 shadow-lg active:scale-95 hover:from-blue-400 hover:to-blue-600'}`}>
+                  className={`${tileSize.tile} rounded-xl ${tileSize.font} font-bold transition-all duration-150 select-none ${tile.used ? 'bg-slate-700/20 text-transparent border-2 border-slate-700/20 cursor-not-allowed' : 'bg-gradient-to-b from-blue-500 to-blue-700 text-white border-2 border-blue-400 shadow-lg active:scale-95 hover:from-blue-400 hover:to-blue-600'}`}>
                   {tile.used ? '' : tile.letter}
                 </button>
               ))}
