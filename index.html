@@ -2970,6 +2970,7 @@ const OneMove = () => {
   const [showPowerUps, setShowPowerUps] = useState(false);
   const [showStreakRestoreOffer, setShowStreakRestoreOffer] = useState(false);
   const [brokenStreakValue, setBrokenStreakValue] = useState(0);
+  const [streakFreezeActive, setStreakFreezeActive] = useState(false);
   const [displayedGems, setDisplayedGems] = useState(0);
   const gemAnimRef = React.useRef(null);
   const [showStreakShieldPrompt, setShowStreakShieldPrompt] = useState(false);
@@ -3010,6 +3011,11 @@ const OneMove = () => {
   const [wrongAttempts, setWrongAttempts] = useState(0);
   const [memoryResult, setMemoryResult] = useState(null);
   const [pendingMFAdvance, setPendingMFAdvance] = useState(null); // {index, delay} to advance after MF win
+  const [mfFreezeUsed, setMfFreezeUsed] = useState(false); // freeze already consumed this MF puzzle
+  const [puzzleFreezeUsed, setPuzzleFreezeUsed] = useState(false); // freeze consumed this puzzle (WS/TF/QM)
+  const [pendingWSAdvance, setPendingWSAdvance] = useState(null); // {index, delay} to advance after WS correct/wrong
+  const [pendingTFAdvance, setPendingTFAdvance] = useState(null); // Tile Flip
+  const [pendingQMAdvance, setPendingQMAdvance] = useState(null); // Quick Math
   const [dailyChallengeCompleted, setDailyChallengeCompleted] = useState(false);
   const [dailyChallengeFailed, setDailyChallengeFailed] = useState(false);
   const [dailyChallengeStreak, setDailyChallengeStreak] = useState(0);
@@ -3253,6 +3259,46 @@ const OneMove = () => {
     }, delay);
     return () => clearTimeout(timer);
   }, [pendingMFAdvance]);
+
+  // Word Scramble advance — same pattern
+  useEffect(() => {
+    if (!pendingWSAdvance) return;
+    const { index, delay } = pendingWSAdvance;
+    const timer = setTimeout(() => {
+      setShowCorrectWord(false);
+      setShowWordWrong(false);
+      setPendingWSAdvance(null);
+      if (index >= 100000) { setScreen('complete'); } else { handleNextPuzzle(index); }
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [pendingWSAdvance]);
+
+  // Tile Flip advance
+  useEffect(() => {
+    if (!pendingTFAdvance) return;
+    const { index, delay } = pendingTFAdvance;
+    const timer = setTimeout(() => {
+      setShowTileSuccess(false);
+      setShowTileFailure(false);
+      setProcessing(false);
+      setPendingTFAdvance(null);
+      if (index >= 100000) { setScreen('complete'); } else { handleNextPuzzle(index); }
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [pendingTFAdvance]);
+
+  // Quick Math advance
+  useEffect(() => {
+    if (!pendingQMAdvance) return;
+    const { index, delay } = pendingQMAdvance;
+    const timer = setTimeout(() => {
+      setShowMathResult(null);
+      setMathSelectedAnswer(null);
+      setPendingQMAdvance(null);
+      if (index >= 100000) { setScreen('complete'); } else { handleNextPuzzle(index); }
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [pendingQMAdvance]);
 
   // Splash screen timer
   useEffect(() => {
@@ -6500,12 +6546,14 @@ const OneMove = () => {
       setGrid(challenge.grid);
       setHintLevel(0);
       setHighlightedArea(null);
+      setPuzzleFreezeUsed(false);
       setScreen('puzzle_tile');
     } else if (challenge.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
       setScrambledWord(challenge.scrambled);
       setUserWord('');
       initTileLetters(challenge.scrambled);
       setHintLevel(0);
+      setPuzzleFreezeUsed(false);
       setScreen('puzzle_word');
     } else if (challenge.type === PUZZLE_TYPES.MEMORY_MATCH) {
       setMemoryCards(challenge.cards);
@@ -6513,6 +6561,7 @@ const OneMove = () => {
       setMatchedPairs([]);
       setMemoryResult(null);
       setSeenCards([]);
+      setMfFreezeUsed(false);
       setExplorationComplete(false);
       setWrongAttempts(0);
       setWrongFlashes([]);
@@ -6534,6 +6583,7 @@ const OneMove = () => {
     } else {
       setMathAnswer('');
       setHintLevel(0);
+      setPuzzleFreezeUsed(false);
       setScreen('puzzle_math');
     }
     
@@ -7403,11 +7453,15 @@ const OneMove = () => {
   };
 
   const resetStreak = () => {
+    if (streakFreezeActive) {
+      // Freeze absorbs the reset — streak survives, freeze consumed
+      setStreakFreezeActive(false);
+      return;
+    }
     if (correctStreak >= 3) {
-      // Worth offering a restore if streak was meaningful
       setBrokenStreakValue(correctStreak);
       setShowStreakRestoreOffer(true);
-      setTimeout(() => setShowStreakRestoreOffer(false), 6000); // auto-dismiss after 6s
+      setTimeout(() => setShowStreakRestoreOffer(false), 6000);
     }
     setCorrectStreak(0);
   };
@@ -7459,6 +7513,7 @@ const OneMove = () => {
       setFlippedCards([]);
       setMatchedPairs([]);
       setMemoryResult(null);
+      setMfFreezeUsed(false);
       setWrongFlashes([]);
       setHintLevel(0);
       // Scale flash time and taps by board size
@@ -7717,22 +7772,11 @@ const handleDailyChallengeReplay = () => {
       setShowTileSuccess(true);
       
       // Show success message then advance to next trivia
-      setTimeout(() => {
-        setShowTileSuccess(false);
-        const newIndex = currentPuzzleIndex + 1;
-        setCurrentPuzzleIndex(newIndex);
-        saveProgress({ currentIndex: newIndex });
-        
-        // Check for level up after state updates
-        setTimeout(() => checkLevelUp(), 100);
-        
-        if (newIndex >= 100000) {
-          setScreen('complete');
-        } else {
-          handleNextPuzzle(newIndex);
-        }
-        setProcessing(false);
-      }, 1500); // Short delay to see the solved state and CORRECT message
+      const tfCorrectIndex = currentPuzzleIndex + 1;
+      setCurrentPuzzleIndex(tfCorrectIndex);
+      saveProgress({ currentIndex: tfCorrectIndex });
+      setTimeout(() => checkLevelUp(), 100);
+      setPendingTFAdvance({ index: tfCorrectIndex, delay: 1500 });
     } else {
       // Check if Daily Challenge and failed
       if (isDailyChallenge) {
@@ -7760,24 +7804,18 @@ const handleDailyChallengeReplay = () => {
       setPuzzleFirstAttempt(false);
       const newFailCount = failCount + 1;
       setFailCount(newFailCount);
+      if (!puzzleFreezeUsed) {
+        if (streakFreezeActive) { setStreakFreezeActive(false); } else { resetStreak(); }
+        setPuzzleFreezeUsed(true);
+      }
+      burnDoublerUse();
       setShowTileFailure(true); // Show big failure message
       
-      // Auto-advance after 3.5 seconds (was 2)
-      setTimeout(() => {
-        setShowTileFailure(false); // Hide before transition
-        const newIndex = currentPuzzleIndex + 1;
-        setCurrentPuzzleIndex(newIndex);
-        saveProgress({ currentIndex: newIndex });
-        
-        setTimeout(() => checkLevelUp(), 100);
-        
-        if (newIndex >= 100000) {
-          setScreen('complete');
-        } else {
-          handleNextPuzzle(newIndex);
-        }
-        setProcessing(false);
-      }, 3500);
+      const tfWrongIndex = currentPuzzleIndex + 1;
+      setCurrentPuzzleIndex(tfWrongIndex);
+      saveProgress({ currentIndex: tfWrongIndex });
+      setTimeout(() => checkLevelUp(), 100);
+      setPendingTFAdvance({ index: tfWrongIndex, delay: 3500 });
     }
   };
 
@@ -8388,6 +8426,7 @@ const handleDailyChallengeReplay = () => {
                       <p>🎯 50/50 (Trivia): <span className="text-white font-bold">-50 gems</span></p>
                       <p className="ml-5 text-slate-400 text-xs">• Eliminates 2 wrong answers</p>
                       <p>👁️ Match Flash Peek: <span className="text-white font-bold">-75 gems</span></p>
+                      <p>🧊 Streak Freeze: <span className="text-white font-bold">-150 gems</span></p>
                       <p className="ml-5 text-slate-400 text-xs">• Reveals 1 hidden card for 2 seconds</p>
                       <p>💡 Hint 1: <span className="text-white font-bold">-50</span></p>
                       <p>💡 Hint 2: <span className="text-white font-bold">-100</span></p>
@@ -8720,6 +8759,42 @@ const handleDailyChallengeReplay = () => {
               <p className="text-slate-400 text-xs text-center mb-5">Spend gems to get an edge</p>
 
               <div className="space-y-3 overflow-y-auto flex-1 pr-1 pb-1" style={{scrollbarWidth:"thin",scrollbarColor:"#475569 transparent"}}>
+
+                {/* Streak Freeze */}
+                <div className="bg-slate-700/60 rounded-xl p-4 border border-cyan-500/30">
+                  <div className="flex items-center justify-between mb-1">
+                    <div>
+                      <p className="text-white font-bold text-sm">🧊 Streak Freeze</p>
+                      <p className="text-slate-400 text-xs">Protect your streak for one puzzle</p>
+                      <p className="text-slate-500 text-xs">Activate during play before submitting</p>
+                    </div>
+                    <span className="text-yellow-400 font-bold text-sm">150 💎</span>
+                  </div>
+                  {streakFreezeActive && (
+                    <p className="text-cyan-400 text-xs mb-2">🧊 Active — streak protected this puzzle</p>
+                  )}
+                  <button
+                    onClick={() => {
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      if (streakFreezeActive) { alert('Freeze already active!'); return; }
+                      if (correctStreak === 0) { alert('No active streak to protect.'); return; }
+                      if (totalGems < 150) { alert('Not enough gems! Need 150 💎'); return; }
+                      const newSpent = gemsSpent + 150;
+                      setGemsSpent(newSpent);
+                      saveProgress({ gemsSpent: newSpent });
+                      setStreakFreezeActive(true);
+                      setShowPowerUps(false);
+                    }}
+                    disabled={streakFreezeActive || correctStreak === 0}
+                    className={`w-full py-2 rounded-lg text-sm font-semibold transition-all ${
+                      streakFreezeActive ? 'bg-cyan-700 text-cyan-300 cursor-not-allowed'
+                      : correctStreak === 0 ? 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                      : 'bg-cyan-600 hover:bg-cyan-700 text-white'
+                    }`}
+                  >
+                    {streakFreezeActive ? '🧊 Freeze Active' : correctStreak === 0 ? 'No streak to protect' : `Freeze Streak (${correctStreak}) — 150 💎`}
+                  </button>
+                </div>
 
                 {/* Gem Doubler */}
                 <div className="bg-slate-700/60 rounded-xl p-4 border border-amber-500/30">
@@ -10490,10 +10565,29 @@ const handleDailyChallengeReplay = () => {
               <span className="text-amber-400 text-2xl font-bold uppercase">{selectedCategory}</span>
             </div>
             {!isDailyChallenge && (
-              <div className="flex items-center justify-center gap-1.5 mb-2">
-                <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
-                <span className="text-white font-bold text-sm">{correctStreak}</span>
-                <span className="text-slate-400 text-xs">streak</span>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${streakFreezeActive ? 'bg-cyan-500/20 border border-cyan-400/50' : ''}`}>
+                  <span className="text-base">{streakFreezeActive ? '🧊' : correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                  <span className={`font-bold text-sm ${streakFreezeActive ? 'text-cyan-300' : 'text-white'}`}>{correctStreak}</span>
+                  <span className="text-slate-400 text-xs">streak</span>
+                  {streakFreezeActive && <span className="text-cyan-400 text-xs font-bold">FROZEN</span>}
+                </div>
+                {!streakFreezeActive && correctStreak > 0 && (
+                  <button
+                    onClick={() => {
+                      const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                      if (totalGems < 150) { alert('Not enough gems! Need 150 💎'); return; }
+                      const newSpent = gemsSpent + 150;
+                      setGemsSpent(newSpent);
+                      saveProgress({ gemsSpent: newSpent });
+                      setStreakFreezeActive(true);
+                    }}
+                    className="flex items-center gap-1 px-2 py-0.5 bg-cyan-600/30 border border-cyan-500/50 rounded-full hover:bg-cyan-600/50 transition-all active:scale-95"
+                  >
+                    <span className="text-xs">🧊</span>
+                    <span className="text-cyan-300 text-xs font-semibold">150 💎</span>
+                  </button>
+                )}
               </div>
             )}
             <h2 className="text-2xl font-light text-white mb-4">
@@ -10655,10 +10749,29 @@ const handleDailyChallengeReplay = () => {
           
           <div className="text-center mb-2">
             {!isDailyChallenge && (
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
-              <span className="text-white font-bold text-sm">{correctStreak}</span>
-              <span className="text-slate-400 text-xs">streak</span>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${streakFreezeActive ? 'bg-cyan-500/20 border border-cyan-400/50' : ''}`}>
+                <span className="text-base">{streakFreezeActive ? '🧊' : correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                <span className={`font-bold text-sm ${streakFreezeActive ? 'text-cyan-300' : 'text-white'}`}>{correctStreak}</span>
+                <span className="text-slate-400 text-xs">streak</span>
+                {streakFreezeActive && <span className="text-cyan-400 text-xs font-bold">FROZEN</span>}
+              </div>
+              {!streakFreezeActive && correctStreak > 0 && (
+                <button
+                  onClick={() => {
+                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                    if (totalGems < 150) { alert('Not enough gems! Need 150 💎'); return; }
+                    const newSpent = gemsSpent + 150;
+                    setGemsSpent(newSpent);
+                    saveProgress({ gemsSpent: newSpent });
+                    setStreakFreezeActive(true);
+                  }}
+                  className="flex items-center gap-1 px-2 py-0.5 bg-cyan-600/30 border border-cyan-500/50 rounded-full hover:bg-cyan-600/50 transition-all active:scale-95"
+                >
+                  <span className="text-xs">🧊</span>
+                  <span className="text-cyan-300 text-xs font-semibold">150 💎</span>
+                </button>
+              )}
             </div>
           )}
             <p className="text-white text-lg font-light">Tile Flip Challenge</p>
@@ -10918,10 +11031,29 @@ const handleDailyChallengeReplay = () => {
             <div className="inline-block bg-amber-500/30 border-2 border-amber-400 rounded-full px-5 py-2 mb-2">
               <p className="text-amber-200 text-base font-bold tracking-widest uppercase">{currentPuzzle.category || 'Word Scramble'}</p>
               {!isDailyChallenge && (
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
-              <span className="text-white font-bold text-sm">{correctStreak}</span>
-              <span className="text-slate-400 text-xs">streak</span>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${streakFreezeActive ? 'bg-cyan-500/20 border border-cyan-400/50' : ''}`}>
+                <span className="text-base">{streakFreezeActive ? '🧊' : correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                <span className={`font-bold text-sm ${streakFreezeActive ? 'text-cyan-300' : 'text-white'}`}>{correctStreak}</span>
+                <span className="text-slate-400 text-xs">streak</span>
+                {streakFreezeActive && <span className="text-cyan-400 text-xs font-bold">FROZEN</span>}
+              </div>
+              {!streakFreezeActive && correctStreak > 0 && (
+                <button
+                  onClick={() => {
+                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                    if (totalGems < 150) { alert('Not enough gems! Need 150 💎'); return; }
+                    const newSpent = gemsSpent + 150;
+                    setGemsSpent(newSpent);
+                    saveProgress({ gemsSpent: newSpent });
+                    setStreakFreezeActive(true);
+                  }}
+                  className="flex items-center gap-1 px-2 py-0.5 bg-cyan-600/30 border border-cyan-500/50 rounded-full hover:bg-cyan-600/50 transition-all active:scale-95"
+                >
+                  <span className="text-xs">🧊</span>
+                  <span className="text-cyan-300 text-xs font-semibold">150 💎</span>
+                </button>
+              )}
             </div>
           )}
             </div>
@@ -11002,15 +11134,15 @@ const handleDailyChallengeReplay = () => {
                 } else if (!isDailyChallenge) {
                   resetStreak();
                 }
-                setTimeout(() => {
-                  setShowCorrectWord(false);
-                  if (isDailyChallenge) { handleDailyChallengeSuccess(); return; }
-                  const newIndex = currentPuzzleIndex + 1;
-                  setCurrentPuzzleIndex(newIndex);
-                  saveProgress({ currentIndex: newIndex });
+                if (!isDailyChallenge) {
+                  const wsNextIndex = currentPuzzleIndex + 1;
+                  setCurrentPuzzleIndex(wsNextIndex);
+                  saveProgress({ currentIndex: wsNextIndex });
                   setTimeout(() => checkLevelUp(), 100);
-                  if (newIndex >= 100000) { setScreen('complete'); } else { handleNextPuzzle(newIndex); }
-                }, 3000);
+                  setPendingWSAdvance({ index: wsNextIndex, delay: 3000 });
+                } else {
+                  setTimeout(() => { setShowCorrectWord(false); handleDailyChallengeSuccess(); }, 3000);
+                }
               } else {
                 if (isDailyChallenge) {
                   saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
@@ -11024,16 +11156,16 @@ const handleDailyChallengeReplay = () => {
                 setPuzzleFirstAttempt(false);
                 setFailCount(prev => prev + 1);
                 setShowWordWrong(true);
-                resetStreak();
+                if (!puzzleFreezeUsed) {
+                  if (streakFreezeActive) { setStreakFreezeActive(false); } else { resetStreak(); }
+                  setPuzzleFreezeUsed(true);
+                }
                 burnDoublerUse();
-                setTimeout(() => {
-                  setShowWordWrong(false);
-                  const newIndex = currentPuzzleIndex + 1;
-                  setCurrentPuzzleIndex(newIndex);
-                  saveProgress({ currentIndex: newIndex });
-                  setTimeout(() => checkLevelUp(), 100);
-                  if (newIndex >= 100000) { setScreen('complete'); } else { handleNextPuzzle(newIndex); }
-                }, 3000);
+                const wsWrongIndex = currentPuzzleIndex + 1;
+                setCurrentPuzzleIndex(wsWrongIndex);
+                saveProgress({ currentIndex: wsWrongIndex });
+                setTimeout(() => checkLevelUp(), 100);
+                setPendingWSAdvance({ index: wsWrongIndex, delay: 3000 });
               }
             }} disabled={!allPlaced || showCorrectWord || showWordWrong}
               className={`flex-grow py-3 rounded-xl text-base font-bold transition-all duration-200 ${allPlaced && !showCorrectWord && !showWordWrong ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white shadow-lg active:scale-95' : 'bg-slate-700 text-slate-500 cursor-not-allowed'}`}>
@@ -11121,11 +11253,7 @@ const handleDailyChallengeReplay = () => {
         setCurrentPuzzleIndex(mathNextIndex);
         saveProgress({ currentIndex: mathNextIndex });
         
-        setTimeout(() => {
-          setShowMathResult(null);
-          setMathSelectedAnswer(null);
-          if (mathNextIndex >= 100000) { setScreen('complete'); } else { handleNextPuzzle(mathNextIndex); }
-        }, 1500);
+        setPendingQMAdvance({ index: mathNextIndex, delay: 1500 });
       } else {
         // WRONG! - Auto-advance immediately (one attempt only)
         setShowMathResult('wrong');
@@ -11151,19 +11279,17 @@ const handleDailyChallengeReplay = () => {
         // Regular game - wrong answer means auto-advance
         setPuzzleFirstAttempt(false);
         setFailCount(failCount + 1);
-        resetStreak();
+        if (!puzzleFreezeUsed) {
+          if (streakFreezeActive) { setStreakFreezeActive(false); } else { resetStreak(); }
+          setPuzzleFreezeUsed(true);
+        }
         burnDoublerUse();
         const mathWrongIndex = currentPuzzleIndex + 1;
         setCurrentPuzzleIndex(mathWrongIndex);
         saveProgress({ currentIndex: mathWrongIndex });
         
-        // Advance to next puzzle after showing wrong feedback
-        setTimeout(() => {
-          setShowMathResult(null);
-          setMathSelectedAnswer(null);
-          setTimeout(() => checkLevelUp(), 100);
-          if (mathWrongIndex >= 100000) { setScreen('complete'); } else { handleNextPuzzle(mathWrongIndex); }
-        }, 1500);
+        setTimeout(() => checkLevelUp(), 100);
+        setPendingQMAdvance({ index: mathWrongIndex, delay: 1500 });
       }
     };
     
@@ -11203,10 +11329,29 @@ const handleDailyChallengeReplay = () => {
           
           <div className="text-center mb-4">
             {!isDailyChallenge && (
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
-              <span className="text-white font-bold text-sm">{correctStreak}</span>
-              <span className="text-slate-400 text-xs">streak</span>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${streakFreezeActive ? 'bg-cyan-500/20 border border-cyan-400/50' : ''}`}>
+                <span className="text-base">{streakFreezeActive ? '🧊' : correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                <span className={`font-bold text-sm ${streakFreezeActive ? 'text-cyan-300' : 'text-white'}`}>{correctStreak}</span>
+                <span className="text-slate-400 text-xs">streak</span>
+                {streakFreezeActive && <span className="text-cyan-400 text-xs font-bold">FROZEN</span>}
+              </div>
+              {!streakFreezeActive && correctStreak > 0 && (
+                <button
+                  onClick={() => {
+                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                    if (totalGems < 150) { alert('Not enough gems! Need 150 💎'); return; }
+                    const newSpent = gemsSpent + 150;
+                    setGemsSpent(newSpent);
+                    saveProgress({ gemsSpent: newSpent });
+                    setStreakFreezeActive(true);
+                  }}
+                  className="flex items-center gap-1 px-2 py-0.5 bg-cyan-600/30 border border-cyan-500/50 rounded-full hover:bg-cyan-600/50 transition-all active:scale-95"
+                >
+                  <span className="text-xs">🧊</span>
+                  <span className="text-cyan-300 text-xs font-semibold">150 💎</span>
+                </button>
+              )}
             </div>
           )}
             <p className="text-white text-lg font-light">Quick Math</p>
@@ -11372,7 +11517,16 @@ const handleDailyChallengeReplay = () => {
             setFlippedCards([]);
             const newWrong = wrongAttempts + 1;
             setWrongAttempts(newWrong);
-            resetStreak();
+            // Only call resetStreak once per puzzle — freeze protects the whole puzzle
+            if (!mfFreezeUsed) {
+              if (streakFreezeActive) {
+                setStreakFreezeActive(false);
+                setMfFreezeUsed(true);
+              } else {
+                resetStreak();
+                setMfFreezeUsed(true);
+              }
+            }
             burnDoublerUse();
 
             if (newWrong >= maxTaps) {
@@ -11442,10 +11596,29 @@ const handleDailyChallengeReplay = () => {
           {/* Header */}
           <div className="text-center">
             {!isDailyChallenge && (
-            <div className="flex items-center justify-center gap-1.5 mb-2">
-              <span className="text-base">{correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
-              <span className="text-white font-bold text-sm">{correctStreak}</span>
-              <span className="text-slate-400 text-xs">streak</span>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${streakFreezeActive ? 'bg-cyan-500/20 border border-cyan-400/50' : ''}`}>
+                <span className="text-base">{streakFreezeActive ? '🧊' : correctStreak >= 10 ? '🔥' : correctStreak >= 5 ? '⚡' : '🎯'}</span>
+                <span className={`font-bold text-sm ${streakFreezeActive ? 'text-cyan-300' : 'text-white'}`}>{correctStreak}</span>
+                <span className="text-slate-400 text-xs">streak</span>
+                {streakFreezeActive && <span className="text-cyan-400 text-xs font-bold">FROZEN</span>}
+              </div>
+              {!streakFreezeActive && correctStreak > 0 && (
+                <button
+                  onClick={() => {
+                    const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
+                    if (totalGems < 150) { alert('Not enough gems! Need 150 💎'); return; }
+                    const newSpent = gemsSpent + 150;
+                    setGemsSpent(newSpent);
+                    saveProgress({ gemsSpent: newSpent });
+                    setStreakFreezeActive(true);
+                  }}
+                  className="flex items-center gap-1 px-2 py-0.5 bg-cyan-600/30 border border-cyan-500/50 rounded-full hover:bg-cyan-600/50 transition-all active:scale-95"
+                >
+                  <span className="text-xs">🧊</span>
+                  <span className="text-cyan-300 text-xs font-semibold">150 💎</span>
+                </button>
+              )}
             </div>
           )}
             <p className="text-white text-lg font-light">Match Flash</p>
