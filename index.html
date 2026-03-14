@@ -3027,6 +3027,7 @@ const OneMove = () => {
   const [dailyChallengeReward, setDailyChallengeReward] = useState(0); // Track reward for result screen
   const [dailyChallengeGemsAwarded, setDailyChallengeGemsAwarded] = useState(false);
   const [dailyChallengeReplayed, setDailyChallengeReplayed] = useState(false);
+  const [dcRetryPuzzle, setDcRetryPuzzle] = useState(null); // exact puzzle to retry
   const [dailyChallengeInProgress, setDailyChallengeInProgress] = useState(false);
   const [savedDailyChallengeState, setSavedDailyChallengeState] = useState(null);
   const [playStreak, setPlayStreak] = useState(0); // Track consecutive days played
@@ -3053,6 +3054,7 @@ const OneMove = () => {
   const [showInstructionPopup, setShowInstructionPopup] = useState(null);
   const [username, setUsername] = useState('Player');
   const [showCorrectWord, setShowCorrectWord] = useState(false);
+  const [wsSubmitting, setWsSubmitting] = useState(false); // prevents double-submit
   const [showWordWrong, setShowWordWrong] = useState(false);
   const [showTileFailure, setShowTileFailure] = useState(false);
   const [showTileSuccess, setShowTileSuccess] = useState(false);
@@ -3267,6 +3269,7 @@ const OneMove = () => {
     const timer = setTimeout(() => {
       setShowCorrectWord(false);
       setShowWordWrong(false);
+      setWsSubmitting(false);
       setPendingWSAdvance(null);
       if (index >= 100000) { setScreen('complete'); } else { handleNextPuzzle(index); }
     }, delay);
@@ -6530,12 +6533,21 @@ const OneMove = () => {
       return;
     }
     
-    // Don't allow if already completed or failed today
-    if (dailyChallengeCompleted || dailyChallengeFailed) {
+    // Don't allow if already completed today
+    if (dailyChallengeCompleted) { return; }
+
+    // If failed AND retry purchased — allow relaunch with same puzzle
+    if (dailyChallengeReplayed && dailyChallengeFailed) {
+      setDailyChallengeFailed(false);
+    }
+
+    // Still blocked if failed and no retry purchased
+    if (dailyChallengeCompleted || dailyChallengeAttempted && dailyChallengeFailed && !dailyChallengeReplayed) {
       return;
     }
     
-    const challenge = generateDailyChallenge();
+    // Use saved retry puzzle if replaying, otherwise generate fresh
+    const challenge = (dailyChallengeReplayed && dcRetryPuzzle) ? dcRetryPuzzle : generateDailyChallenge();
     setIsDailyChallenge(true);
     setDailyChallengeAttempted(true);
     setDailyChallengeInProgress(true);
@@ -6547,6 +6559,10 @@ const OneMove = () => {
       setHintLevel(0);
       setHighlightedArea(null);
       setPuzzleFreezeUsed(false);
+      setProcessing(false);
+      setShowTileSuccess(false);
+      setShowTileFailure(false);
+      setPendingTFAdvance(null);
       setScreen('puzzle_tile');
     } else if (challenge.type === PUZZLE_TYPES.WORD_SCRAMBLE) {
       setScrambledWord(challenge.scrambled);
@@ -6554,6 +6570,7 @@ const OneMove = () => {
       initTileLetters(challenge.scrambled);
       setHintLevel(0);
       setPuzzleFreezeUsed(false);
+      setWsSubmitting(false);
       setScreen('puzzle_word');
     } else if (challenge.type === PUZZLE_TYPES.MEMORY_MATCH) {
       setMemoryCards(challenge.cards);
@@ -7172,6 +7189,7 @@ const OneMove = () => {
   const generateQuickMath = (isDaily = false) => {
     // Difficulty based on puzzle index OR if it's Daily Challenge
     let num1, num2, operation, answer, choices;
+    const lastQMAnswer = localStorage.getItem('lastQMAnswer');
     
     // DAILY CHALLENGE: Always use HARD difficulty
     if (isDaily) {
@@ -7282,6 +7300,12 @@ const OneMove = () => {
           num2 = Math.floor(Math.random() * 12) + 2;
           num1 = answer * num2;
         }
+      }
+
+      // Repeat prevention: if same answer as last QM, nudge it
+      if (!isDaily && String(answer) === lastQMAnswer) {
+        answer = answer + (Math.random() > 0.5 ? 2 : -2);
+        if (answer <= 0) answer = Math.abs(answer) + 1;
       }
 
       // Generate 3 wrong answers for procedural questions
@@ -7502,6 +7526,7 @@ const OneMove = () => {
       setScreen('puzzle_word');
     } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
       const puzzle = generateQuickMath();
+      localStorage.setItem('lastQMAnswer', String(puzzle.answer));
       setCurrentPuzzle(puzzle);
       setMathAnswer('');
       setHintLevel(0);
@@ -8845,6 +8870,7 @@ const handleDailyChallengeReplay = () => {
                       setDailyChallengeAttempted(false);
                       setDailyChallengeGemsAwarded(false);
                       setDailyChallengeReplayed(true);
+                      setDcRetryPuzzle(currentPuzzle); // save exact failed puzzle
                       const dcStored = localStorage.getItem('dailyChallenge');
                       if (dcStored) {
                         const dc = JSON.parse(dcStored);
@@ -10936,8 +10962,8 @@ const handleDailyChallengeReplay = () => {
           </div>
 
           {/* ANSWER SLOTS */}
-          <div className="bg-slate-800/60 rounded-2xl p-4 border border-slate-600">
-            <p className="text-slate-400 text-xs text-center mb-3 tracking-widest uppercase">Your Answer</p>
+          <div className={`bg-slate-800/60 rounded-2xl border border-slate-600 ${totalLetters >= 9 ? 'p-2' : 'p-4'}`}>
+            <p className="text-slate-400 text-xs text-center mb-2 tracking-widest uppercase">Your Answer</p>
             {isMultiWord ? (
               <div className="flex flex-col gap-2 items-center">
                 {wordLengths.map((len, wi) => {
@@ -10973,8 +10999,8 @@ const handleDailyChallengeReplay = () => {
           </div>
 
           {/* LETTER TILES */}
-          <div className="bg-slate-900/50 rounded-2xl p-4 border border-slate-700">
-            <p className="text-slate-400 text-xs text-center mb-3 tracking-widest uppercase">Tap a Letter</p>
+          <div className={`bg-slate-900/50 rounded-2xl border border-slate-700 ${totalLetters >= 9 ? 'p-2' : 'p-4'}`}>
+            <p className="text-slate-400 text-xs text-center mb-2 tracking-widest uppercase">Tap a Letter</p>
             <div className={`flex flex-wrap justify-center ${tileSize.gap}`}>
               {tileLetters.map((tile) => (
                 <button key={tile.id} onClick={() => handleLetterTileTap(tile)} disabled={tile.used}
@@ -10992,6 +11018,8 @@ const handleDailyChallengeReplay = () => {
               ✕ Clear
             </button>
             <button onClick={() => {
+              if (wsSubmitting) return;
+              setWsSubmitting(true);
               const flat = placedTiles.map(t => t.letter).join('');
               const answerRaw = currentPuzzle.answer || currentPuzzle.word || '';
               const cleanUser = flat.toUpperCase();
@@ -11040,7 +11068,7 @@ const handleDailyChallengeReplay = () => {
                 setTimeout(() => checkLevelUp(), 100);
                 setPendingWSAdvance({ index: wsWrongIndex, delay: 3000 });
               }
-            }} disabled={!allPlaced || showCorrectWord || showWordWrong}
+            }} disabled={!allPlaced || showCorrectWord || showWordWrong || wsSubmitting}
               className={`flex-grow py-3 rounded-xl text-base font-bold transition-all duration-200 ${allPlaced && !showCorrectWord && !showWordWrong ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white shadow-lg active:scale-95' : 'bg-slate-700 text-slate-500 cursor-not-allowed'}`}>
               {allPlaced ? '✓ Submit' : `${placedTiles.length} / ${totalLetters}`}
             </button>
