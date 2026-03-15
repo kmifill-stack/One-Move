@@ -3106,9 +3106,10 @@ const OneMove = () => {
         setDeckPosition(data.deckPosition || 0);
         puzzleDeckRef.current = data.puzzleDeck;
         deckPositionRef.current = data.deckPosition || 0;
-        if (data.correctStreak) setCorrectStreak(data.correctStreak);
-        if (data.playStreak) setPlayStreak(data.playStreak);
       }
+      // Always load streaks regardless of deck state
+      if (data.correctStreak) setCorrectStreak(data.correctStreak);
+      if (data.playStreak) setPlayStreak(data.playStreak);
       setTriviaScore(data.triviaScore || 0);
       setPuzzleScore(data.puzzleScore || 0);
       setDailyChallengeGems(data.dailyChallengeGems || 0);
@@ -7204,10 +7205,10 @@ const OneMove = () => {
     {question: 'Which is the next perfect square after 169?', answer: '196', choices: ['180', '184', '196', '225']},
   ];
 
-  const generateQuickMath = (isDaily = false) => {
+  const generateQuickMath = (isDaily = false, explicitIndex = null) => {
     // Difficulty based on puzzle index OR if it's Daily Challenge
     let num1, num2, operation, answer, choices;
-    const lastQMAnswer = localStorage.getItem('lastQMAnswer');
+    // lastQMAnswer removed — repeat prevention caused answer corruption
     
     // DAILY CHALLENGE: Always use HARD difficulty
     if (isDaily) {
@@ -7279,8 +7280,9 @@ const OneMove = () => {
 
       // Procedural fast-calc (70%) — 4 difficulty tiers
       let questionText;
+      const puzzleIdx = explicitIndex !== null ? explicitIndex : currentPuzzleIndex;
 
-      if (currentPuzzleIndex < 15) {
+      if (puzzleIdx < 15) {
         // ── TIER 1: Starter (puzzles 0-14) ──
         // Two-digit addition & subtraction — no single digit answers
         operation = Math.random() < 0.5 ? '+' : '-';
@@ -7291,7 +7293,7 @@ const OneMove = () => {
         if (answer < 5) answer = num1 + num2; // fallback to addition if subtraction too small
         questionText = `${num1} ${operation} ${num2} = ?`;
 
-      } else if (currentPuzzleIndex < 75) {
+      } else if (puzzleIdx < 75) {
         // ── TIER 2: Medium (puzzles 15-74) ──
         // Multiplication tables up to 15, division, mixed two-digit ops
         const pick = Math.random();
@@ -7319,7 +7321,7 @@ const OneMove = () => {
           questionText = `${num1} ${operation} ${num2} = ?`;
         }
 
-      } else if (currentPuzzleIndex < 200) {
+      } else if (puzzleIdx < 200) {
         // ── TIER 3: Hard (puzzles 75-199) ──
         // Order of operations, percentages, larger multiplication
         const pick = Math.random();
@@ -7394,13 +7396,8 @@ const OneMove = () => {
         }
       }
 
-      // Repeat prevention
-      if (!isDaily && String(answer) === lastQMAnswer) {
-        answer = answer + (Math.random() > 0.5 ? 3 : -3);
-        if (answer <= 0) answer = Math.abs(answer) + 1;
-      }
-
       // Build 3 wrong answers then inject correct answer at random position
+      // Note: repeat prevention removed — nudging answer corrupted question/answer mismatch
       const wrongSet = new Set();
       const spread = answer > 200 ? 25 : answer > 50 ? 12 : answer > 20 ? 6 : 4;
       let att = 0;
@@ -7607,7 +7604,7 @@ const OneMove = () => {
     return a;
   };
 
-  const launchPuzzleType = (puzzleType) => {
+  const launchPuzzleType = (puzzleType, nextIndex) => {
     // Show Daily Challenge nudge after puzzle 10 (once only)
     if (currentPuzzleIndex === 10 && !dailyChallengeAttempted && !isDailyChallenge) {
       setShowDailyChallengeNudge(true);
@@ -7629,11 +7626,14 @@ const OneMove = () => {
       setHintLevel(0);
       setScreen('puzzle_word');
     } else if (puzzleType === PUZZLE_TYPES.QUICK_MATH) {
-      const puzzle = generateQuickMath();
-      localStorage.setItem('lastQMAnswer', String(puzzle.answer));
+      const puzzle = generateQuickMath(false, nextIndex);
       setCurrentPuzzle(puzzle);
       setMathAnswer('');
       setHintLevel(0);
+      setPuzzleFreezeUsed(false);
+      setFailCount(0);
+      setPuzzleFirstAttempt(true);
+      setShowMathResult(null);
       setScreen('puzzle_math');
     } else if (puzzleType === PUZZLE_TYPES.MEMORY_MATCH) {
       const puzzle = generateMemoryMatch();
@@ -7702,7 +7702,7 @@ const OneMove = () => {
     deckPositionRef.current = newPos;
     saveProgress({ puzzleDeck: currentDeck, deckPosition: newPos });
 
-    launchPuzzleType(puzzleType);
+    launchPuzzleType(puzzleType, nextIndex);
   };
 
   const handleAnswerSelect = (answer) => {
@@ -7806,6 +7806,8 @@ const handleDailyChallengeSuccess = () => {
   setDailyChallengeInProgress(false);
   setSavedDailyChallengeState(null);
   setIsDailyChallenge(false);
+  // Explicitly preserve correctStreak — DC completion must not affect puzzle win streak
+  saveProgress({ correctStreak });
   
   // Show result screen
   setTimeout(() => {
@@ -7903,8 +7905,9 @@ const handleDailyChallengeReplay = () => {
       
       // Show CORRECT message
       setShowTileSuccess(true);
+      setProcessing(false); // Release lock so advance can fire
       
-      // Show success message then advance to next trivia
+      // Show success message then advance to next puzzle
       const tfCorrectIndex = currentPuzzleIndex + 1;
       setCurrentPuzzleIndex(tfCorrectIndex);
       saveProgress({ currentIndex: tfCorrectIndex });
@@ -7943,6 +7946,7 @@ const handleDailyChallengeReplay = () => {
       }
       burnDoublerUse();
       setShowTileFailure(true); // Show big failure message
+      setProcessing(false); // Release lock so advance can fire
       
       const tfWrongIndex = currentPuzzleIndex + 1;
       setCurrentPuzzleIndex(tfWrongIndex);
