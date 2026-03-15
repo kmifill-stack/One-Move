@@ -2993,6 +2993,8 @@ const OneMove = () => {
   const [peekMode, setPeekMode] = useState(false); // waiting for player to select a card to peek
   const [showStreakCelebration, setShowStreakCelebration] = useState(false);
   const [deckPosition, setDeckPosition] = useState(0);
+  const puzzleDeckRef = React.useRef([]);
+  const deckPositionRef = React.useRef(0);
   const [triviaScore, setTriviaScore] = useState(0);
   const [puzzleScore, setPuzzleScore] = useState(0);
   const [processing, setProcessing] = useState(false);
@@ -3102,6 +3104,10 @@ const OneMove = () => {
       if (data.puzzleDeck && data.puzzleDeck.length === 4) {
         setPuzzleDeck(data.puzzleDeck);
         setDeckPosition(data.deckPosition || 0);
+        puzzleDeckRef.current = data.puzzleDeck;
+        deckPositionRef.current = data.deckPosition || 0;
+        if (data.correctStreak) setCorrectStreak(data.correctStreak);
+        if (data.playStreak) setPlayStreak(data.playStreak);
       }
       setTriviaScore(data.triviaScore || 0);
       setPuzzleScore(data.puzzleScore || 0);
@@ -3350,6 +3356,8 @@ const OneMove = () => {
       gemsSpentOn5050,
       gemsSpentOnHints,
       isPremiumUnlocked,
+      correctStreak,
+      playStreak,
       ...data
     }));
   };
@@ -7392,30 +7400,29 @@ const OneMove = () => {
         if (answer <= 0) answer = Math.abs(answer) + 1;
       }
 
-      // Generate 3 smart wrong answers — correct answer always included first
-      choices = [answer];
-      let attempts = 0;
-      const spread = answer > 200 ? 30 : answer > 100 ? 20 : answer > 30 ? 8 : answer > 10 ? 4 : 3;
-      while (choices.length < 4 && attempts < 200) {
-        attempts++;
+      // Build 3 wrong answers then inject correct answer at random position
+      const wrongSet = new Set();
+      const spread = answer > 200 ? 25 : answer > 50 ? 12 : answer > 20 ? 6 : 4;
+      let att = 0;
+      while (wrongSet.size < 3 && att < 300) {
+        att++;
         const offset = Math.floor(Math.random() * (spread * 2 + 1)) - spread;
-        let wrong = answer + (offset === 0 ? 1 : offset);
-        if (wrong > 0 && wrong !== answer && !choices.includes(wrong)) {
-          choices.push(wrong);
-        }
+        if (offset === 0) continue;
+        const wrong = answer + offset;
+        if (wrong > 0 && wrong !== answer) wrongSet.add(wrong);
       }
-      // Fallback: if still not 4 choices, add sequential values
-      let fallback = 1;
-      while (choices.length < 4) {
-        if (!choices.includes(answer + fallback)) choices.push(answer + fallback);
-        else if (!choices.includes(answer + fallback + 1)) choices.push(answer + fallback + 1);
-        fallback++;
+      // Fallback: guarantee 3 wrong answers using sequential offsets
+      let seq = 1;
+      while (wrongSet.size < 3) {
+        if (answer + seq !== answer) wrongSet.add(answer + seq);
+        seq++;
+        if (wrongSet.size < 3 && answer + seq + 1 !== answer) wrongSet.add(answer + seq + 1);
+        seq++;
       }
-      // Shuffle — correct answer goes in randomly, not always first
-      for (let i = choices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [choices[i], choices[j]] = [choices[j], choices[i]];
-      }
+      // Build choices array with correct answer injected at random position
+      const wrongArr = Array.from(wrongSet).slice(0, 3);
+      const insertPos = Math.floor(Math.random() * 4);
+      choices = [...wrongArr.slice(0, insertPos), answer, ...wrongArr.slice(insertPos)];
 
       return {
         type: PUZZLE_TYPES.QUICK_MATH,
@@ -7568,6 +7575,7 @@ const OneMove = () => {
   const handleCorrectStreak = () => {
     const newStreak = correctStreak + 1;
     setCorrectStreak(newStreak);
+    saveProgress({ correctStreak: newStreak });
     if (newStreak > 0 && newStreak % 3 === 0) {
       setShowStreakCelebration(newStreak);
       setTimeout(() => setShowStreakCelebration(false), 2500);
@@ -7586,6 +7594,7 @@ const OneMove = () => {
       setTimeout(() => setShowStreakRestoreOffer(false), 6000);
     }
     setCorrectStreak(0);
+    saveProgress({ correctStreak: 0 });
   };
 
   // Shuffle helper
@@ -7667,17 +7676,15 @@ const OneMove = () => {
       return;
     }
 
-    // Shuffled deck: 4 puzzle types, each appears exactly once per cycle
-    // When deck is empty, deal a fresh shuffled deck
+    // Always read from refs to avoid stale closure issues
     const allTypes = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH];
-    let currentDeck = puzzleDeck.length === 4 ? puzzleDeck : shuffleArray(allTypes);
-    let currentPos = puzzleDeck.length === 4 ? deckPosition : 0;
+    let currentDeck = puzzleDeckRef.current.length === 4 ? puzzleDeckRef.current : shuffleArray(allTypes);
+    let currentPos = puzzleDeckRef.current.length === 4 ? deckPositionRef.current : 0;
 
     if (currentPos >= 4) {
       // Deck exhausted — shuffle a new one, avoid starting with same type as last card
       const lastType = currentDeck[3];
       let newDeck = shuffleArray(allTypes);
-      // If new deck starts with same type as last played, rotate it
       if (newDeck[0] === lastType) {
         newDeck = [...newDeck.slice(1), newDeck[0]];
       }
@@ -7688,8 +7695,11 @@ const OneMove = () => {
     const puzzleType = currentDeck[currentPos];
     const newPos = currentPos + 1;
 
+    // Update both state and refs atomically
     setPuzzleDeck(currentDeck);
     setDeckPosition(newPos);
+    puzzleDeckRef.current = currentDeck;
+    deckPositionRef.current = newPos;
     saveProgress({ puzzleDeck: currentDeck, deckPosition: newPos });
 
     launchPuzzleType(puzzleType);
