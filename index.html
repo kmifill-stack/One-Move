@@ -8761,8 +8761,8 @@ const handleDailyChallengeReplay = () => {
         
         {/* Power-Ups Modal */}
         {showPowerUps && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setShowPowerUps(false)}>
-            <div className="bg-slate-800 rounded-2xl px-5 py-6 max-w-sm w-full border-2 border-amber-500 flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[200] p-4" onClick={() => setShowPowerUps(false)}>
+            <div className="bg-slate-800 rounded-2xl px-5 py-6 max-w-sm w-full border-2 border-amber-500 flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
               <h2 className="text-2xl font-bold text-white text-center mb-1">⚡ Power-Ups</h2>
               <p className="text-slate-400 text-xs text-center mb-5">Spend gems to get an edge</p>
 
@@ -9143,7 +9143,7 @@ const handleDailyChallengeReplay = () => {
         
         {/* TOP BAR */}
         {!showGemsAndRewards && (
-        <div className="sticky top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-50 bg-gradient-to-b from-slate-900/80 to-transparent backdrop-blur-sm">
+        <div className="sticky top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-[100] bg-gradient-to-b from-slate-900/80 to-transparent backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setScreen('home')}
