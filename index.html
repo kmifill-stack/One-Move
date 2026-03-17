@@ -43,6 +43,10 @@
       0% { opacity: 0; transform: translateY(20px); }
       100% { opacity: 1; transform: translateY(0); }
     }
+    @keyframes htpPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+      50% { box-shadow: 0 0 12px 4px rgba(99,102,241,0.6); }
+    }
     @keyframes glowPulse {
       0%, 100% { box-shadow: 0 0 40px rgba(96,165,250,0.5), 0 0 80px rgba(59,130,246,0.3), 0 0 120px rgba(37,99,235,0.2); }
       50% { box-shadow: 0 0 60px rgba(96,165,250,0.8), 0 0 120px rgba(59,130,246,0.5), 0 0 180px rgba(37,99,235,0.3); }
@@ -3084,6 +3088,7 @@ const OneMove = () => {
   const FREE_PUZZLE_LIMIT = 60;
   const [showUsernameEdit, setShowUsernameEdit] = useState(false);
   const [tempUsername, setTempUsername] = useState('');
+  const [sessionCount, setSessionCount] = useState(0); // tracks sessions for HTP pulse
   const [showLevelInfo, setShowLevelInfo] = useState(false);
   // Customization states
   const [selectedIcon, setSelectedIcon] = useState('default');
@@ -3097,6 +3102,11 @@ const OneMove = () => {
 
   // Load/save progress
   useEffect(() => {
+    // Increment session count each time app loads
+    const sc = parseInt(localStorage.getItem('omSessionCount') || '0') + 1;
+    localStorage.setItem('omSessionCount', String(sc));
+    setSessionCount(sc);
+
     const saved = localStorage.getItem('oneMoveSave_v4');
     if (saved) {
       const data = JSON.parse(saved);
@@ -6758,6 +6768,18 @@ const OneMove = () => {
     return "Beginner";
   };
   
+  const getNextLevelInfo = () => {
+    const count = currentPuzzleIndex;
+    if (count < 76)   return { name: "Pattern Seeker", target: 76,   icon: "📜" };
+    if (count < 250)  return { name: "Logic Master",   target: 250,  icon: "🥉" };
+    if (count < 400)  return { name: "Mind Bender",    target: 400,  icon: "🥈" };
+    if (count < 700)  return { name: "Puzzle Architect", target: 700, icon: "🥇" };
+    if (count < 1000) return { name: "The Persistent", target: 1000, icon: "💚" };
+    if (count < 1500) return { name: "ONE MOVE Master", target: 1500, icon: "💎" };
+    if (count < 2000) return { name: "Ultimate Champion", target: 2000, icon: "👑" };
+    return null; // max level
+  };
+
   const getThemeColors = () => {
     const theme = SHOP_THEMES.find(t => t.id === selectedTheme) || SHOP_THEMES[0];
     return `bg-gradient-to-br from-${theme.colors.from} via-${theme.colors.via} to-${theme.colors.to}`;
@@ -8163,6 +8185,15 @@ const handleDailyChallengeReplay = () => {
       setShowPaywall(true);
       return;
     }
+    // Safety: ensure deck refs are initialized before playing
+    if (!puzzleDeckRef.current || puzzleDeckRef.current.length === 0) {
+      const allTypes = [PUZZLE_TYPES.TILE_FLIP, PUZZLE_TYPES.WORD_SCRAMBLE, PUZZLE_TYPES.QUICK_MATH, PUZZLE_TYPES.MEMORY_MATCH];
+      const freshDeck = shuffleArray(allTypes);
+      puzzleDeckRef.current = freshDeck;
+      deckPositionRef.current = 0;
+      setPuzzleDeck(freshDeck);
+      setDeckPosition(0);
+    }
     handleNextPuzzle(currentPuzzleIndex);
   };
 
@@ -9156,7 +9187,7 @@ const handleDailyChallengeReplay = () => {
               <Home className="w-6 h-6 text-white" />
             </button>
             <button 
-              onClick={() => setShowUsernameEdit(true)}
+              onClick={() => { setShowUsernameEdit(true); setTempUsername(username); }}
               className="bg-slate-800/80 px-4 py-3 rounded-lg shadow-lg border border-slate-700 hover:bg-slate-700/80 transition-all duration-300"
             >
               <div className="flex items-center gap-2">
@@ -9188,7 +9219,7 @@ const handleDailyChallengeReplay = () => {
                     type="text"
                     value={tempUsername}
                     onChange={(e) => setTempUsername(e.target.value)}
-                    placeholder={username}
+                    placeholder="Enter new username"
                     maxLength={20}
                     className="flex-1 px-3 py-2.5 bg-slate-900 text-white rounded-lg border-2 border-slate-700 focus:border-blue-500 outline-none text-center text-base"
                   />
@@ -9654,6 +9685,36 @@ const handleDailyChallengeReplay = () => {
               </div>
             </div>
 
+            {/* Level Progress Bar */}
+            {(() => {
+              const next = getNextLevelInfo();
+              const currentLevel = getUserLevel();
+              if (!next) return (
+                <div className="bg-slate-800/60 rounded-xl p-3 border border-amber-500/30 text-center">
+                  <p className="text-amber-400 font-bold text-sm">👑 Ultimate Champion — Max Level!</p>
+                </div>
+              );
+              const prevTarget = getLevelInfo(currentLevel).threshold;
+              const progress = Math.min(100, Math.round(((currentPuzzleIndex - prevTarget) / (next.target - prevTarget)) * 100));
+              return (
+                <div className="bg-slate-800/60 rounded-xl p-3 border border-slate-700/50">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-slate-400 text-xs">{getLevelInfo(currentLevel).icon} {currentLevel}</span>
+                    <span className="text-slate-400 text-xs">{next.icon} {next.name}</span>
+                  </div>
+                  <div className="w-full bg-slate-700 rounded-full h-2 mb-1.5">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-500"
+                      style={{width: `${progress}%`}}
+                    />
+                  </div>
+                  <p className="text-center text-xs text-slate-400">
+                    <span className="text-white font-semibold">{next.target - currentPuzzleIndex}</span> puzzles to {next.name}
+                  </p>
+                </div>
+              );
+            })()}
+
             <button
               onClick={handlePlay}
               className="w-full px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 flex items-center justify-center gap-3 text-xl font-light tracking-wide shadow-lg"
@@ -9667,9 +9728,15 @@ const handleDailyChallengeReplay = () => {
             
             <button
               onClick={() => setScreen('instructions')}
-              className="w-full px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide"
+              className="w-full px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-all duration-300 text-sm font-light tracking-wide relative"
+              style={sessionCount <= 5 ? {animation: 'htpPulse 2s ease-in-out infinite'} : {}}
             >
               HOW TO PLAY
+              {sessionCount <= 5 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-indigo-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full leading-none">
+                  START HERE
+                </span>
+              )}
             </button>
             
             <button
