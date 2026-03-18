@@ -7804,7 +7804,7 @@ const OneMove = () => {
   };
 
   
-const handleDailyChallengeSuccess = () => {
+const handleDailyChallengeSuccess = (currentCorrectStreak) => {
   // Award 500 gems ONLY if not already awarded today
   if (!dailyChallengeGemsAwarded) {
     const newDCGems = dailyChallengeGems + 500;
@@ -7813,23 +7813,22 @@ const handleDailyChallengeSuccess = () => {
     saveProgress({ dailyChallengeGems: newDCGems });
   }
   
-  // Update streak
+  // Update DC streak
   const dcData = getDailyChallengeData();
   const newStreak = dcData ? (dcData.streak || 0) + 1 : 1;
   setDailyChallengeStreak(newStreak);
-  // Save last known streak value for DC Streak Restore
   localStorage.setItem('dcLastStreak', String(newStreak));
   const newTotalDays = totalDcDaysCompleted + 1;
   setTotalDcDaysCompleted(newTotalDays);
   
-  // Save completion with gems awarded flag - clear inProgress
+  // Save completion — explicitly pass correctStreak to prevent it being wiped
   saveDailyChallengeData(true, false, newStreak, true, dailyChallengeReplayed, false, null);
   setDailyChallengeCompleted(true);
   setDailyChallengeInProgress(false);
   setSavedDailyChallengeState(null);
   setIsDailyChallenge(false);
-  // Explicitly preserve correctStreak — DC completion must not affect puzzle win streak
-  saveProgress({ correctStreak });
+  // Pass correctStreak explicitly since this function is outside React scope
+  saveProgress({ correctStreak: currentCorrectStreak });
   
   // Show result screen
   setTimeout(() => {
@@ -8036,7 +8035,7 @@ const handleDailyChallengeReplay = () => {
         
         // Check if this is Daily Challenge AFTER showing success
         if (isDailyChallenge) {
-          handleDailyChallengeSuccess();
+          handleDailyChallengeSuccess(correctStreak);
           return;
         }
         
@@ -11240,7 +11239,7 @@ const handleDailyChallengeReplay = () => {
                   setTimeout(() => checkLevelUp(), 100);
                   setPendingWSAdvance({ index: wsNextIndex, delay: 3000 });
                 } else {
-                  setTimeout(() => { setShowCorrectWord(false); handleDailyChallengeSuccess(); }, 3000);
+                  setTimeout(() => { setShowCorrectWord(false); handleDailyChallengeSuccess(correctStreak); }, 3000);
                 }
               } else {
                 if (isDailyChallenge) {
@@ -11334,7 +11333,7 @@ const handleDailyChallengeReplay = () => {
         
         // Check if this is Daily Challenge
         if (isDailyChallenge)  {
- 			 handleDailyChallengeSuccess();
+ 			 handleDailyChallengeSuccess(correctStreak);
   			return;
 		}        
         if (puzzleFirstAttempt) {
@@ -11593,7 +11592,7 @@ const handleDailyChallengeReplay = () => {
             // ALL MATCHED — WIN!
             playSound('success');
             setMemoryResult('perfect');
-            if (isDailyChallenge) { handleDailyChallengeSuccess(); return; }
+            if (isDailyChallenge) { handleDailyChallengeSuccess(correctStreak); return; }
             const mfGems = awardGems(100);
             const newPuzzleScore = puzzleScore + mfGems;
             setPuzzleScore(newPuzzleScore);
@@ -11912,7 +11911,7 @@ const handleDailyChallengeReplay = () => {
       
       if (correct) {
         // Logic Grid is Daily Challenge only
-        handleDailyChallengeSuccess();
+        handleDailyChallengeSuccess(correctStreak);
       } else {
         // Wrong answer — one attempt, fail the Daily Challenge
         handleDailyChallengeFailure();
