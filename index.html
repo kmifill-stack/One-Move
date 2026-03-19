@@ -7724,6 +7724,7 @@ const OneMove = () => {
     deckPositionRef.current = newPos;
     saveProgress({ puzzleDeck: currentDeck, deckPosition: newPos });
 
+    setWsSubmitting(false); // Always clear on puzzle advance
     launchPuzzleType(puzzleType, nextIndex);
   };
 
@@ -8211,6 +8212,7 @@ const handleDailyChallengeReplay = () => {
   };
 
   const handleSkipPuzzle = () => {
+    setWsSubmitting(false); // Reset in case skip is used from WS screen
     const skipCost = 200;
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
@@ -11239,10 +11241,11 @@ const handleDailyChallengeReplay = () => {
                   setTimeout(() => checkLevelUp(), 100);
                   setPendingWSAdvance({ index: wsNextIndex, delay: 3000 });
                 } else {
-                  setTimeout(() => { setShowCorrectWord(false); handleDailyChallengeSuccess(correctStreak); }, 3000);
+                  setTimeout(() => { setShowCorrectWord(false); setWsSubmitting(false); handleDailyChallengeSuccess(correctStreak); }, 3000);
                 }
               } else {
                 if (isDailyChallenge) {
+                  setWsSubmitting(false);
                   saveDailyChallengeData(false, true, dailyChallengeStreak, false, false, false, null);
                   setDailyChallengeFailed(true);
                   setDailyChallengeInProgress(false);
