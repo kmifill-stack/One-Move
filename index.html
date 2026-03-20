@@ -3071,6 +3071,8 @@ const OneMove = () => {
   const [username, setUsername] = useState('Player');
   const [showCorrectWord, setShowCorrectWord] = useState(false);
   const [wsSubmitting, setWsSubmitting] = useState(false); // prevents double-submit
+  const [qmSubmitting, setQmSubmitting] = useState(false); // prevents QM double-submit
+  const [emergencySkipUsed, setEmergencySkipUsed] = useState(false); // free skip when gems=0
   const [showWordWrong, setShowWordWrong] = useState(false);
   const [showTileFailure, setShowTileFailure] = useState(false);
   const [showTileSuccess, setShowTileSuccess] = useState(false);
@@ -3103,6 +3105,7 @@ const OneMove = () => {
   // Load/save progress
   useEffect(() => {
     // Increment session count each time app loads
+    setEmergencySkipUsed(false); // Reset emergency skip each session
     const sc = parseInt(localStorage.getItem('omSessionCount') || '0') + 1;
     localStorage.setItem('omSessionCount', String(sc));
     setSessionCount(sc);
@@ -3324,6 +3327,7 @@ const OneMove = () => {
     const timer = setTimeout(() => {
       setShowMathResult(null);
       setMathSelectedAnswer(null);
+      setQmSubmitting(false);
       setPendingQMAdvance(null);
       if (index >= 100000) { setScreen('complete'); } else { handleNextPuzzle(index); }
     }, delay);
@@ -7527,6 +7531,7 @@ const OneMove = () => {
     setFiftyFiftyUsed(true);
   };
   const handleCategorySelect = (category) => {
+    setWsSubmitting(false); // Always clear on any puzzle transition
     // LAYER 1 - Category rotation: don't repeat a category until 5 others have been used
     const allCategories = Object.values(CATEGORIES);
     let selectedCategory = category;
@@ -7656,6 +7661,7 @@ const OneMove = () => {
       setFailCount(0);
       setPuzzleFirstAttempt(true);
       setShowMathResult(null);
+      setQmSubmitting(false);
       setScreen('puzzle_math');
     } else if (puzzleType === PUZZLE_TYPES.MEMORY_MATCH) {
       const puzzle = generateMemoryMatch();
@@ -8212,7 +8218,13 @@ const handleDailyChallengeReplay = () => {
   };
 
   const handleSkipPuzzle = () => {
-    setWsSubmitting(false); // Reset in case skip is used from WS screen
+    setWsSubmitting(false); // Reset WS
+    setQmSubmitting(false); // Reset QM
+    setProcessing(false);   // Reset TF
+    setPendingTFAdvance(null);
+    setPendingWSAdvance(null);
+    setPendingQMAdvance(null);
+    setPendingMFAdvance(null);
     const skipCost = 200;
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
@@ -11303,6 +11315,18 @@ const handleDailyChallengeReplay = () => {
           <button onClick={() => setShowSkipConfirm(true)} className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-all duration-300">
             ⏭️ Skip Puzzle (-200 💎)
           </button>
+          {totalGems === 0 && failCount > 0 && !emergencySkipUsed && (
+            <button onClick={() => {
+              setEmergencySkipUsed(true);
+              const newIndex = currentPuzzleIndex + 1;
+              setCurrentPuzzleIndex(newIndex);
+              saveProgress({ currentIndex: newIndex });
+              setWsSubmitting(false);
+              handleNextPuzzle(newIndex);
+            }} className="w-full px-6 py-3 bg-red-900/60 hover:bg-red-800/60 text-red-300 rounded-lg text-sm transition-all duration-300 border border-red-700/50">
+              🆘 Emergency Skip — Free (no gems needed)
+            </button>
+          )}
         </div>
 
         {showSkipConfirm && (
@@ -11327,7 +11351,8 @@ const handleDailyChallengeReplay = () => {
     const totalGems = triviaScore + puzzleScore + dailyChallengeGems + bonusGems - gemsSpent;
     
     const handleMathAnswer = (selected) => {
-      if (showMathResult) return; // Prevent double tap
+      if (showMathResult || qmSubmitting) return; // Prevent double tap
+      setQmSubmitting(true);
       setMathSelectedAnswer(selected);
       if (selected === currentPuzzle.answer) {
         // CORRECT!
