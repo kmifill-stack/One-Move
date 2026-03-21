@@ -3068,6 +3068,12 @@ const OneMove = () => {
   const [usedTrivia, setUsedTrivia] = useState([]);
   const [recentCategories, setRecentCategories] = useState([]);
   const [showInstructionPopup, setShowInstructionPopup] = useState(null);
+  // Shuffled deck system for trivia
+  const [triviaDeck, setTriviaDeck] = useState([]);
+  const [triviaDeckPos, setTriviaDeckPos] = useState(0);
+  // Shuffled deck system for word scramble
+  const [scrambleDeck, setScrambleDeck] = useState([]);
+  const [scrambleDeckPos, setScrambleDeckPos] = useState(0);
   const [username, setUsername] = useState('Player');
   const [showCorrectWord, setShowCorrectWord] = useState(false);
   const wsSubmittingRef = React.useRef(false); // ref for immediate guard in handler
@@ -3141,6 +3147,11 @@ const OneMove = () => {
       setUsedPatterns(data.usedPatterns || []);
       setUsedTrivia(data.usedTrivia || []);
       setRecentCategories(data.recentCategories || []);
+      // Load shuffled decks
+      setTriviaDeck(data.triviaDeck || []);
+      setTriviaDeckPos(data.triviaDeckPos || 0);
+      setScrambleDeck(data.scrambleDeck || []);
+      setScrambleDeckPos(data.scrambleDeckPos || 0);
       
       // ONE-TIME MIGRATION: Award past level bonuses
       const currentIndex = data.currentIndex || 0;
@@ -6897,28 +6908,38 @@ const OneMove = () => {
   };
 
   const generateWordScramble = () => {
-    // Pick random word from scramble bank (5+ letters only), avoiding recently used words
-    let scrambleItem;
-    let attempts = 0;
-    do {
-      scrambleItem = SCRAMBLE_BANK[Math.floor(Math.random() * SCRAMBLE_BANK.length)];
-      attempts++;
-    } while ((usedWords.includes(scrambleItem.word) || scrambleItem.word.replace(/\s/g, '').length < 5) && attempts < 100);
-    
-    // Add word to used list and maintain 500-word buffer
-    const newUsedWords = [...usedWords, scrambleItem.word];
-    if (newUsedWords.length > 500) {
-      newUsedWords.shift(); // Remove oldest word
+    // SHUFFLED DECK SYSTEM — play every word once before any repeats
+    // Filter bank to 5+ letter words only
+    const validBank = SCRAMBLE_BANK.map((item, i) => ({item, i}))
+      .filter(({item}) => item.word.replace(/\s/g, '').length >= 5);
+
+    let deck = scrambleDeck;
+    let pos = scrambleDeckPos;
+
+    // Build or rebuild deck if empty or exhausted
+    if (deck.length === 0 || pos >= deck.length) {
+      const indices = validBank.map(({i}) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      deck = indices;
+      pos = 0;
     }
-    setUsedWords(newUsedWords);
-    saveProgress({ usedWords: newUsedWords });
-    
+
+    const scrambleItem = SCRAMBLE_BANK[deck[pos]];
+    const newPos = pos + 1;
+
+    // Save deck and position
+    setScrambleDeck(deck);
+    setScrambleDeckPos(newPos);
+    saveProgress({ scrambleDeck: deck, scrambleDeckPos: newPos });
+
     const word = scrambleItem.word;
-    
+
     // Handle multi-word phrases by scrambling each word separately and joining with underscore
     let scrambledText;
     if (word.includes(' ')) {
-      // Multi-word: scramble each word separately, join with underscore
       const words = word.split(' ');
       const scrambledWords = words.map(w => {
         const letters = w.split('');
@@ -6930,7 +6951,6 @@ const OneMove = () => {
       });
       scrambledText = scrambledWords.join(' _ ');
     } else {
-      // Single word: scramble normally
       const letters = word.split('');
       for (let i = letters.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -6938,7 +6958,7 @@ const OneMove = () => {
       }
       scrambledText = letters.join('');
     }
-    
+
     return {
       type: PUZZLE_TYPES.WORD_SCRAMBLE,
       scrambled: scrambledText,
@@ -7533,59 +7553,42 @@ const OneMove = () => {
   };
   const handleCategorySelect = (category) => {
     setWsSubmitting(false); // Always clear on any puzzle transition
-    // LAYER 1 - Category rotation: don't repeat a category until 5 others have been used
-    const allCategories = Object.values(CATEGORIES);
-    let selectedCategory = category;
-    
-    // If this category was used too recently, pick a fresher one
-    if (recentCategories.slice(-5).includes(category)) {
-      const freshCategories = allCategories.filter(c => !recentCategories.slice(-5).includes(c));
-      if (freshCategories.length > 0) {
-        selectedCategory = freshCategories[Math.floor(Math.random() * freshCategories.length)];
+
+    // SHUFFLED DECK SYSTEM — play every question once before any repeats
+    let deck = triviaDeck;
+    let pos = triviaDeckPos;
+
+    // Build or rebuild deck if empty or exhausted
+    if (deck.length === 0 || pos >= deck.length) {
+      // Shuffle all indices
+      const indices = TRIVIA_BANK.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
       }
+      deck = indices;
+      pos = 0;
     }
-    
-    // Update category rotation buffer (keep last 5)
-    const newRecentCategories = [...recentCategories, selectedCategory];
-    if (newRecentCategories.length > 5) newRecentCategories.shift();
-    setRecentCategories(newRecentCategories);
-    
-    // LAYER 2 - Per-category deduplication with full-reset when exhausted
-    const categoryQuestions = TRIVIA_BANK.filter(q => q.cat === selectedCategory);
-    
-    // Filter out already-used questions in this category
-    let available = categoryQuestions.filter(q => !usedTrivia.includes(q.q));
-    
-    // If category exhausted, reset just that category's questions from the buffer
-    if (available.length === 0) {
-      const otherCatUsed = usedTrivia.filter(qText => {
-        const match = TRIVIA_BANK.find(q => q.q === qText);
-        return match && match.cat !== selectedCategory;
-      });
-      const newUsedTrivia = otherCatUsed;
-      setUsedTrivia(newUsedTrivia);
-      saveProgress({ usedTrivia: newUsedTrivia, recentCategories: newRecentCategories });
-      available = categoryQuestions;
-    }
-    
-    // Pick random unused question
-    const question = available[Math.floor(Math.random() * available.length)];
-    
-    // Add to global buffer (cap at 1000 to cover all questions)
-    const newUsedTrivia = [...usedTrivia, question.q];
-    if (newUsedTrivia.length > 1000) {
-      newUsedTrivia.shift();
-    }
-    setUsedTrivia(newUsedTrivia);
-    saveProgress({ usedTrivia: newUsedTrivia, recentCategories: newRecentCategories });
-    
+
+    // Pick next question from deck
+    const question = TRIVIA_BANK[deck[pos]];
+    const newPos = pos + 1;
+
+    // Save deck and position to state and localStorage
+    setTriviaDeck(deck);
+    setTriviaDeckPos(newPos);
+    saveProgress({ triviaDeck: deck, triviaDeckPos: newPos });
+
+    // Category label comes from the question itself
+    const selectedCategory = question.cat;
+    setSelectedCategory(selectedCategory);
+
     const choices = [...question.c];
     for (let i = choices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [choices[i], choices[j]] = [choices[j], choices[i]];
     }
-    
-    setSelectedCategory(selectedCategory);
+
     setCurrentTriviaQuestion(question);
     setFiftyFiftyUsed(false);
     setEliminatedAnswers([]);
