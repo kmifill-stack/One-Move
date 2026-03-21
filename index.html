@@ -3070,8 +3070,12 @@ const OneMove = () => {
   const [showInstructionPopup, setShowInstructionPopup] = useState(null);
   const [username, setUsername] = useState('Player');
   const [showCorrectWord, setShowCorrectWord] = useState(false);
-  const [wsSubmitting, setWsSubmitting] = useState(false); // prevents double-submit
-  const [qmSubmitting, setQmSubmitting] = useState(false); // prevents QM double-submit
+  const wsSubmittingRef = React.useRef(false); // ref prevents hint re-renders from resetting it
+  const setWsSubmitting = (val) => { wsSubmittingRef.current = val; };
+  const wsSubmitting = wsSubmittingRef.current;
+  const qmSubmittingRef = React.useRef(false); // ref prevents re-renders from resetting it
+  const setQmSubmitting = (val) => { qmSubmittingRef.current = val; };
+  const qmSubmitting = qmSubmittingRef.current;
   const [emergencySkipUsed, setEmergencySkipUsed] = useState(false); // free skip when gems=0
   const [showWordWrong, setShowWordWrong] = useState(false);
   const [showTileFailure, setShowTileFailure] = useState(false);
@@ -7885,6 +7889,9 @@ const handleDailyChallengeReplay = () => {
     if (processing) return;
     setProcessing(true);
     
+    // Safety: auto-release processing after 5 seconds in case something goes wrong
+    const processingTimeout = setTimeout(() => setProcessing(false), 5000);
+    
     const newGrid = grid.map(r => [...r]);
     applyFlipPattern(row, col, newGrid, currentPuzzle.pattern);
     
@@ -7892,6 +7899,7 @@ const handleDailyChallengeReplay = () => {
     setGrid(newGrid);
     
     await new Promise(resolve => setTimeout(resolve, 800));
+    clearTimeout(processingTimeout); // Clear safety timeout since we got here
     const isSolved = newGrid.every(row => row.every(tile => tile === 1));
     
     if (isSolved) {
@@ -7980,7 +7988,8 @@ const handleDailyChallengeReplay = () => {
       setCurrentPuzzleIndex(tfWrongIndex);
       saveProgress({ currentIndex: tfWrongIndex });
       setTimeout(() => checkLevelUp(), 100);
-      setPendingTFAdvance({ index: tfWrongIndex, delay: 3500 });
+      // Delay slightly to ensure state updates before advance fires
+      setTimeout(() => setPendingTFAdvance({ index: tfWrongIndex, delay: 3000 }), 100);
     }
   };
 
