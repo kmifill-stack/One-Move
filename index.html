@@ -5,18 +5,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>ONE MOVE</title>
+  <style>
+    #app-loading {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #2E1065, #1E3A8A, #0F172A);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #app-loading h1 {
+      color: #52C3FC;
+      font-size: 2.5rem;
+      font-weight: 300;
+      font-family: -apple-system, sans-serif;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    #app-loading p {
+      color: #94A3B8;
+      font-size: 0.9rem;
+      font-family: -apple-system, sans-serif;
+    }
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #1E3A8A;
+      border-top: 3px solid #52C3FC;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
-  <script>
-    // Fallback: if scripts fail to load, show error message
-    window.addEventListener('error', function(e) {
-      if (e.target && (e.target.tagName === 'SCRIPT')) {
-        console.error('Script failed to load:', e.target.src);
-      }
-    }, true);
-  </script>
   <style>
     * {
       -webkit-tap-highlight-color: transparent;
@@ -102,6 +132,11 @@
   </style>
 </head>
 <body>
+  <div id="app-loading">
+    <div class="loader"></div>
+    <h1>ONE MOVE</h1>
+    <p>Think Fast. Play Smart. One Move.</p>
+  </div>
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -3100,6 +3135,7 @@ const OneMove = () => {
   const [bonusGems, setBonusGems] = useState(0);
   const [lastAwardedLevel, setLastAwardedLevel] = useState('');
   
+
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const FREE_PUZZLE_LIMIT = 60;
@@ -3143,6 +3179,14 @@ const OneMove = () => {
   }, []);
 
   useEffect(() => {
+    // Remove loading screen now that React has mounted
+    const loadingEl = document.getElementById('app-loading');
+    if (loadingEl) {
+      loadingEl.style.transition = 'opacity 0.5s ease';
+      loadingEl.style.opacity = '0';
+      setTimeout(() => { if (loadingEl.parentNode) loadingEl.parentNode.removeChild(loadingEl); }, 500);
+    }
+
     // Increment session count each time app loads
     setEmergencySkipUsed(false); // Reset emergency skip each session
     const sc = parseInt(localStorage.getItem('omSessionCount') || '0') + 1;
@@ -3421,6 +3465,7 @@ const OneMove = () => {
       ...data
     }));
   };
+
 
   // Daily Challenge Functions
   const getTodayDateString = () => {
@@ -10555,8 +10600,9 @@ const handleDailyChallengeReplay = () => {
           </div>
         )}
         
-        </div>
-        )}
+      </div>
+    );
+  }
 
   // Category Selection
   if (screen === 'category_select') {
@@ -12235,6 +12281,7 @@ const handleDailyChallengeReplay = () => {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<OneMove />);
+// Loading screen will be hidden by the React component once it mounts
   </script>
 </body>
 </html>
