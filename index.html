@@ -6,55 +6,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>ONE MOVE</title>
   <style>
-    #app-loading {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, #2E1065, #1E3A8A, #0F172A);
-      display: -webkit-flex;
-      display: flex;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    #app-loading h1 {
-      color: #52C3FC;
-      font-size: 2.5rem;
-      font-weight: 300;
-      font-family: -apple-system, sans-serif;
-      letter-spacing: 0.1em;
-      margin-bottom: 0.5rem;
-    }
-    #app-loading p {
-      color: #94A3B8;
-      font-size: 0.9rem;
-      font-family: -apple-system, sans-serif;
-    }
-    .loader {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #1E3A8A;
-      border-top: 3px solid #52C3FC;
-      border-radius: 50%;
-      -webkit-animation: spin 1s linear infinite;
-      animation: spin 1s linear infinite;
-      margin-bottom: 1.5rem;
-    }
-    @-webkit-keyframes spin {
-      0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
-      100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-    }
-    @keyframes spin {
-      0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
-      100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
-    }
-  </style>
 
   <style>
     * {
@@ -141,11 +92,6 @@
   </style>
 </head>
 <body>
-  <div id="app-loading">
-    <div class="loader"></div>
-    <h1>ONE MOVE</h1>
-    <p>Think Fast. Play Smart. One Move.</p>
-  </div>
   <div id="root"></div>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
@@ -3192,14 +3138,6 @@ const OneMove = () => {
   }, []);
 
   useEffect(() => {
-    // Remove loading screen now that React has mounted
-    const loadingEl = document.getElementById('app-loading');
-    if (loadingEl) {
-      loadingEl.style.transition = 'opacity 0.5s ease';
-      loadingEl.style.opacity = '0';
-      setTimeout(() => { if (loadingEl.parentNode) loadingEl.parentNode.removeChild(loadingEl); }, 500);
-    }
-
     // Increment session count each time app loads
     setEmergencySkipUsed(false); // Reset emergency skip each session
     const sc = parseInt(localStorage.getItem('omSessionCount') || '0') + 1;
